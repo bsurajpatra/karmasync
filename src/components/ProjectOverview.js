@@ -371,27 +371,27 @@ const ProjectOverview = () => {
   };
 
   const DeleteConfirmationModal = () => (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
+    <div className="confirmation-modal-overlay">
+      <div className="confirmation-modal-content">
+        <div className="confirmation-header">
           <h2>Delete Project</h2>
         </div>
-        <div className="modal-body">
+        <div className="confirmation-body">
           <p>Are you sure you want to delete this project?</p>
-          <p className="warning-text">This action cannot be undone. All project data, including tasks and boards, will be permanently deleted.</p>
-          <div className="project-to-delete">
+          <p className="confirmation-warning-text">This action cannot be undone. All project data, including tasks and boards, will be permanently deleted.</p>
+          <div className="confirmation-project-info">
             <strong>Project to delete:</strong> {project?.title}
           </div>
         </div>
-        <div className="modal-actions">
+        <div className="confirmation-actions">
           <button
-            className="btn btn-secondary"
+            className="btn-confirmation-cancel"
             onClick={() => setShowDeleteConfirm(false)}
           >
             Cancel
           </button>
           <button
-            className="btn btn-danger"
+            className="btn-confirmation-delete"
             onClick={handleDeleteProject}
           >
             Delete Project
@@ -563,27 +563,27 @@ const ProjectOverview = () => {
 
 
   const LeaveConfirmationModal = () => (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
+    <div className="confirmation-modal-overlay">
+      <div className="confirmation-modal-content">
+        <div className="confirmation-header">
           <h2>Leave Project</h2>
         </div>
-        <div className="modal-body">
+        <div className="confirmation-body">
           <p>Are you sure you want to leave this project?</p>
-          <p className="warning-text">You will no longer have access to this project. You can only rejoin if invited by a project manager.</p>
-          <div className="project-to-leave">
+          <p className="confirmation-warning-text">You will no longer have access to this project. You can only rejoin if invited by a project manager.</p>
+          <div className="confirmation-project-info">
             <strong>Project:</strong> {project?.title}
           </div>
         </div>
-        <div className="modal-actions">
+        <div className="confirmation-actions">
           <button
-            className="btn btn-secondary"
+            className="btn-confirmation-cancel"
             onClick={() => setShowLeaveConfirm(false)}
           >
             Cancel
           </button>
           <button
-            className="btn btn-danger"
+            className="btn-confirmation-leave"
             onClick={handleLeaveProject}
           >
             Leave Project
@@ -907,15 +907,15 @@ const ProjectOverview = () => {
       </div>
 
       {showAddIssueModal && (
-        <div className="modal-overlay">
-          <div className="modal-content issue-modal">
-            <div className="modal-header">
-              <h2>Add New Issue</h2>
+        <div className="modal-overlay issue-modal-overlay">
+          <div className="modal-content issue-modal issue-modal--overview">
+            <div className="modal-header issue-modal__header">
+              <h2 className="issue-modal__title">Add New Issue</h2>
             </div>
-            <div className="modal-body">
-              <form onSubmit={handleIssueFormSubmit} className="issue-form">
-                <div className="form-row">
-                  <div className="form-group">
+            <div className="modal-body issue-modal__body">
+              <form onSubmit={handleIssueFormSubmit} className="issue-form issue-form--overview">
+                <div className="form-row issue-form__row">
+                  <div className="form-group issue-form__group">
                     <label htmlFor="title">Title</label>
                     <input
                       type="text"
@@ -924,11 +924,11 @@ const ProjectOverview = () => {
                       value={issueFormData.title}
                       onChange={handleIssueFormChange}
                       required
-                      className="form-control"
+                      className="form-control issue-input issue-input--title"
                       placeholder="Enter issue title"
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="form-group issue-form__group">
                     <label htmlFor="type">Type</label>
                     <select
                       id="type"
@@ -947,8 +947,8 @@ const ProjectOverview = () => {
                   </div>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
+                <div className="form-row issue-form__row">
+                  <div className="form-group issue-form__group">
                     <label htmlFor="description">Description</label>
                     <textarea
                       id="description"
@@ -962,8 +962,8 @@ const ProjectOverview = () => {
                   </div>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
+                <div className="form-row issue-form__row">
+                  <div className="form-group issue-form__group">
                     <label htmlFor="status">Status</label>
                     <select
                       id="status"
@@ -982,7 +982,7 @@ const ProjectOverview = () => {
                       ))}
                     </select>
                   </div>
-                  <div className="form-group">
+                  <div className="form-group issue-form__group">
                     <label htmlFor="deadline">Deadline</label>
                     <input
                       type="date"
@@ -996,8 +996,8 @@ const ProjectOverview = () => {
                 </div>
 
                 {project.projectType === 'collaborative' && (
-                  <div className="form-row">
-                    <div className="form-group">
+                  <div className="form-row issue-form__row">
+                    <div className="form-group issue-form__group">
                       <label htmlFor="assignee">Assignee</label>
                       <select
                         id="assignee"
@@ -1018,8 +1018,8 @@ const ProjectOverview = () => {
                 )}
 
                 {showCustomType && (
-                  <div className="form-row">
-                    <div className="form-group">
+                  <div className="form-row issue-form__row">
+                    <div className="form-group issue-form__group">
                       <label htmlFor="customType">Custom Type</label>
                       <input
                         type="text"
@@ -1034,13 +1034,13 @@ const ProjectOverview = () => {
                   </div>
                 )}
 
-                <div className="modal-actions">
-                  <button type="submit" className="btn btn-primary">
+                <div className="modal-actions issue-modal__actions">
+                  <button type="submit" className="btn btn-primary issue-modal__primary-btn">
                     Create Issue
                   </button>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-secondary issue-modal__secondary-btn"
                     onClick={() => {
                       setShowAddIssueModal(false);
                       setShowCustomType(false);

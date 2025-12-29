@@ -798,19 +798,22 @@
 }
 
 /* Modal Styles */
-.modal-overlay {
+ .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 100;
-  background: transparent !important;
-  background-color: transparent !important;
+}
+
+/* Dedicated styling for issue add/edit overlays to avoid global overrides */
+.issue-modal-overlay {
+  background: rgba(0, 0, 0, 0.65) !important;
+  backdrop-filter: blur(2px);
 }
 
 /* Add new style for nested modal overlay */
@@ -819,7 +822,7 @@
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-.modal-content {
+ .modal-content {
   background: white;
   padding: 24px;
   border-radius: 12px;
@@ -829,8 +832,6 @@
   animation: modalSlideIn 0.3s ease;
   position: relative;
   z-index: 1001;
-  background: transparent !important;
-  background-color: transparent !important;
 }
 
 /* Add new style for nested modal content */
@@ -1610,13 +1611,14 @@
   max-width: 600px;
   max-height: 80vh;
   overflow-y: auto;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(148, 163, 184, 0.4);
 }
 
 .issue-modal .modal-header {
-  padding: 0.75rem 1rem;
+  padding: 0.4rem 0.6rem;
   border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
@@ -1626,7 +1628,7 @@
 }
 
 .issue-modal .modal-header h2 {
-  font-size: 1.25rem;
+  font-size: 0.95rem;
   margin: 0;
   color: #333;
   font-weight: 600;
@@ -1648,19 +1650,19 @@
 }
 
 .issue-modal .modal-body {
-  padding: 1rem;
+  padding: 0.6rem;
 }
 
 .issue-form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.35rem;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  gap: 0.35rem;
 }
 
 .form-row:has(.form-group:only-child) {
@@ -1674,19 +1676,26 @@
 }
 
 .form-group label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: #555;
   margin-bottom: 0.25rem;
 }
 
 .form-group .form-control {
-  padding: 0.5rem 0.75rem;
+  padding: 0.3rem 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 0.9rem;
   transition: all 0.2s;
   background: #fff;
+}
+
+/* Explicitly shrink the Add Issue title field, independent of global .form-control */
+.issue-input--title {
+  font-size: 0.8rem !important;
+  padding: 0.25rem 0.45rem !important;
+  font-weight: 500;
 }
 
 .form-group .form-control:focus {
@@ -1697,8 +1706,8 @@
 
 .form-group textarea.form-control {
   resize: vertical;
-  min-height: 50px;
-  max-height: 100px;
+  min-height: 32px;
+  max-height: 64px;
   line-height: 1.4;
 }
 
@@ -1729,9 +1738,9 @@
 .issue-modal .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.75rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  padding-top: 0.6rem;
   border-top: 1px solid #e0e0e0;
 }
 
@@ -3693,4 +3702,141 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* Confirmation Modal - Professional Styling */
+.confirmation-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2500;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.confirmation-modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.confirmation-header {
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: none;
+}
+
+.confirmation-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  line-height: 1.2;
+}
+
+.confirmation-body {
+  padding: 0 1.5rem 1.5rem;
+  color: #4a5568;
+}
+
+.confirmation-body p {
+  margin: 0 0 1rem;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.confirmation-warning-text {
+  color: #744210;
+  background-color: #fffaf0;
+  border-left: 4px solid #ed8936;
+  padding: 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.confirmation-project-info {
+  background: #f7fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #2d3748;
+  font-size: 1rem;
+  border: 1px solid #e2e8f0;
+}
+
+.confirmation-project-info strong {
+  color: #718096;
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.confirmation-actions {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  background: #f8fafc;
+  border-top: 1px solid #edf2f7;
+}
+
+.btn-confirmation-cancel {
+  padding: 0.75rem 1.5rem;
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-confirmation-cancel:hover {
+  background: #f7fafc;
+  border-color: #a0aec0;
+  color: #2d3748;
+}
+
+.btn-confirmation-delete,
+.btn-confirmation-leave {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-confirmation-delete {
+  background: #e53e3e;
+}
+
+.btn-confirmation-delete:hover {
+  background: #c53030;
+  box-shadow: 0 4px 6px rgba(229, 62, 62, 0.2);
+}
+
+.btn-confirmation-leave {
+  background: #ecc94b;
+  /* Warning yellow/orange */
+  color: #744210;
+}
+
+.btn-confirmation-leave:hover {
+  background: #d69e2e;
+  box-shadow: 0 4px 6px rgba(214, 158, 46, 0.2);
 }
