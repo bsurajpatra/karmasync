@@ -6,6 +6,9 @@ const LandingPage = () => {
   return (
     <div className="landing-page">
       <section className="landing-header">
+        <div className="header-logo">
+          <img src="/logo.png" alt="KarmaSync Logo" className="app-logo" />
+        </div>
         <div className="header-text">
           <h1 className="app-title">KarmaSync</h1>
           <p className="app-tagline">Agile Project Management Made Simple</p>
@@ -14,9 +17,6 @@ const LandingPage = () => {
               Get Started
             </Link>
           </div>
-        </div>
-        <div className="header-logo">
-          <img src="/logo.png" alt="KarmaSync Logo" className="app-logo" />
         </div>
       </section>
 

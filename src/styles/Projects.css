@@ -1,82 +1,15 @@
-/* Projects Layout */
-.projects-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef);
-  color: white;
-  position: relative;
+/* Projects Container overrides */
+.dashboard-wrapper .content-container {
+  padding-top: 0.5rem !important;
 }
 
-/* Header Styles - Matching Profile */
-.projects-header {
-  width: 100%;
-  padding: 2rem 0;
-  color: white;
-  background: transparent;
-}
+/* Top Bar styles imported from Dashboard.css */
 
-.projects-header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 2rem;
-}
-
-.projects-header-left {
-  display: flex;
-  align-items: center;
-  gap: 3rem;
-}
-
-.projects-header-left h1 {
-  margin: 0;
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-}
-
-.projects-subtitle {
-  margin: 0.5rem 0 0;
-  opacity: 0.9;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
+/* Actions in top bar */
 .projects-header-actions {
   display: flex;
   gap: 1.5rem;
   align-items: center;
-}
-
-.projects-back-btn {
-  background: #4a90e2;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  letter-spacing: 0.5px;
-  text-decoration: none;
-  box-shadow: 0 4px 15px rgba(0, 70, 161, 0.3);
-}
-
-.projects-back-btn:hover {
-  background: rgb(0, 50, 120);
-  transform: translateY(-2px);
-  text-decoration: none;
-  color: white;
-  box-shadow: 0 6px 20px rgba(0, 70, 161, 0.4);
 }
 
 .create-project-button {
@@ -103,58 +36,80 @@
   box-shadow: 0 6px 20px rgba(0, 200, 83, 0.4);
 }
 
+/* Professional List Header */
+.projects-content-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 1.2rem !important;
+  padding: 0 0.5rem !important;
+}
+
+.projects-content-header h2 {
+  color: #1a1a1a !important;
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+}
+
 /* Projects List */
 .projects-list-container {
-  padding: 2rem 6rem;
-  width: 100%;
-  flex: 1;
+  padding: 1rem 2.5rem 2.5rem 2.5rem !important;
+  width: 100% !important;
+  flex: 1 !important;
 }
 
 .projects-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.2rem !important;
+  width: 100% !important;
+  max-width: 1400px !important;
+  margin: 0 auto !important;
 }
 
+/* Professional Project Cards */
 .project-item {
-  background: white;
-  border-radius: 15px;
-  padding: 1.5rem 2rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: white !important;
+  border-radius: 12px !important;
+  padding: 1.2rem 1.8rem !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  display: block !important;
+  position: relative !important;
 }
 
 .project-item:hover {
-  transform: translateX(5px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+  border-color: #4a90e2 !important;
 }
 
 .project-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 1.2rem !important;
 }
 
 .project-item-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: #1a1a1a !important;
+  margin: 0 !important;
+  letter-spacing: -0.2px !important;
 }
 
 .project-type-badge {
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: white;
+  padding: 0.3rem 0.9rem !important;
+  border-radius: 6px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+  color: white !important;
 }
 
 .project-type-badge.personal {
@@ -171,10 +126,11 @@
 }
 
 .project-item-description {
-  color: #666;
-  font-size: 1rem;
-  line-height: 1.5;
-  margin: 0;
+  color: #555 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+  opacity: 0.8 !important;
 }
 
 /* Update the no projects message */
@@ -212,6 +168,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -311,21 +268,27 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.6); /* semi-transparent black */
+  background: rgba(0, 0, 0, 0.6);
+  /* semi-transparent black */
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999; /* lower than modal's 1000 but still high */
+  z-index: 999;
+  /* lower than modal's 1000 but still high */
 }
 
 /* Remove or set to transparent any background/background-color on main/root containers */
-.projects-container, .projects-list, .modal-content, .modal-overlay {
+.projects-container,
+.projects-list,
+.modal-content,
+.modal-overlay {
   background: transparent !important;
   background-color: transparent !important;
 }
 
 /* Responsive Styles */
 @media (max-width: 1200px) {
+
   .projects-header,
   .projects-list-container {
     padding: 2rem 4rem;

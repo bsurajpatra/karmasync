@@ -11,7 +11,7 @@ const LoadingAnimation = ({ message = 'Loading...' }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'var(--primary-gradient)',
+      background: 'white',
       zIndex: 1000
     },
     container: {
@@ -38,15 +38,15 @@ const LoadingAnimation = ({ message = 'Loading...' }) => {
       height: '100%',
       borderRadius: '50%',
       border: '4px solid transparent',
-      borderTopColor: '#ffffff',
+      borderTopColor: '#a770ef',
       animation: 'rotate 1.5s linear infinite'
     },
     circle2: {
-      borderTopColor: '#00ffcc',
+      borderTopColor: '#cf8bf3',
       animationDelay: '-0.5s'
     },
     circle3: {
-      borderTopColor: '#fff176',
+      borderTopColor: '#fdb99b',
       animationDelay: '-1s'
     },
     syncIcon: {
@@ -55,16 +55,16 @@ const LoadingAnimation = ({ message = 'Loading...' }) => {
       left: '50%',
       transform: 'translate(-50%, -50%)',
       fontSize: '24px',
-      color: '#ffffff',
+      color: '#000000',
       animation: 'pulse 1.5s ease-in-out infinite'
     },
     message: {
       marginTop: '1.5rem',
-      color: '#ffffff',
+      color: '#000000',
       fontSize: '1.2rem',
       fontWeight: '500',
       textAlign: 'center',
-      textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+      textShadow: 'none'
     }
   };
 
@@ -86,8 +86,8 @@ const LoadingAnimation = ({ message = 'Loading...' }) => {
       <div style={styles.container}>
         <div style={styles.loadingRing}>
           <div style={styles.circle}></div>
-          <div style={{...styles.circle, ...styles.circle2}}></div>
-          <div style={{...styles.circle, ...styles.circle3}}></div>
+          <div style={{ ...styles.circle, ...styles.circle2 }}></div>
+          <div style={{ ...styles.circle, ...styles.circle3 }}></div>
           <div style={styles.syncIcon}>
             🔄
           </div>

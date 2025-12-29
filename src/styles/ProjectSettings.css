@@ -1,0 +1,323 @@
+/* Settings View Styles */
+.settings-view {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.settings-group {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.settings-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.settings-form .form-group label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2d3748;
+    letter-spacing: 0.01em;
+}
+
+.settings-form .po-edit-input,
+.settings-form .edit-textarea,
+.settings-form .github-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: #1a202c;
+    background: #ffffff;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.settings-form .edit-textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.settings-form .po-edit-input:hover,
+.settings-form .edit-textarea:hover,
+.settings-form .github-input:hover {
+    border-color: #cbd5e0;
+}
+
+.settings-form .po-edit-input:focus,
+.settings-form .edit-textarea:focus,
+.settings-form .github-input:focus {
+    outline: none;
+    border-color: #a770ef;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(167, 112, 239, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Submit Buttons */
+.settings-submit-btn {
+    align-self: flex-end;
+    padding: 0.6rem 1.5rem;
+    background: linear-gradient(135deg, #a770ef 0%, #cf8bf3 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(167, 112, 239, 0.25);
+    margin-top: 0.5rem;
+}
+
+.settings-submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(167, 112, 239, 0.35);
+}
+
+.settings-submit-btn:active {
+    transform: translateY(0);
+}
+
+/* New Isolated Danger Zone Styles */
+.settings-danger-zone {
+    border: 1px solid #fed7d7;
+    background: #fff5f5;
+    border-radius: 12px;
+    padding: 1.5rem;
+    width: 100%;
+}
+
+.settings-danger-zone h2 {
+    color: #c53030;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.settings-danger-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.settings-danger-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.settings-danger-row {
+    background: white;
+    border: 1px solid #feb2b2;
+    border-radius: 8px;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.settings-danger-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.settings-danger-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #4a5568;
+}
+
+.settings-danger-btn {
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.settings-danger-btn.danger {
+    background: #fff5f5;
+    color: #e53e3e;
+    border-color: #e53e3e;
+}
+
+.settings-danger-btn.danger:hover {
+    background: #e53e3e;
+    color: white;
+}
+
+.settings-danger-btn.warning {
+    background: #fffaf0;
+    color: #dd6b20;
+    border-color: #dd6b20;
+}
+
+.settings-danger-btn.warning:hover {
+    background: #dd6b20;
+    color: white;
+}
+
+/* Isolated Settings Dialogs */
+.settings-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.settings-dialog-overlay.z-top {
+    z-index: 2000 !important;
+}
+
+.settings-dialog-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: dialogFadeIn 0.2s ease-out;
+}
+
+.settings-dialog-content.settings-dialog-wide {
+    max-width: 800px;
+}
+
+.settings-dialog-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settings-dialog-header h2,
+.settings-dialog-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.settings-dialog-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #a0aec0;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.settings-dialog-close:hover {
+    background: #f7fafc;
+    color: #e53e3e;
+}
+
+.settings-dialog-body {
+    padding: 1.5rem;
+}
+
+@keyframes dialogFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Fix for internal components */
+.settings-dialog-body .collab-to-remove {
+    background: #f7fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.settings-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+    border-radius: 0 0 12px 12px;
+}
+
+/* Settings Dialog Button Styles */
+.settings-dialog-actions button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.settings-dialog-actions .btn-secondary {
+    background: #e2e8f0;
+    color: #4a5568;
+    border-color: #cbd5e0;
+}
+
+.settings-dialog-actions .btn-secondary:hover {
+    background: #cbd5e0;
+    color: #2d3748;
+}
+
+.settings-dialog-actions .btn-danger {
+    background: #e53e3e;
+    color: white;
+}
+
+.settings-dialog-actions .btn-danger:hover {
+    background: #c53030;
+}

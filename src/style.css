@@ -101,7 +101,7 @@
   border: 2px solid #a770ef;
   color: #a770ef;
   background: linear-gradient(white, white) padding-box,
-              var(--primary-gradient) border-box;
+    var(--primary-gradient) border-box;
   border: 2px solid transparent;
 }
 
@@ -269,11 +269,12 @@ input[type="submit"].btn {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6rem 4rem;
+  padding: 4rem 2rem 2rem 2rem;
   margin-bottom: 4rem;
-  margin-top: 4rem;
+  margin-top: 1rem;
   position: relative;
   overflow: hidden;
+  gap: 2rem;
 }
 
 .landing-header::before {
@@ -283,7 +284,7 @@ input[type="submit"].btn {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
   z-index: 0;
 }
 
@@ -291,7 +292,8 @@ input[type="submit"].btn {
   flex: 1.2;
   position: relative;
   z-index: 1;
-  margin-left: 3rem;
+  margin-left: 0;
+  margin-right: 0.5rem;
 }
 
 .header-logo {
@@ -301,12 +303,12 @@ input[type="submit"].btn {
   align-items: center;
   position: relative;
   z-index: 1;
-  margin-right: 2rem;
-  margin-left: 1rem;
+  margin-right: 0;
+  margin-left: 0.5rem;
 }
 
 .app-logo {
-  max-width: 400px;
+  max-width: 350px;
   height: auto;
   filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -318,21 +320,21 @@ input[type="submit"].btn {
 }
 
 .app-title {
-  font-size: 6.5rem;
-  color: #ffffff;
-  margin-bottom: 2rem;
+  font-size: 5rem;
+  color: #000000;
+  margin-bottom: 1rem;
   font-weight: 800;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
   font-family: 'Poppins', sans-serif;
   letter-spacing: -0.02em;
   animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .app-tagline {
-  font-size: 2.8rem;
-  color: #ffffff;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  margin-bottom: 3rem;
+  font-size: 2.1rem;
+  color: #000000;
+  text-shadow: none;
+  margin-bottom: 1.5rem;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -344,17 +346,19 @@ input[type="submit"].btn {
 }
 
 .header-cta .btn {
-  font-size: 1.8rem;
-  padding: 1.2rem 3rem;
+  font-size: 1.4rem;
+  padding: 1.1rem 2rem;
   border-radius: 50px;
-  background: white;
-  color: var(--primary-color);
+  background: linear-gradient(135deg, #a770ef 0%, #cf8bf3 50%, #fdb99b 100%);
+  color: white;
   border: none;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   font-weight: 600;
+  width: auto;
+  display: inline-block;
 }
 
 .header-cta .btn::before {
@@ -364,7 +368,7 @@ input[type="submit"].btn {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transform: translateX(-100%);
   transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -380,10 +384,17 @@ input[type="submit"].btn {
 
 /* About Section */
 .landing-about {
-  padding: 4rem 4rem;
-  margin-bottom: 4rem;
+  padding: 4rem 3rem;
+  margin-bottom: 6rem;
+  margin-left: 3rem;
+  margin-right: 3rem;
   position: relative;
   overflow: hidden;
+  background: linear-gradient(white, white) padding-box,
+    linear-gradient(135deg, #a770ef, #cf8bf3, #fdb99b) border-box;
+  border: 3px solid transparent;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .landing-about::before {
@@ -393,15 +404,15 @@ input[type="submit"].btn {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
   z-index: 0;
 }
 
 .landing-about h2 {
-  color: #ffffff;
-  margin-bottom: 3rem;
-  font-size: 4.5rem;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: #000000;
+  margin-bottom: 2rem;
+  font-size: 3.2rem;
+  text-shadow: none;
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -410,10 +421,10 @@ input[type="submit"].btn {
 }
 
 .landing-about p {
-  color: #ffffff;
-  line-height: 2.2;
-  font-size: 2.2rem;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: #000000;
+  line-height: 1.9;
+  font-size: 1.5rem;
+  text-shadow: none;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.8s backwards;
@@ -425,8 +436,8 @@ input[type="submit"].btn {
 
 /* Team Section */
 .landing-team {
-  padding: 4rem 4rem;
-  margin-bottom: 4rem;
+  padding: 4rem 3rem;
+  margin-bottom: 6rem;
   position: relative;
   overflow: hidden;
 }
@@ -438,16 +449,16 @@ input[type="submit"].btn {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
   z-index: 0;
 }
 
 .landing-team h2 {
-  color: #ffffff;
-  margin-bottom: 4rem;
-  font-size: 4.5rem;
+  color: #000000;
+  margin-bottom: 2.5rem;
+  font-size: 3.2rem;
   text-align: center;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -456,32 +467,55 @@ input[type="submit"].btn {
 
 .team-members {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
   text-align: center;
   position: relative;
   z-index: 1;
 }
 
 .team-member {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 30px;
-  padding: 3rem;
+  background: linear-gradient(135deg, rgba(167, 112, 239, 0.15), rgba(207, 139, 243, 0.15), rgba(253, 185, 155, 0.15)) padding-box,
+    linear-gradient(135deg, #a770ef, #cf8bf3, #fdb99b) border-box;
+  border: 3px solid transparent;
+  border-radius: 20px;
+  padding: 2.5rem;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 1.2s backwards;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.team-member::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(167, 112, 239, 0.05), rgba(207, 139, 243, 0.05), rgba(253, 185, 155, 0.05));
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
 }
 
 .team-member:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(167, 112, 239, 0.3);
+  border: 3px solid transparent;
+  background: linear-gradient(135deg, rgba(253, 185, 155, 0.25), rgba(207, 139, 243, 0.25), rgba(167, 112, 239, 0.25)) padding-box,
+    linear-gradient(135deg, #fdb99b, #cf8bf3, #a770ef) border-box;
+}
+
+.team-member:hover::before {
+  opacity: 1;
 }
 
 .team-member p {
-  color: #ffffff;
-  font-size: 2.2rem;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: #000000;
+  font-size: 1.4rem;
+  text-shadow: none;
   margin: 0;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
@@ -493,8 +527,9 @@ input[type="submit"].btn {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
-  opacity: 1;
+    opacity: 1;
     transform: translateY(0);
   }
 }
@@ -546,7 +581,7 @@ input[type="submit"].btn {
     text-align: center;
     padding: 3rem 2rem;
     margin-top: 2rem;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
   }
 
   .header-text {
@@ -561,36 +596,38 @@ input[type="submit"].btn {
   }
 
   .app-logo {
-    max-width: 320px;
+    max-width: 220px;
   }
 
   .app-title {
-    font-size: 4.5rem;
+    font-size: 3rem;
   }
 
   .app-tagline {
-    font-size: 2.2rem;
+    font-size: 1.4rem;
   }
 
   .header-cta .btn {
-    font-size: 1.8rem;
-    padding: 1.2rem 3rem;
+    font-size: 1.1rem;
+    padding: 0.8rem 1.5rem;
+    width: auto;
+    display: inline-block;
   }
 
   .landing-about,
   .landing-team {
-    padding: 3rem 2rem;
+    padding: 2rem 1.5rem;
     margin-bottom: 3rem;
   }
 
   .landing-about h2,
   .landing-team h2 {
-    font-size: 3.5rem;
+    font-size: 2.2rem;
   }
 
   .landing-about p,
   .team-member p {
-    font-size: 1.8rem;
+    font-size: 1.1rem;
   }
 
   .landing-cta .btn {
@@ -652,8 +689,6 @@ input[type="submit"].btn {
 .dashboard-content {
   flex: 1;
   padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
   width: 100%;
 }
 
@@ -1047,7 +1082,7 @@ input[type="password"]::-webkit-input-password-toggle-button {
 @media (max-width: 1400px) {
   .auth-card {
     max-width: 480px;
-  padding: 2rem;
+    padding: 2rem;
   }
 }
 
@@ -1056,11 +1091,11 @@ input[type="password"]::-webkit-input-password-toggle-button {
     max-width: 440px;
     padding: 1.75rem;
   }
-  
+
   .auth-logo {
     width: 260px;
   }
-  
+
   .auth-logo-text {
     font-size: 3rem;
   }
@@ -1069,8 +1104,8 @@ input[type="password"]::-webkit-input-password-toggle-button {
 @media (max-width: 768px) {
   .auth-card {
     max-width: 100%;
-        padding: 1.5rem;
-    }
+    padding: 1.5rem;
+  }
 
   .auth-logo-section {
     padding-right: 0;
@@ -1092,7 +1127,16 @@ input[type="password"]::-webkit-input-password-toggle-button {
 }
 
 /* Transparent backgrounds for main/root containers to show global gradient */
-.signup-container, .signup-form, .dashboard-container, .dashboard-main, .login-container, .login-form, .forgot-password-container, .forgot-password-form, .reset-password-container, .reset-password-form, .modal-content, .modal-overlay {
+.signup-container,
+.signup-form,
+.dashboard-container,
+.dashboard-main,
+.login-container,
+.login-form,
+.forgot-password-container,
+.forgot-password-form,
+.reset-password-container,
+.reset-password-form {
   background: transparent !important;
   background-color: transparent !important;
 }

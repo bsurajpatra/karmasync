@@ -104,12 +104,12 @@ export const updateCustomBoard = async (projectId, boardId, boardData) => {
 export const deleteCustomBoard = async (projectId, boardId) => {
   const response = await axios.delete(`${BASE_URL}/${projectId}/boards/${boardId}`);
   return response.data;
-}; 
+};
 
 export const removeCollaborator = async (projectId, collaboratorId) => {
   try {
     console.log('Making POST request to remove collaborator:', { projectId, collaboratorId });
-    const response = await axios.post(`${BASE_URL}/${projectId}/collaborators/remove`, 
+    const response = await axios.post(`${BASE_URL}/${projectId}/collaborators/remove`,
       { collaboratorId },
       {
         headers: {
@@ -129,10 +129,33 @@ export const removeCollaborator = async (projectId, collaboratorId) => {
   }
 };
 
+export const updateCollaboratorRole = async (projectId, collaboratorId, role) => {
+  try {
+    console.log('Making PUT request to update collaborator role:', { projectId, collaboratorId, role });
+    const response = await axios.put(`${BASE_URL}/${projectId}/collaborators/role`,
+      { collaboratorId, role },
+      {
+        headers: {
+          ...getAuthHeader(),
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    console.log('Update collaborator role response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error in updateCollaboratorRole:', error.response || error);
+    if (error.response?.data) {
+      throw error.response.data;
+    }
+    throw { message: 'Error updating collaborator role' };
+  }
+};
+
 export const addCollaborator = async (projectId, collaboratorData) => {
   try {
     console.log('Making POST request to add collaborator:', { projectId, collaboratorData });
-    const response = await axios.post(`${BASE_URL}/${projectId}/collaborators`, 
+    const response = await axios.post(`${BASE_URL}/${projectId}/collaborators`,
       collaboratorData,
       {
         headers: {

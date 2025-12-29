@@ -10,21 +10,21 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
+    <div className="v2-logout-wrapper">
+      <div className="v2-logout-container">
+        <div className="v2-logout-title-area">
           <h2>Confirm Logout</h2>
         </div>
-        <div className="modal-body">
+        <div className="v2-logout-main-content">
           <p>Are you sure you want to log out?</p>
-          <div className="modal-actions">
-            <div className="modal-buttons">
-            <button className="cancel-button" onClick={onClose}>
-              Cancel
-            </button>
-            <button className="logout-confirm-button" onClick={onConfirm}>
-              Logout
-            </button>
+          <div className="v2-logout-action-row">
+            <div className="v2-logout-btn-group">
+              <button className="cancel-button" onClick={onClose}>
+                Cancel
+              </button>
+              <button className="logout-confirm-button" onClick={onConfirm}>
+                Logout
+              </button>
             </div>
           </div>
         </div>
@@ -102,7 +102,9 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <div className="top-bar">
           <div className="header-left">
-            <img src="/logo.png" alt="KarmaSync" className="dashboard-logo" />
+            <Link to="/dashboard">
+              <img src="/logo.png" alt="KarmaSync" className="dashboard-logo" />
+            </Link>
             <div className="header-content">
               <h1>Welcome to KarmaSync</h1>
               <p className="dashboard-subtitle">Your productivity companion</p>
@@ -114,49 +116,39 @@ const Dashboard = () => {
           </button>
         </div>
 
-        <div className="content-container">
-          <div className="message-box">
-            <h2>Maximize Your Productivity</h2>
-            <p>
-            KarmaSync helps you manage projects, track tasks, and collaborate with your team. Stay organized, meet deadlines, and achieve goals with our powerful tools and features.
-            </p>
-            <div className="message-footer">
-              Here's what you can do:
-            </div>
+        <div className="dashboard-body">
+          <div className="dashboard-sidebar">
+            <nav className="sidebar-nav">
+              <Link to="/projects" className="sidebar-link">
+                <i className="fas fa-project-diagram"></i>
+                <span>Projects</span>
+              </Link>
+              <Link to="/todos" className="sidebar-link">
+                <i className="fas fa-tasks"></i>
+                <span>My To-dos</span>
+              </Link>
+              <Link to="/profile" className="sidebar-link">
+                <i className="fas fa-user"></i>
+                <span>Profile</span>
+              </Link>
+              <Link to="/contact" className="sidebar-link">
+                <i className="fas fa-envelope"></i>
+                <span>Contact Us</span>
+              </Link>
+            </nav>
           </div>
 
-          <div className="feature-grid">
-            <Link to="/projects" className="feature-card">
-              <div className="feature-icon">
-                <i className="fas fa-project-diagram"></i>
-              </div>
-              <h3>Projects</h3>
-              <p>Manage your projects and track progress</p>
-            </Link>
-
-            <Link to="/todos" className="feature-card">
-              <div className="feature-icon">
-                <i className="fas fa-tasks"></i>
-              </div>
-              <h3>My To-dos</h3>
-              <p>Organize and track your daily tasks</p>
-            </Link>
-
-            <Link to="/profile" className="feature-card">
-              <div className="feature-icon">
-                <i className="fas fa-user"></i>
-              </div>
-              <h3>Profile</h3>
-              <p>View and update your profile settings</p>
-            </Link>
-
-            <Link to="/contact" className="feature-card">
-              <div className="feature-icon">
-                <i className="fas fa-envelope"></i>
-              </div>
-              <h3>Contact Us</h3>
-              <p>Get in touch with our support team</p>
-            </Link>
+          <div className="content-container">
+            <div className="message-box">
+              <h2>Maximize Your Productivity</h2>
+              <p>
+                KarmaSync helps you manage projects, track tasks, and collaborate with your team. Stay organized, meet deadlines, and achieve goals.
+              </p>
+            </div>
+            {/* Main content area where stats or other dashboard widgets would go */}
+            <div className="dashboard-main-area">
+              <p style={{ textAlign: 'center', color: '#666', marginTop: '2rem' }}>Select an option from the sidebar to get started.</p>
+            </div>
           </div>
         </div>
       </div>
