@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { createProject } from '../api/projectApi';
 import LoadingAnimation from './LoadingAnimation';
 import Footer from './Footer';
-import '../styles/CreatePersonalProject.css';
+
 import '../styles/ProjectOverview.css';
 import '../styles/CreateProjectCompact.css';
 
@@ -109,7 +109,7 @@ const CreatePersonalProject = () => {
               </div>
 
               <div className="cp-form-group">
-                <label htmlFor="githubLink" className="cp-label">GitHub Link</label>
+                <label htmlFor="githubLink" className="cp-label">Repository Link</label>
                 <input
                   type="url"
                   id="githubLink"

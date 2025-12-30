@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getTaskById, updateTask, deleteTask, addTaskComment, updateTaskStatus } from '../api/taskApi';
 import { getProjectById } from '../api/projectApi';
 import LoadingAnimation from './LoadingAnimation';
-import '../styles/TaskOverview.css';
+
 import '../styles/ProjectOverview.css';
 import '../styles/TaskOverviewCompact.css';
 import Footer from './Footer';

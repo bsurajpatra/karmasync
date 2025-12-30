@@ -229,11 +229,118 @@
     background: #fed7d7;
 }
 
+/* Modal Styles */
+.cp-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.cp-role-modal {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    animation: cpSlideUp 0.3s ease;
+}
+
+.cp-role-modal h3 {
+    margin-bottom: 1.5rem;
+    color: #333;
+    text-align: center;
+}
+
+.cp-role-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.cp-role-option {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: left;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cp-role-option:hover {
+    border-color: #2196F3;
+    transform: translateY(-2px);
+}
+
+.cp-role-option.manager:hover {
+    border-color: #4CAF50;
+}
+
+.cp-role-option h4 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+}
+
+.cp-role-option p {
+    margin: 0 0 1rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.cp-role-option ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.cp-role-option li {
+    margin-bottom: 0.3rem;
+}
+
+.cp-modal-close-btn {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    background: #f5f5f5;
+    border: none;
+    border-radius: 4px;
+    color: #666;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.cp-modal-close-btn:hover {
+    background: #e0e0e0;
+}
+
 /* Animations */
 @keyframes cpFadeIn {
     from {
         opacity: 0;
         transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes cpSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
 
     to {
@@ -255,5 +362,9 @@
     .cp-btn-secondary {
         width: 100%;
         justify-content: center;
+    }
+
+    .cp-role-options {
+        grid-template-columns: 1fr;
     }
 }

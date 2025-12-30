@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { createProject } from '../api/projectApi';
 import { searchUsers } from '../api/userApi';
 import LoadingAnimation from './LoadingAnimation';
-import '../styles/CreateCollaborativeProject.css';
+
 import '../styles/ProjectOverview.css';
 import '../styles/CreateProjectCompact.css';
 import Footer from './Footer';
@@ -248,7 +248,7 @@ const CreateCollaborativeProject = () => {
               </div>
 
               <div className="cp-form-group">
-                <label htmlFor="githubLink" className="cp-label">GitHub Link</label>
+                <label htmlFor="githubLink" className="cp-label">Repository Link</label>
                 <input
                   type="url"
                   id="githubLink"
@@ -278,12 +278,12 @@ const CreateCollaborativeProject = () => {
       </div>
 
       {showRoleModal && (
-        <div className="modal-overlay">
-          <div className="role-selection-modal">
+        <div className="cp-modal-overlay">
+          <div className="cp-role-modal">
             <h3>Select Role for {selectedUser?.username}</h3>
-            <div className="role-options">
+            <div className="cp-role-options">
               <button
-                className="role-option manager"
+                className="cp-role-option manager"
                 onClick={() => handleRoleSelect(ROLE_TYPES.MANAGER)}
               >
                 <h4>Project Manager</h4>
@@ -296,7 +296,7 @@ const CreateCollaborativeProject = () => {
                 </ul>
               </button>
               <button
-                className="role-option developer"
+                className="cp-role-option developer"
                 onClick={() => handleRoleSelect(ROLE_TYPES.DEVELOPER)}
               >
                 <h4>Developer</h4>
@@ -309,7 +309,7 @@ const CreateCollaborativeProject = () => {
               </button>
             </div>
             <button
-              className="close-modal"
+              className="cp-modal-close-btn"
               onClick={() => {
                 setShowRoleModal(false);
                 setSelectedUser(null);
