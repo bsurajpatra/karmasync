@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { createProject } from '../api/projectApi';
 import LoadingAnimation from './LoadingAnimation';
 import Footer from './Footer';
 import '../styles/CreatePersonalProject.css';
+import '../styles/ProjectOverview.css';
+import '../styles/CreateProjectCompact.css';
 
 const CreatePersonalProject = () => {
   const navigate = useNavigate();
@@ -46,84 +48,101 @@ const CreatePersonalProject = () => {
   if (loading) return <LoadingAnimation message="Creating your project..." />;
 
   return (
-    <div className="projects-container">
-      <div className="projects-header">
-        <div className="projects-header-content">
-          <div className="projects-header-left">
-            <h1>Create Personal Project</h1>
-          </div>
-          <div className="projects-header-actions">
-            <button 
-              className="back-to-dashboard-button"
-              onClick={() => navigate('/projects')}
-            >
-              <i className="fas fa-arrow-left"></i> Back to Projects
-            </button>
+    <div className="projects-wrapper">
+      <header className="po-header">
+        <div className="po-header-content">
+          <Link to="/dashboard" className="po-logo-container">
+            <img src="/logo.png" alt="KarmaSync" className="po-logo" />
+          </Link>
+
+          <div className="po-divider"></div>
+
+          <div className="po-titles">
+            <span className="po-page-label">Create Project</span>
+            <div className="po-project-title-wrapper">
+              <h1 className="po-project-name">Personal</h1>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="project-form-container">
-        <form onSubmit={handleSubmit} className="project-form">
-          {error && <div className="error-message">{error}</div>}
-          
-          <div className="form-group">
-            <label htmlFor="title">Project Name *</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              required
-              placeholder="Enter project name"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              rows="4"
-              placeholder="Enter project description"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="githubLink">GitHub Link</label>
-            <input
-              type="url"
-              id="githubLink"
-              name="githubLink"
-              value={formData.githubLink}
-              onChange={handleInputChange}
-              placeholder="https://github.com/username/repository"
-              pattern="https://github.com/.*"
-            />
-            <small className="input-hint">Must be a valid GitHub URL starting with https://github.com/</small>
-          </div>
-
-          <div className="form-actions">
-            <button 
-              type="submit" 
-              className="btn btn-primary"
-              disabled={loading}
-            >
-              {loading ? 'Creating...' : 'Create Project'}
+      <div className="projects-body">
+        <div className="projects-sidebar">
+          <nav className="sidebar-nav">
+            <button className="sidebar-link" onClick={() => navigate('/projects')}>
+              <i className="fas fa-arrow-left"></i>
+              <span>Back to Projects</span>
             </button>
-            <button 
-              type="button" 
-              className="btn btn-secondary"
-              onClick={() => navigate('/projects')}
-              disabled={loading}
-            >
-              Cancel
-            </button>
+          </nav>
+        </div>
+
+        <div className="project-overview-container">
+          <div className="cp-container">
+            <form onSubmit={handleSubmit} className="cp-form">
+              {error && <div className="error-message">{error}</div>}
+
+              <div className="cp-form-group">
+                <label htmlFor="title" className="cp-label">Project Name *</label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Enter project name"
+                  className="cp-input"
+                />
+              </div>
+
+              <div className="cp-form-group">
+                <label htmlFor="description" className="cp-label">Description</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  rows="4"
+                  placeholder="Enter project description"
+                  className="cp-textarea"
+                />
+              </div>
+
+              <div className="cp-form-group">
+                <label htmlFor="githubLink" className="cp-label">GitHub Link</label>
+                <input
+                  type="url"
+                  id="githubLink"
+                  name="githubLink"
+                  value={formData.githubLink}
+                  onChange={handleInputChange}
+                  placeholder="https://github.com/username/repository"
+                  pattern="https://github.com/.*"
+                  className="cp-input"
+                />
+                <small className="cp-hint">Must be a valid GitHub URL starting with https://github.com/</small>
+              </div>
+
+              <div className="cp-actions">
+                <button
+                  type="submit"
+                  className="cp-btn-primary"
+                  disabled={loading}
+                >
+                  {loading ? 'Creating...' : 'Create Project'}
+                </button>
+                <button
+                  type="button"
+                  className="cp-btn-secondary"
+                  onClick={() => navigate('/projects')}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
       <Footer />
     </div>

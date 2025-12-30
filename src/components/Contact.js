@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom';
 import "react-toastify/dist/ReactToastify.css";
 import LoadingAnimation from './LoadingAnimation';
 import { FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa';
-import '../styles/Contact.css';
+import '../styles/ProjectOverview.css';
+import '../styles/ContactCompact.css';
 import Footer from './Footer';
 
 const Contact = () => {
@@ -49,7 +50,7 @@ const Contact = () => {
                 templateParams,
                 process.env.REACT_APP_EMAILJS_PUBLIC_API
             );
-            
+
             setMessage("");
             toast.success("Message sent successfully!");
         } catch (error) {
@@ -61,66 +62,98 @@ const Contact = () => {
     };
 
     return (
-        <div className="contact-wrapper">
-            <div className="contact-header">
-                <div className="contact-header-content">
-                    <div className="contact-header-left">
-                        <h1>Contact Us</h1>
-                        <p className="contact-subtitle">Get in touch with our support team</p>
-                    </div>
-                    <Link to="/dashboard" className="dashboard-back-btn">
-                        <i className="fas fa-arrow-left"></i> Back to Dashboard
+        <div className="projects-wrapper">
+            <header className="po-header">
+                <div className="po-header-content">
+                    <Link to="/dashboard" className="po-logo-container">
+                        <img src="/logo.png" alt="KarmaSync" className="po-logo" />
                     </Link>
-                </div>
-            </div>
-
-            <div className="contact-section">
-                <div className="contact-container">
-                    <div className="contact-info">
-                        <h3>Get in Touch</h3>
-                        <p>Whether it's feedback, support, feature ideas, or collaboration — we're here for every sprint. Let's keep building better, together.</p>
-                        
-                        <div className="contact-details">
-                            <div className="contact-item">
-                                <i className="fas fa-envelope"></i>
-                                <span>Mail : karmasync.official@gmail.com</span>
-                            </div>
-                            <div className="contact-item">
-                                <i className="fas fa-phone"></i>
-                                <span>Phone : +91 876 3232 589</span>
-                            </div>
+                    <div className="po-divider"></div>
+                    <div className="po-titles">
+                        <span className="po-page-label">Support</span>
+                        <div className="po-project-title-wrapper">
+                            <h1 className="po-project-name">Contact Us</h1>
                         </div>
                     </div>
+                </div>
+            </header>
 
-                        <form onSubmit={submitHandler} className="contact-form">
-                            <div className="form-group">
-                                <label>Message</label>
-                                <textarea
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    className="form-control"
-                                    rows="5"
-                                    placeholder="Write your message here..."
-                                    required
-                                ></textarea>
+            <div className="projects-body">
+                <div className="projects-sidebar">
+                    <nav className="sidebar-nav">
+                        <Link to="/projects" className="sidebar-link">
+                            <i className="fas fa-project-diagram"></i>
+                            <span>Projects</span>
+                        </Link>
+                        <Link to="/todos" className="sidebar-link">
+                            <i className="fas fa-tasks"></i>
+                            <span>My To-dos</span>
+                        </Link>
+                        <Link to="/profile" className="sidebar-link">
+                            <i className="fas fa-user"></i>
+                            <span>Profile</span>
+                        </Link>
+                        <Link to="/contact" className="sidebar-link active" style={{ background: 'linear-gradient(135deg, #a770ef 0%, #cf8bf3 100%)', color: 'white', boxShadow: '0 4px 10px rgba(167, 112, 239, 0.3)' }}>
+                            <i className="fas fa-envelope" style={{ color: 'white' }}></i>
+                            <span>Contact Us</span>
+                        </Link>
+                    </nav>
+                </div>
+
+                <div className="project-overview-container">
+                    <div className="ct-container">
+                        <div className="ct-info-section">
+                            <div className="ct-header">
+                                <h2>Get in Touch</h2>
+                                <p className="ct-subtitle">We'd love to hear from you</p>
                             </div>
+                            <p className="ct-description">
+                                Whether it's feedback, support, feature ideas, or collaboration — we're here for every sprint. Let's keep building better, together.
+                            </p>
 
-                            <button 
-                                type="submit" 
-                                className="btn btn-primary"
-                                disabled={loading}
-                            >
-                                {loading ? (
-                                    <>
-                                        <i className="fas fa-spinner fa-spin"></i> Sending...
-                                    </>
-                                ) : (
-                                    <>
-                                        <i className="fas fa-paper-plane"></i> Send Message
-                                    </>
-                                )}
-                            </button>
-                        </form>
+                            <div className="ct-details">
+                                <div className="ct-item">
+                                    <i className="fas fa-envelope"></i>
+                                    <span>karmasync.official@gmail.com</span>
+                                </div>
+                                <div className="ct-item">
+                                    <i className="fas fa-phone"></i>
+                                    <span>+91 876 3232 589</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="ct-form-section">
+                            <form onSubmit={submitHandler} className="ct-form">
+                                <div className="ct-form-group">
+                                    <label className="ct-label">Message</label>
+                                    <textarea
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        className="ct-textarea"
+                                        placeholder="Write your message here..."
+                                        required
+                                    ></textarea>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="ct-btn"
+                                    disabled={loading}
+                                >
+                                    {loading ? (
+                                        <>
+                                            <i className="fas fa-spinner fa-spin"></i> Sending...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="fas fa-paper-plane"></i> Send Message
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
             <ToastContainer position="bottom-right" theme="light" />

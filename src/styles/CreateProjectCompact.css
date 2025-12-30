@@ -1,0 +1,259 @@
+/* Create Project Compact Styles - 'cp-' prefix */
+
+/* Container */
+.cp-container {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    animation: cpFadeIn 0.3s ease;
+}
+
+/* Form Styles */
+.cp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.cp-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.cp-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4a5568;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cp-input,
+.cp-textarea {
+    padding: 0.75rem 1rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    font-family: inherit;
+    background: #f7fafc;
+}
+
+.cp-input:focus,
+.cp-textarea:focus {
+    outline: none;
+    border-color: #4299e1;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.cp-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.cp-hint {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-top: 0.25rem;
+}
+
+/* Actions */
+.cp-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.cp-btn-primary {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 6px rgba(66, 153, 225, 0.2);
+}
+
+.cp-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(66, 153, 225, 0.3);
+}
+
+.cp-btn-secondary {
+    background: #edf2f7;
+    color: #4a5568;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.cp-btn-secondary:hover {
+    background: #e2e8f0;
+    color: #2d3748;
+}
+
+/* Collaborator Search */
+.cp-search-container {
+    position: relative;
+}
+
+.cp-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    max-height: 250px;
+    overflow-y: auto;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+}
+
+.cp-search-item {
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #f7fafc;
+}
+
+.cp-search-item:last-child {
+    border-bottom: none;
+}
+
+.cp-search-item:hover {
+    background: #f7fafc;
+}
+
+.cp-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.cp-username {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 0.9rem;
+}
+
+.cp-email {
+    font-size: 0.8rem;
+    color: #718096;
+}
+
+/* Collaborator Tags */
+.cp-collaborators-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.cp-collaborator-tag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ebf8ff;
+    border: 1px solid #bee3f8;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.cp-collaborator-tag:hover {
+    background: #e6fffa;
+    border-color: #b2f5ea;
+}
+
+.cp-role-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-left: 0.5rem;
+}
+
+.cp-role-manager {
+    background: #c6f6d5;
+    color: #276749;
+}
+
+.cp-role-developer {
+    background: #bee3f8;
+    color: #2c5282;
+}
+
+.cp-remove-btn {
+    background: none;
+    border: none;
+    color: #e53e3e;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.cp-remove-btn:hover {
+    background: #fed7d7;
+}
+
+/* Animations */
+@keyframes cpFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .cp-container {
+        padding: 1.5rem;
+    }
+
+    .cp-actions {
+        flex-direction: column-reverse;
+    }
+
+    .cp-btn-primary,
+    .cp-btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}

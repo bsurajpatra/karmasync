@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { getTodos, createTodo, updateTodo, deleteTodo, updateTodoStatus } from '../api/todosApi';
 import LoadingAnimation from './LoadingAnimation';
-import '../styles/Todos.css';
 import Footer from './Footer';
+import '../styles/ProjectOverview.css';
+import '../styles/TodosCompact.css';
 
 const Todos = () => {
   const navigate = useNavigate();
@@ -136,7 +137,7 @@ const Todos = () => {
           {todo.status}
         </span>
       </div>
-      
+
       <div className="todo-details">
         <div className="todo-tags">
           <span className="todo-category">{todo.category}</span>
@@ -151,21 +152,21 @@ const Todos = () => {
       </div>
 
       <div className="todo-actions">
-        <button 
+        <button
           className="mark-done"
           onClick={() => handleStatusChange(todo)}
         >
           <i className={`fas fa-${todo.status === 'Pending' ? 'check' : 'undo'}`}></i>
           {todo.status === 'Pending' ? 'Mark Done' : 'Mark Pending'}
         </button>
-        <button 
+        <button
           className="edit"
           onClick={() => handleEdit(todo)}
         >
           <i className="fas fa-edit"></i>
           Edit
         </button>
-        <button 
+        <button
           className="delete"
           onClick={() => setDeleteConfirmation(todo)}
         >
@@ -180,26 +181,35 @@ const Todos = () => {
     if (!deleteConfirmation) return null;
 
     return (
-      <div className="delete-confirmation-modal">
-        <div className="delete-confirmation-content">
-          <h3>Delete To-do</h3>
-          <p>Are you sure you want to delete "{deleteConfirmation.name}"? This action cannot be undone.</p>
-          <div className="delete-confirmation-actions">
-            <button 
-              className="cancel"
-              onClick={() => setDeleteConfirmation(null)}
-            >
-              Cancel
-            </button>
-            <button 
-              className="confirm"
-              onClick={() => {
-                handleDelete(deleteConfirmation._id);
-                setDeleteConfirmation(null);
-              }}
-            >
-              Delete
-            </button>
+      <div className="td-modal-overlay">
+        <div className="td-modal">
+          <div className="td-modal-header">
+            <h2>Delete To-do</h2>
+            <button className="td-modal-close" onClick={() => setDeleteConfirmation(null)}>&times;</button>
+          </div>
+          <div className="td-modal-body">
+            <p style={{ color: '#4a5568', marginBottom: '1.5rem' }}>
+              Are you sure you want to delete "{deleteConfirmation.name}"? This action cannot be undone.
+            </p>
+            <div className="td-actions" style={{ justifyContent: 'flex-end', borderTop: 'none', paddingTop: 0 }}>
+              <button
+                className="td-btn"
+                style={{ background: '#edf2f7', color: '#4a5568' }}
+                onClick={() => setDeleteConfirmation(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="td-btn"
+                style={{ background: '#e53e3e', color: 'white' }}
+                onClick={() => {
+                  handleDelete(deleteConfirmation._id);
+                  setDeleteConfirmation(null);
+                }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -211,205 +221,243 @@ const Todos = () => {
   }
 
   return (
-    <div className="todos-container">
-      <div className="todos-header">
-        <div className="todos-header-content">
-          <div className="todos-header-left">
-            <h1>My Personal To-dos</h1>
-            <p className="current-date">
-              {new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </p>
-          </div>
-          <div className="todos-header-actions">
-            <button 
-              className="todo-back-btn"
-              onClick={() => navigate('/dashboard')}
-            >
-              <i className="fas fa-arrow-left"></i> Back to Dashboard
-            </button>
-            <button 
-              className="add-todo-button"
-              onClick={() => setShowForm(true)}
-            >
-              <i className="fas fa-plus"></i> Add To-do
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {error && <div className="error-message">{error}</div>}
-
-      <div className="todos-content">
-        <div className="search-bar">
-          <div className="search-input-wrapper">
-            <i className="fas fa-search search-icon"></i>
-            <input
-              type="text"
-              placeholder="Search by name, category, priority, status or due date..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-          </div>
-          {searchTerm && (
-            <div className="search-results-info">
-              <span>
-                Found {filteredTodos.length} {filteredTodos.length === 1 ? 'todo' : 'todos'} matching "{searchTerm}"
-              </span>
-              <button 
-                className="clear-search"
-                onClick={() => setSearchTerm('')}
-              >
-                <i className="fas fa-times"></i>
-                Clear Search
-              </button>
+    <div className="projects-wrapper">
+      <header className="po-header">
+        <div className="po-header-content">
+          <Link to="/dashboard" className="po-logo-container">
+            <img src="/logo.png" alt="KarmaSync" className="po-logo" />
+          </Link>
+          <div className="po-divider"></div>
+          <div className="po-titles">
+            <span className="po-page-label">Personal</span>
+            <div className="po-project-title-wrapper">
+              <h1 className="po-project-name">My To-dos</h1>
             </div>
-          )}
+          </div>
+        </div>
+      </header>
+
+      <div className="projects-body">
+        <div className="projects-sidebar">
+          <nav className="sidebar-nav">
+            <Link to="/projects" className="sidebar-link">
+              <i className="fas fa-project-diagram"></i>
+              <span>Projects</span>
+            </Link>
+            <Link to="/todos" className="sidebar-link active" style={{ background: 'linear-gradient(135deg, #a770ef 0%, #cf8bf3 100%)', color: 'white', boxShadow: '0 4px 10px rgba(167, 112, 239, 0.3)' }}>
+              <i className="fas fa-tasks" style={{ color: 'white' }}></i>
+              <span>My To-dos</span>
+            </Link>
+            <Link to="/profile" className="sidebar-link">
+              <i className="fas fa-user"></i>
+              <span>Profile</span>
+            </Link>
+            <Link to="/contact" className="sidebar-link">
+              <i className="fas fa-envelope"></i>
+              <span>Contact Us</span>
+            </Link>
+          </nav>
         </div>
 
-        <div className="todos-list">
-          {filteredTodos.length === 0 ? (
-            <div className="no-todos">
-              {searchTerm ? (
-                <>
-                  <h3>No Matching To-dos</h3>
-                  <p>No to-dos found matching "{searchTerm}"</p>
-                  <button 
-                    className="clear-search-button"
-                    onClick={() => setSearchTerm('')}
-                  >
-                    Clear Search
+        <div className="project-overview-container">
+          <div className="td-container">
+            <div className="td-header">
+              <div>
+                <span className="td-date">
+                  {new Date().toLocaleDateString('en-US', {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                  })}
+                </span>
+                <h2 style={{ margin: '0.5rem 0 0 0', color: '#2d3748' }}>Task Board</h2>
+              </div>
+              <div className="td-header-actions">
+                <button
+                  className="td-btn"
+                  onClick={() => setShowForm(true)}
+                  style={{
+                    background: 'linear-gradient(135deg, #4299e1 0%, #3182ce 100%)',
+                    color: 'white',
+                    padding: '0.75rem 1.5rem',
+                    boxShadow: '0 4px 6px rgba(66, 153, 225, 0.2)'
+                  }}
+                >
+                  <i className="fas fa-plus"></i> Add New To-do
+                </button>
+              </div>
+            </div>
+
+            {error && <div className="error-message">{error}</div>}
+
+            <div className="td-content">
+              <div className="td-search-bar">
+                <div className="td-search-wrapper">
+                  <i className="fas fa-search td-search-icon"></i>
+                  <input
+                    type="text"
+                    placeholder="Search todos..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="td-search-input"
+                  />
+                </div>
+                {searchTerm && (
+                  <button className="td-clear-search" onClick={() => setSearchTerm('')}>
+                    <i className="fas fa-times"></i> Clear
                   </button>
-                </>
-              ) : (
-                <>
-                  <h3>No To-dos Found</h3>
-                  <p>Add your first to-do to get started!</p>
-                </>
-              )}
+                )}
+              </div>
+
+              <div className="td-list">
+                {filteredTodos.length === 0 ? (
+                  <div className="td-empty">
+                    <h3>{searchTerm ? 'No matches found' : 'All caught up!'}</h3>
+                    <p>{searchTerm ? 'Try a different search term' : 'Create a task to get started'}</p>
+                  </div>
+                ) : (
+                  filteredTodos.map(todo => (
+                    <div key={todo._id} className={`td-item td-item-${todo.priority.toLowerCase()}`}>
+                      <div className="td-item-header">
+                        <h3 className="td-item-title">{todo.name}</h3>
+                        <span className={`td-badge ${todo.status === 'Done' ? 'td-status-done' : 'td-status-pending'}`}>
+                          {todo.status}
+                        </span>
+                      </div>
+
+                      <div className="td-item-details">
+                        <span className="td-badge td-category">{todo.category}</span>
+                        <span className={`td-badge td-priority-${todo.priority.toLowerCase()}`}>{todo.priority}</span>
+                        {todo.dueDate && (
+                          <span className="td-date-badge">
+                            <i className="fas fa-calendar-alt"></i>
+                            {new Date(todo.dueDate).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="td-actions">
+                        <button className="td-btn td-btn-done" onClick={() => handleStatusChange(todo)}>
+                          <i className={`fas fa-${todo.status === 'Pending' ? 'check' : 'undo'}`}></i>
+                          {todo.status === 'Pending' ? 'Done' : 'Undo'}
+                        </button>
+                        <button className="td-btn td-btn-edit" onClick={() => handleEdit(todo)}>
+                          <i className="fas fa-edit"></i> Edit
+                        </button>
+                        <button className="td-btn td-btn-delete" onClick={() => setDeleteConfirmation(todo)}>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
-          ) : (
-            filteredTodos.map(renderTodoItem)
-          )}
+          </div>
         </div>
       </div>
 
       {renderDeleteConfirmation()}
 
       {showForm && (
-        <div className="modal-overlay">
-          <div className="todo-form-modal">
-            <button 
-              className="modal-close"
-              onClick={() => {
+        <div className="td-modal-overlay">
+          <div className="td-modal">
+            <div className="td-modal-header">
+              <h2>{editingTodo ? 'Edit Todo' : 'New Todo'}</h2>
+              <button className="td-modal-close" onClick={() => {
                 setShowForm(false);
                 setEditingTodo(null);
                 setFormData({
-                  name: '',
-                  priority: 'Low',
-                  category: 'General',
-                  dueDate: '',
-                  status: 'Pending'
+                  name: '', priority: 'Low', category: 'General', dueDate: '', status: 'Pending'
                 });
                 setCustomCategory('');
-              }}
-            >
-              &times;
-            </button>
-            <h2>{editingTodo ? 'Edit Todo' : 'Add New Todo'}</h2>
-            {isSubmitting ? (
-              <div className="form-loading">
-                <LoadingAnimation message={editingTodo ? "Updating todo..." : "Creating todo..."} />
-              </div>
-            ) : (
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="name">Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Enter todo name"
-                />
-              </div>
+              }}>&times;</button>
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="priority">Priority</label>
-                <select
-                  id="priority"
-                  name="priority"
-                  value={formData.priority}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
-                </select>
-              </div>
+            <div className="td-modal-body">
+              {isSubmitting ? (
+                <LoadingAnimation message="Saving..." />
+              ) : (
+                <form onSubmit={handleSubmit} className="td-form">
+                  <div className="td-form-group">
+                    <label className="td-label" htmlFor="name">Task Name</label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="What needs to be done?"
+                      className="td-input"
+                    />
+                  </div>
 
-              <div className="form-group">
-                <label htmlFor="category">Category</label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="General">General</option>
-                  <option value="Health">Health</option>
-                  <option value="Study">Study</option>
-                  <option value="Work">Work</option>
-                  <option value="Custom">Custom</option>
-                </select>
-              </div>
+                  <div className="td-form-group">
+                    <label className="td-label" htmlFor="priority">Priority</label>
+                    <select
+                      id="priority"
+                      name="priority"
+                      value={formData.priority}
+                      onChange={handleInputChange}
+                      className="td-select"
+                    >
+                      <option value="Low">Low</option>
+                      <option value="Medium">Medium</option>
+                      <option value="High">High</option>
+                    </select>
+                  </div>
 
-              {formData.category === 'Custom' && (
-                <div className="form-group">
-                  <label htmlFor="customCategory">Custom Category</label>
-                  <input
-                    type="text"
-                    id="customCategory"
-                    value={customCategory}
-                    onChange={(e) => setCustomCategory(e.target.value)}
-                    required
-                    placeholder="Enter custom category"
-                  />
-                </div>
+                  <div className="td-form-group">
+                    <label className="td-label" htmlFor="category">Category</label>
+                    <select
+                      id="category"
+                      name="category"
+                      value={formData.category}
+                      onChange={handleInputChange}
+                      className="td-select"
+                    >
+                      <option value="General">General</option>
+                      <option value="Health">Health</option>
+                      <option value="Study">Study</option>
+                      <option value="Work">Work</option>
+                      <option value="Custom">Custom</option>
+                    </select>
+                  </div>
+
+                  {formData.category === 'Custom' && (
+                    <div className="td-form-group">
+                      <label className="td-label">Custom Category</label>
+                      <input
+                        type="text"
+                        value={customCategory}
+                        onChange={(e) => setCustomCategory(e.target.value)}
+                        required
+                        placeholder="Enter category name"
+                        className="td-input"
+                      />
+                    </div>
+                  )}
+
+                  <div className="td-form-group">
+                    <label className="td-label" htmlFor="dueDate">Due Date</label>
+                    <input
+                      type="date"
+                      id="dueDate"
+                      name="dueDate"
+                      value={formData.dueDate}
+                      onChange={handleInputChange}
+                      className="td-input"
+                    />
+                  </div>
+
+                  <button type="submit" className="td-submit-btn">
+                    {editingTodo ? 'Save Changes' : 'Create Task'}
+                  </button>
+                </form>
               )}
-
-              <div className="form-group">
-                <label htmlFor="dueDate">Due Date</label>
-                <input
-                  type="date"
-                  id="dueDate"
-                  name="dueDate"
-                  value={formData.dueDate}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className="form-actions">
-                <button type="submit" className="submit-button">
-                  {editingTodo ? 'Update Todo' : 'Add Todo'}
-                </button>
-              </div>
-            </form>
-            )}
+            </div>
           </div>
         </div>
       )}
-
       <Footer />
     </div>
   );

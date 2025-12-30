@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { createProject } from '../api/projectApi';
 import { searchUsers } from '../api/userApi';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/CreateCollaborativeProject.css';
+import '../styles/ProjectOverview.css';
+import '../styles/CreateProjectCompact.css';
 import Footer from './Footer';
 
 const ROLE_TYPES = {
@@ -40,12 +42,12 @@ const CreateCollaborativeProject = () => {
         console.log('Searching for users with term:', term);
         const results = await searchUsers(term);
         console.log('Search results:', results);
-        
-        const filteredResults = results.filter(user => 
+
+        const filteredResults = results.filter(user =>
           !selectedCollaborators.some(collab => collab._id === user._id)
         );
         console.log('Filtered results (excluding selected collaborators):', filteredResults);
-        
+
         setSearchResults(filteredResults);
       } catch (err) {
         console.error('Error searching users:', {
@@ -65,7 +67,7 @@ const CreateCollaborativeProject = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       debouncedSearch(searchTerm);
-    }, 300); 
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [searchTerm, debouncedSearch]);
@@ -98,7 +100,7 @@ const CreateCollaborativeProject = () => {
   };
 
   const handleRemoveCollaborator = (userId) => {
-    setSelectedCollaborators(prev => 
+    setSelectedCollaborators(prev =>
       prev.filter(collab => collab._id !== userId)
     );
   };
@@ -131,127 +133,148 @@ const CreateCollaborativeProject = () => {
   if (loading) return <LoadingAnimation message="Creating project..." />;
 
   return (
-    <div className="projects-container">
-      <div className="projects-header">
-        <div className="projects-header-content">
-          <div className="projects-header-left">
-            <h1>Create Collaborative Project</h1>
+    <div className="projects-wrapper">
+      <header className="po-header">
+        <div className="po-header-content">
+          <Link to="/dashboard" className="po-logo-container">
+            <img src="/logo.png" alt="KarmaSync" className="po-logo" />
+          </Link>
+
+          <div className="po-divider"></div>
+
+          <div className="po-titles">
+            <span className="po-page-label">Create Project</span>
+            <div className="po-project-title-wrapper">
+              <h1 className="po-project-name">Collaborative</h1>
+            </div>
           </div>
-          <button 
-            className="back-to-dashboard-button"
-            onClick={() => navigate('/projects')}
-          >
-            <i className="fas fa-arrow-left"></i> Back to Projects
-          </button>
         </div>
-      </div>
+      </header>
 
-      <div className="project-form-container">
-        <form onSubmit={handleSubmit} className="project-form">
-          {error && <div className="error-message">{error}</div>}
+      <div className="projects-body">
+        <div className="projects-sidebar">
+          <nav className="sidebar-nav">
+            <button className="sidebar-link" onClick={() => navigate('/projects')}>
+              <i className="fas fa-arrow-left"></i>
+              <span>Back to Projects</span>
+            </button>
+          </nav>
+        </div>
 
-          <div className="form-group">
-            <label htmlFor="title">Project Name*</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              placeholder="Enter project name"
-              required
-            />
-          </div>
+        <div className="project-overview-container">
+          <div className="cp-container">
+            <form onSubmit={handleSubmit} className="cp-form">
+              {error && <div className="error-message">{error}</div>}
 
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Enter project description"
-              rows="4"
-            />
-          </div>
+              <div className="cp-form-group">
+                <label htmlFor="title" className="cp-label">Project Name*</label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  placeholder="Enter project name"
+                  className="cp-input"
+                  required
+                />
+              </div>
 
-          <div className="form-group">
-            <label htmlFor="collaborators">Collaborators*</label>
-            <div className="collaborator-search-container">
-              <input
-                type="text"
-                id="collaborators"
-                placeholder="Search users by username"
-                value={searchTerm}
-                onChange={handleSearch}
-                className="collaborator-search-input"
-              />
-              {searchResults.length > 0 && (
-                <div className="search-results">
-                  {searchResults.map(user => (
-                    <div 
-                      key={user._id} 
-                      className="search-result-item"
-                      onClick={() => handleAddCollaborator(user)}
-                    >
-                      <div className="user-info">
-                        <span className="username">{user.username}</span>
-                        <span className="user-email">{user.email}</span>
+              <div className="cp-form-group">
+                <label htmlFor="description" className="cp-label">Description</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  placeholder="Enter project description"
+                  rows="4"
+                  className="cp-textarea"
+                />
+              </div>
+
+              <div className="cp-form-group">
+                <label htmlFor="collaborators" className="cp-label">Collaborators*</label>
+                <div className="cp-search-container">
+                  <input
+                    type="text"
+                    id="collaborators"
+                    placeholder="Search users by username"
+                    value={searchTerm}
+                    onChange={handleSearch}
+                    className="cp-input"
+                  />
+                  {searchResults.length > 0 && (
+                    <div className="cp-search-results">
+                      {searchResults.map(user => (
+                        <div
+                          key={user._id}
+                          className="cp-search-item"
+                          onClick={() => handleAddCollaborator(user)}
+                        >
+                          <div className="cp-user-info">
+                            <span className="cp-username">{user.username}</span>
+                            <span className="cp-email">{user.email}</span>
+                          </div>
+                          <i className="fas fa-plus add-icon"></i>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="cp-collaborators-list">
+                  {selectedCollaborators.map(collab => (
+                    <div key={collab._id} className="cp-collaborator-tag">
+                      <div className="collaborator-info">
+                        <span className="cp-username">{collab.username}</span>
+                        <span className="cp-role-badge">
+                          {collab.role === ROLE_TYPES.MANAGER ?
+                            <span className="cp-role-manager">Project Manager</span> :
+                            <span className="cp-role-developer">Developer</span>
+                          }
+                        </span>
                       </div>
-                      <i className="fas fa-plus add-icon"></i>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCollaborator(collab._id)}
+                        className="cp-remove-btn"
+                        title="Remove collaborator"
+                      >
+                        ×
+                      </button>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-            <div className="selected-collaborators">
-              {selectedCollaborators.map(collab => (
-                <div key={collab._id} className="collaborator-tag">
-                  <div className="collaborator-info">
-                    <span className="username">{collab.username}</span>
-                    <span className="user-email">{collab.email}</span>
-                    <span className={`collaborator-role ${collab.role}`}>
-                      {collab.role === ROLE_TYPES.MANAGER ? 'Project Manager' : 'Developer'}
-                    </span>
-                  </div>
-                  <button 
-                    type="button"
-                    onClick={() => handleRemoveCollaborator(collab._id)}
-                    className="remove-collaborator"
-                    title="Remove collaborator"
-                  >
-                    <span className="cross-icon">×</span>
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+              </div>
 
-          <div className="form-group">
-            <label htmlFor="githubLink">GitHub Link</label>
-            <input
-              type="url"
-              id="githubLink"
-              name="githubLink"
-              value={formData.githubLink}
-              onChange={handleInputChange}
-              placeholder="Enter GitHub repository URL"
-            />
-          </div>
+              <div className="cp-form-group">
+                <label htmlFor="githubLink" className="cp-label">GitHub Link</label>
+                <input
+                  type="url"
+                  id="githubLink"
+                  name="githubLink"
+                  value={formData.githubLink}
+                  onChange={handleInputChange}
+                  placeholder="Enter GitHub repository URL"
+                  className="cp-input"
+                />
+              </div>
 
-          <div className="form-actions">
-            <button type="submit" className="btn btn-primary">
-              Create Project
-            </button>
-            <button 
-              type="button" 
-              className="btn btn-secondary"
-              onClick={() => navigate('/projects')}
-            >
-              Cancel
-            </button>
+              <div className="cp-actions">
+                <button type="submit" className="cp-btn-primary">
+                  Create Project
+                </button>
+                <button
+                  type="button"
+                  className="cp-btn-secondary"
+                  onClick={() => navigate('/projects')}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
 
       {showRoleModal && (
