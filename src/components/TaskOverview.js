@@ -600,27 +600,31 @@ const TaskOverview = () => {
 
 
       {showDeleteConfirm && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Delete Issue</h2>
-            </div>
-            <div className="modal-body">
-              <p>Are you sure you want to delete this issue?</p>
-              <p className="warning-text">This action cannot be undone.</p>
-              <div className="task-to-delete">
-                <strong>Issue to delete:</strong> {task.title}
+        <div className="dc-overlay">
+          <div className="dc-modal">
+            <div className="dc-header">
+              <div className="dc-icon-wrapper">
+                <i className="fas fa-exclamation-triangle"></i>
               </div>
+              <h2 className="dc-title">Delete Issue</h2>
             </div>
-            <div className="modal-actions">
+            <div className="dc-body">
+              <p className="dc-message">Are you sure you want to permanently delete this issue?</p>
+              <div className="dc-item-preview">
+                <span className="dc-label">Selected:</span>
+                <span className="dc-value">"{task.title}"</span>
+              </div>
+              <p className="dc-warning">This action cannot be undone.</p>
+            </div>
+            <div className="dc-actions">
               <button
-                className="to-btn-secondary"
+                className="dc-btn-cancel"
                 onClick={() => setShowDeleteConfirm(false)}
               >
                 Cancel
               </button>
               <button
-                className="to-btn-danger"
+                className="dc-btn-delete"
                 onClick={handleDelete}
               >
                 Delete Issue
