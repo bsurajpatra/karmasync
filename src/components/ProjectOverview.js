@@ -68,6 +68,14 @@ const ProjectOverview = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const action = searchParams.get('action');
+    const view = searchParams.get('view');
+
+    if (view === 'settings') {
+      setActiveView('settings');
+    } else if (view === 'overview') {
+      setActiveView('overview');
+    }
+
     if (action === 'manageCollaborators') {
       // Ensure user is manager before showing
       if (project && project.currentUserRole === 'manager') {

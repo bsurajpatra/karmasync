@@ -716,7 +716,7 @@ const KanbanBoard = () => {
                 <span>Manage Collaborators</span>
               </button>
             )}
-            <button className="sidebar-link" onClick={() => navigate(`/project/${projectId}/overview`)}>
+            <button className="sidebar-link" onClick={() => navigate(`/project/${projectId}/overview?view=settings`)}>
               <i className="fas fa-cog"></i>
               <span>Settings</span>
             </button>
