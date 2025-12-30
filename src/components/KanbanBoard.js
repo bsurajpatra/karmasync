@@ -687,9 +687,9 @@ const KanbanBoard = () => {
           <div className="po-divider"></div>
 
           <div className="po-titles">
-            <span className="po-page-label">Project</span>
+            <span className="po-page-label">Project - Kanban Board</span>
             <div className="po-project-title-wrapper">
-              <h1 className="po-project-name">{project.title} <span className="kb-view-badge">Kanban Board</span></h1>
+              <h1 className="po-project-name">{project.title}</h1>
             </div>
           </div>
         </div>
@@ -731,20 +731,22 @@ const KanbanBoard = () => {
         <div className="project-overview-container kb-main-container">
           <div className="kb-actions-header">
             <div className="kb-header-left">
-              {/* Optional: Add search or filters here later */}
+              {/* Actions space */}
             </div>
             <div className="kb-header-right">
               <button
-                className="btn btn-secondary kb-action-btn"
+                className="btn kb-btn-manage"
                 onClick={handleManageBoardsClick}
               >
-                <i className="fas fa-columns"></i> Manage Boards
+                <i className="fas fa-columns"></i>
+                <span>Manage Boards</span>
               </button>
               <button
-                className="btn btn-primary kb-action-btn"
+                className="btn kb-btn-primary"
                 onClick={handleAddIssueClick}
               >
-                <i className="fas fa-plus"></i> Add Issue
+                <i className="fas fa-plus"></i>
+                <span>Add Issue</span>
               </button>
             </div>
           </div>

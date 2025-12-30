@@ -278,7 +278,7 @@ const TaskList = () => {
           </Link>
           <div className="po-divider"></div>
           <div className="po-titles">
-            <span className="po-page-label">Project Tasks</span>
+            <span className="po-page-label">Project Issues</span>
             <div className="po-project-title-wrapper">
               <h1 className="po-project-name">{project.title}</h1>
             </div>

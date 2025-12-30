@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getTaskById, updateTask, deleteTask, addTaskComment, updateTaskStatus } from '../api/taskApi';
 import { getProjectById } from '../api/projectApi';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/TaskOverview.css';
+import '../styles/ProjectOverview.css';
+import '../styles/TaskOverviewCompact.css';
 import Footer from './Footer';
 
 const TaskOverview = () => {
@@ -30,6 +32,7 @@ const TaskOverview = () => {
   const [newStatus, setNewStatus] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showDangerModal, setShowDangerModal] = useState(false);
 
   useEffect(() => {
     fetchTaskAndProject();
@@ -62,7 +65,7 @@ const TaskOverview = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === 'type') {
       if (value === 'custom') {
         setShowCustomType(true);
@@ -100,7 +103,7 @@ const TaskOverview = () => {
         ...formData,
         assignee: formData.assignee || task.assignee?._id || task.assignee
       });
-      
+
       const refreshedTask = await getTaskById(taskId);
       setTask(refreshedTask);
       setEditing(false);
@@ -140,21 +143,21 @@ const TaskOverview = () => {
     try {
       console.log('Starting status change to:', newStatus);
       setLoading(true);
-      setError(''); 
-      
+      setError('');
+
       console.log('Calling updateTaskStatus API...');
       const updatedTask = await updateTaskStatus(taskId, newStatus);
       console.log('API Response:', updatedTask);
-      
+
       if (!updatedTask) {
         throw new Error('No response received from server');
       }
-      
+
       setTask(prevTask => ({
         ...prevTask,
         ...updatedTask
       }));
-      
+
       setIsEditingStatus(false);
       console.log('Status change completed successfully');
     } catch (err) {
@@ -164,9 +167,9 @@ const TaskOverview = () => {
         response: err.response?.data,
         status: err.response?.status
       });
-      
+
       setError(err.response?.data?.message || err.message || 'Failed to update status');
-      
+
       setNewStatus(task.status);
     } finally {
       setLoading(false);
@@ -179,7 +182,7 @@ const TaskOverview = () => {
       <div className="modal-content error-modal">
         <div className="modal-header">
           <h2>Access Denied</h2>
-          <button 
+          <button
             className="modal-close"
             onClick={() => {
               setShowErrorModal(false);
@@ -196,7 +199,7 @@ const TaskOverview = () => {
           <p className="error-message">{errorMessage}</p>
         </div>
         <div className="modal-actions">
-          <button 
+          <button
             className="btn btn-secondary"
             onClick={() => {
               setShowErrorModal(false);
@@ -225,162 +228,17 @@ const TaskOverview = () => {
   if (!task) return <div className="error-message">Task not found</div>;
 
   return (
-    <div className="task-overview-container">
+    <div className="projects-wrapper">
       {showErrorModal && <ErrorModal />}
-      <div className="task-overview-header">
-        <div className="task-overview-header-content">
-          <div className="task-overview-header-left">
-            <h1 style={{ 
-              color: '#FFFFFF', 
-              fontWeight: '800',
-              fontSize: '2.5rem',
-              textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
-            }}>Issue Details</h1>
-            {project && (
-              <div className="project-info">
-                <span className="task-id" style={{ 
-                  color: '#FFFFFF', 
-                  fontWeight: '800',
-                  fontSize: '1.2rem',
-                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
-                }}>#{task.serialNumber}</span>
-                <span className="task-date" style={{ 
-                  color: 'var(--text-color)', 
-                  fontWeight: '800',
-                  fontSize: '1.2rem',
-                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
-                }}>
-                  Created: {new Date(task.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-            )}
-          </div>
-          <div className="task-overview-header-actions">
-            <button 
-              className="btn btn-secondary"
-              onClick={() => navigate(`/project/${project._id}/tasks`)}
-            >
-              <i className="fas fa-arrow-left"></i> Back to Issues List
-            </button>
-            <button 
-              className="btn btn-secondary"
-              onClick={() => navigate(`/project/${project._id}/kanban`)}
-            >
-              <i className="fas fa-columns"></i> View in Kanban
-            </button>
-            {!editing && (
-              <button 
-                className="btn btn-primary"
-                onClick={handleEditClick}
-              >
-                <i className="fas fa-edit"></i> Edit Issue
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
 
-      <div className="task-overview-content">
-        {editing ? (
-          <div className="edit-modal-overlay">
-            <div className="edit-modal-container">
-              <form onSubmit={handleSubmit} className="edit-modal-form">
-                <div className="edit-modal-header">
-                  <h2>Edit Issue</h2>
-                </div>
-                <div className="edit-modal-body">
-            <div className="form-group">
-              <label htmlFor="title">Title</label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="form-control"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="description">Description</label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="form-control"
-                rows="4"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="type">Type</label>
-              <select
-                id="type"
-                name="type"
-                value={showCustomType ? 'custom' : formData.type}
-                onChange={handleInputChange}
-                className="form-control"
-                required
-              >
-                <option value="tech">Technical</option>
-                <option value="review">Review</option>
-                <option value="bug">Bug</option>
-                <option value="feature">Feature</option>
-                <option value="documentation">Documentation</option>
-                <option value="custom">Custom Type</option>
-              </select>
-              {showCustomType && (
-                <input
-                  type="text"
-                  name="customType"
-                  value={formData.customType}
-                  onChange={handleInputChange}
-                  className="form-control custom-type-input"
-                  placeholder="Enter custom issue type"
-                  required
-                />
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="deadline">Deadline</label>
-              <input
-                type="date"
-                id="deadline"
-                name="deadline"
-                value={formData.deadline}
-                onChange={handleInputChange}
-                className="form-control"
-              />
-            </div>
-
-            {project?.projectType === 'collaborative' && (
-              <div className="form-group">
-                <label htmlFor="assignee">Assignee</label>
-                <select
-                  id="assignee"
-                  name="assignee"
-                  value={formData.assignee}
-                  onChange={handleInputChange}
-                  className="form-control"
-                >
-                  <option value="">Select Assignee</option>
-                  {project.collaborators.map((collab) => (
-                    <option key={collab.userId._id} value={collab.userId._id}>
-                      {collab.userId.username}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-                </div>
-                <div className="edit-modal-actions">
-              <button type="submit" className="btn btn-primary">Save Changes</button>
-              <button 
-                type="button" 
-                className="btn btn-secondary"
+      {/* Edit Modal */}
+      {editing && (
+        <div className="to-modal-overlay">
+          <div className="to-modal-content">
+            <div className="to-modal-header">
+              <h2>Edit Issue</h2>
+              <button
+                className="to-modal-close"
                 onClick={() => {
                   setEditing(false);
                   setFormData({
@@ -393,61 +251,246 @@ const TaskOverview = () => {
                   });
                 }}
               >
+                ×
+              </button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="to-modal-body">
+                <div className="to-form-row">
+                  <div className="to-form-group">
+                    <label htmlFor="title">Title</label>
+                    <input
+                      type="text"
+                      id="title"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleInputChange}
+                      className="to-input"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="to-form-row">
+                  <div className="to-form-group">
+                    <label htmlFor="description">Description</label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      className="to-input"
+                      rows="2"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row-compact">
+                  <div className="form-group-compact">
+                    <label htmlFor="type">Type</label>
+                    <select
+                      id="type"
+                      name="type"
+                      value={showCustomType ? 'custom' : formData.type}
+                      onChange={handleInputChange}
+                      className="to-input"
+                      required
+                    >
+                      <option value="tech">Technical</option>
+                      <option value="review">Review</option>
+                      <option value="bug">Bug</option>
+                      <option value="feature">Feature</option>
+                      <option value="documentation">Documentation</option>
+                      <option value="custom">Custom Type</option>
+                    </select>
+                    {showCustomType && (
+                      <input
+                        type="text"
+                        name="customType"
+                        value={formData.customType}
+                        onChange={handleInputChange}
+                        className="to-input"
+                        placeholder="Enter custom issue type"
+                        required
+                      />
+                    )}
+                  </div>
+                  <div className="form-group-compact">
+                    <label htmlFor="deadline">Deadline</label>
+                    <input
+                      type="date"
+                      id="deadline"
+                      name="deadline"
+                      value={formData.deadline}
+                      onChange={handleInputChange}
+                      className="to-input"
+                    />
+                  </div>
+                </div>
+
+                {project?.projectType === 'collaborative' && (
+                  <div className="form-row-compact">
+                    <div className="form-group-compact">
+                      <label htmlFor="assignee">Assignee</label>
+                      <select
+                        id="assignee"
+                        name="assignee"
+                        value={formData.assignee}
+                        onChange={handleInputChange}
+                        className="to-input"
+                      >
+                        <option value="">Select Assignee</option>
+                        {project.collaborators.map((collab) => (
+                          <option key={collab.userId._id} value={collab.userId._id}>
+                            {collab.userId.username}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="to-modal-actions">
+                <button type="submit" className="to-btn-primary">Save Changes</button>
+                <button
+                  type="button"
+                  className="to-btn-secondary"
+                  onClick={() => {
+                    setEditing(false);
+                    setFormData({
+                      title: task.title,
+                      description: task.description,
+                      type: task.type,
+                      status: task.status,
+                      deadline: task.deadline,
+                      assignee: task.assignee?._id || ''
+                    });
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Danger Zone Modal */}
+      {showDangerModal && (
+        <div className="to-modal-overlay">
+          <div className="to-modal-content to-modal-danger">
+            <div className="to-modal-header">
+              <h2>Danger Zone</h2>
+              <button className="to-modal-close" onClick={() => setShowDangerModal(false)}>
+                ×
+              </button>
+            </div>
+            <div className="to-modal-body">
+              <div className="to-danger-warning">
+                <i className="fas fa-exclamation-triangle"></i>
+                <h3>Delete this issue</h3>
+                <p>Once you delete this issue, there is no going back. Please be certain.</p>
+              </div>
+            </div>
+            <div className="to-modal-actions">
+              <button
+                className="to-btn-danger"
+                onClick={() => {
+                  setShowDangerModal(false);
+                  setShowDeleteConfirm(true);
+                }}
+              >
+                <i className="fas fa-trash"></i> Delete Issue
+              </button>
+              <button
+                className="to-btn-secondary"
+                onClick={() => setShowDangerModal(false)}
+              >
                 Cancel
               </button>
             </div>
-          </form>
+          </div>
+        </div>
+      )}
+
+      <header className="po-header">
+        <div className="po-header-content">
+          <Link to="/dashboard" className="po-logo-container">
+            <img src="/logo.png" alt="KarmaSync" className="po-logo" />
+          </Link>
+
+          <div className="po-divider"></div>
+
+          <div className="po-titles">
+            <span className="po-page-label">Issue Details</span>
+            <div className="po-project-title-wrapper">
+              <h1 className="po-project-name">{task.title}</h1>
             </div>
           </div>
-        ) : (
-          <div className="task-details">
-            <div className="task-section">
-              <h2>{task.title}</h2>
-              <div className="task-meta">
-                <div className="task-meta-left">
-                  <div className="task-meta-item">
-                    <span className="task-meta-label">Project Name:</span>
-                    <span className="task-meta-value">{project.title}</span>
+        </div>
+      </header>
+
+      <div className="projects-body">
+        <div className="projects-sidebar">
+          <nav className="sidebar-nav">
+            <button className="sidebar-link" onClick={handleEditClick}>
+              <i className="fas fa-edit"></i>
+              <span>Edit Issue</span>
+            </button>
+            <button className="sidebar-link" onClick={() => setShowDangerModal(true)}>
+              <i className="fas fa-exclamation-triangle"></i>
+              <span>Danger Zone</span>
+            </button>
+            <div className="sidebar-divider"></div>
+            <button className="sidebar-link" onClick={() => navigate(`/project/${project._id}/tasks`)}>
+              <i className="fas fa-arrow-left"></i>
+              <span>Back to Issues List</span>
+            </button>
+          </nav>
+        </div>
+
+        <div className="project-overview-container">
+          <div className="to-section">
+            <div className="to-section-header">
+              <h2>Issue Information</h2>
+            </div>
+
+            {editing ? (
+              // This block is now handled by the Edit Modal above, so it's empty here.
+              // The original content of the inline edit form was moved to the Edit Modal.
+              null
+            ) : (
+              <div className="to-details">
+                <h3 className="to-title">{task.title}</h3>
+                <div className="to-meta-grid">
+                  <div className="to-meta-item">
+                    <span className="to-meta-label">Project</span>
+                    <span className="to-meta-value">{project.title}</span>
                   </div>
-                  <div className="task-meta-item">
-                    <span className="task-meta-label">Project ID:</span>
-                    <span className="task-meta-value">#{project.shortId}</span>
+                  <div className="to-meta-item">
+                    <span className="to-meta-label">Issue ID</span>
+                    <span className="to-meta-value">#{task.serialNumber}</span>
                   </div>
-                  {project.projectType === 'collaborative' && task.assignee && (
-                    <div className="task-meta-item">
-                      <span className="task-meta-label">Assigned to:</span>
-                      <span className="task-meta-value">{task.assignee.username || task.assignee.fullName || 'Unassigned'}</span>
-                    </div>
-                  )}
-                </div>
-                <div className="task-meta-right">
-                  {task.deadline && (
-                    <div className="task-meta-item">
-                      <span className="task-meta-label">Deadline:</span>
-                      <span className="task-meta-value">{new Date(task.deadline).toLocaleDateString()}</span>
-                    </div>
-                  )}
-                  <div className="task-meta-item">
-                    <span className="task-meta-label">Type:</span>
-                    <span className={`task-meta-value task-type ${task.type}`} style={{ color: '#FFFFFF' }}>
+                  <div className="to-meta-item">
+                    <span className="to-meta-label">Type</span>
+                    <span className={`to-badge to-badge-${task.type}`}>
                       {task.type === 'tech' ? 'Technical' :
-                       task.type === 'review' ? 'Review' :
-                       task.type === 'bug' ? 'Bug' :
-                       task.type === 'feature' ? 'Feature' :
-                       task.type === 'documentation' ? 'Documentation' :
-                       task.type.charAt(0).toUpperCase() + task.type.slice(1)}
-                </span>
+                        task.type === 'review' ? 'Review' :
+                          task.type === 'bug' ? 'Bug' :
+                            task.type === 'feature' ? 'Feature' :
+                              task.type === 'documentation' ? 'Documentation' :
+                                task.type.charAt(0).toUpperCase() + task.type.slice(1)}
+                    </span>
                   </div>
-                  <div className="task-meta-item">
-                    <span className="task-meta-label">Status:</span>
+                  <div className="to-meta-item">
+                    <span className="to-meta-label">Status</span>
                     {isEditingStatus ? (
-                      <div className="status-edit-container">
-                        {error && <div className="signup-message error">{error}</div>}
+                      <div className="to-status-edit">
                         <select
                           value={newStatus}
                           onChange={(e) => setNewStatus(e.target.value)}
-                          className="status-select"
-                        >
+                          className="to-select">
+
                           <option value="todo">To Do</option>
                           <option value="doing">Doing</option>
                           <option value="done">Done</option>
@@ -457,38 +500,36 @@ const TaskOverview = () => {
                             </option>
                           ))}
                         </select>
-                        <div className="status-edit-actions">
-                          <button 
-                            className="btn btn-sm btn-primary"
-                            onClick={() => handleStatusChange(newStatus)}
-                            disabled={loading}
-                          >
-                            {loading ? 'Updating...' : 'Set'}
-                          </button>
-                          <button 
-                            className="btn btn-sm btn-secondary"
-                            onClick={() => {
-                              setIsEditingStatus(false);
-                              setNewStatus(task.status);
-                              setError('');
-                            }}
-                            disabled={loading}
-                          >
-                            Cancel
-                          </button>
-                        </div>
+                        <button
+                          className="to-btn-icon to-btn-success"
+                          onClick={() => handleStatusChange(newStatus)}
+                          disabled={loading}
+                        >
+                          <i className="fas fa-check"></i>
+                        </button>
+                        <button
+                          className="to-btn-icon to-btn-cancel"
+                          onClick={() => {
+                            setIsEditingStatus(false);
+                            setNewStatus(task.status);
+                            setError('');
+                          }}
+                          disabled={loading}
+                        >
+                          <i className="fas fa-times"></i>
+                        </button>
                       </div>
                     ) : (
-                      <div className="status-display">
-                        <span className={`task-meta-value task-status ${task.status}`}>
-                  {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                </span>
-                        <button 
-                          className="btn btn-sm btn-link"
+                      <div className="to-status-display">
+                        <span className={`to-badge to-badge-${task.status}`}>
+                          {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                        </span>
+                        <button
+                          className="to-btn-link"
                           onClick={() => {
                             setIsEditingStatus(true);
                             setNewStatus(task.status);
-                            setError(''); 
+                            setError('');
                           }}
                           disabled={loading}
                         >
@@ -497,69 +538,66 @@ const TaskOverview = () => {
                       </div>
                     )}
                   </div>
-                </div>
-              </div>
-              <div className="task-description">
-                <h3>Description</h3>
-                <p>{task.description || 'No description provided'}</p>
-              </div>
-            </div>
-
-            <div className="task-section">
-              <h3>Comments</h3>
-              <div className="comments-list">
-                {task.comments?.map(comment => (
-                  <div key={comment._id} className="comment">
-                    <div className="comment-content">
-                      <div className="comment-header">
-                        {project.projectType === 'collaborative' && (
-                          <span className="comment-author">
-                            {comment.user?.username || 'Unknown User'}
-                          </span>
-                        )}
-                      <span className="comment-date">
-                        {new Date(comment.createdAt).toLocaleDateString()}
-                      </span>
-                      </div>
-                      <p className="comment-text">{comment.text}</p>
+                  {task.deadline && (
+                    <div className="to-meta-item">
+                      <span className="to-meta-label">Deadline</span>
+                      <span className="to-meta-value">{new Date(task.deadline).toLocaleDateString()}</span>
                     </div>
-                  </div>
-                ))}
-              </div>
-              <form onSubmit={handleCommentSubmit} className="comment-form">
-                <textarea
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Add a comment..."
-                  className="form-control"
-                  rows="3"
-                />
-                <button type="submit" className="btn btn-primary">
-                  Add Comment
-                </button>
-              </form>
-            </div>
-
-            <div className="task-section task-danger-zone">
-              <h3>Danger Zone</h3>
-              <div className="task-danger-zone-content">
-                <div className="task-danger-action">
-                  <div className="task-danger-action-info">
-                    <h4>Delete this issue</h4>
-                    <p>Once you delete a issue, there is no going back. Please be certain.</p>
-                  </div>
-                  <button 
-                    className="btn btn-danger"
-                    onClick={() => setShowDeleteConfirm(true)}
-                  >
-                    Delete Issue
-                  </button>
+                  )}
+                  {project.projectType === 'collaborative' && task.assignee && (
+                    <div className="to-meta-item">
+                      <span className="to-meta-label">Assigned to</span>
+                      <span className="to-meta-value">{task.assignee.username || task.assignee.fullName || 'Unassigned'}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="to-description">
+                  <h4>Description</h4>
+                  <p>{task.description || 'No description provided'}</p>
                 </div>
               </div>
-            </div>
+            )}
           </div>
-        )}
+
+          <div className="to-section">
+            <div className="to-section-header">
+              <h2>Comments</h2>
+            </div>
+            <div className="to-comments-list">
+              {task.comments?.map(comment => (
+                <div key={comment._id} className="to-comment">
+                  <div className="to-comment-header">
+                    {project.projectType === 'collaborative' && (
+                      <span className="to-comment-author">
+                        {comment.user?.username || 'Unknown User'}
+                      </span>
+                    )}
+                    <span className="to-comment-date">
+                      {new Date(comment.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="to-comment-text">{comment.text}</p>
+                </div>
+              ))}
+            </div>
+            <form onSubmit={handleCommentSubmit} className="to-comment-form">
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Add a comment..."
+                className="to-textarea"
+                rows="2"
+              />
+              <button type="submit" className="to-btn-primary to-comment-btn">
+                <i className="fas fa-comment"></i> Add Comment
+              </button>
+            </form>
+          </div>
+
+        </div>
       </div>
+
+
 
       {showDeleteConfirm && (
         <div className="modal-overlay">
@@ -575,14 +613,14 @@ const TaskOverview = () => {
               </div>
             </div>
             <div className="modal-actions">
-              <button 
-                className="btn btn-secondary"
+              <button
+                className="to-btn-secondary"
                 onClick={() => setShowDeleteConfirm(false)}
               >
                 Cancel
               </button>
-              <button 
-                className="btn btn-danger"
+              <button
+                className="to-btn-danger"
                 onClick={handleDelete}
               >
                 Delete Issue

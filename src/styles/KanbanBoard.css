@@ -19,28 +19,96 @@
   border-left: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Action Header */
+/* Action Header - Transparent */
 .kb-actions-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
-  background: white;
+  padding: 0.75rem 1.5rem 0.1rem 1.0rem;
+  border-bottom: none;
+  background: transparent;
   flex-shrink: 0;
   z-index: 50;
-  height: 70px;
+  height: auto;
+}
+
+.kb-header-left {
+  display: flex;
+  align-items: center;
 }
 
 .kb-header-right {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
+  align-items: center;
 }
 
-.kb-action-btn {
-  font-size: 0.85rem !important;
-  padding: 0.5rem 1rem !important;
-  height: 36px;
+/* Professional Button Styles - Override global .btn */
+.kb-btn-manage,
+.kb-btn-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  padding: 0.45rem 0.9rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  border: none !important;
+  cursor: pointer;
+  transition: all 0.25s ease !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+  letter-spacing: 0.01em;
+  min-width: auto !important;
+  height: auto !important;
+  line-height: 1.2 !important;
+}
+
+.kb-btn-manage i,
+.kb-btn-primary i {
+  font-size: 0.75rem !important;
+  margin: 0 !important;
+}
+
+.kb-btn-manage span,
+.kb-btn-primary span {
+  font-size: 0.8rem !important;
+  line-height: 1 !important;
+}
+
+/* Manage Boards Button - Blue */
+.kb-btn-manage {
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.kb-btn-manage:hover {
+  background: linear-gradient(135deg, #357abd 0%, #2868a8 100%) !important;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3) !important;
+  transform: translateY(-2px) !important;
+}
+
+.kb-btn-manage:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 4px rgba(74, 144, 226, 0.2) !important;
+}
+
+/* Add Issue Button - Primary Accent */
+.kb-btn-primary {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.kb-btn-primary:hover {
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%) !important;
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3) !important;
+  transform: translateY(-2px) !important;
+}
+
+.kb-btn-primary:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 4px rgba(72, 187, 120, 0.2) !important;
 }
 
 /* Board Container - Horizontal Scroll */
