@@ -249,6 +249,27 @@
   gap: 1rem;
 }
 
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.sidebar-logo img {
+  height: 32px;
+  width: auto;
+}
+
+.sidebar-logo span {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a365d;
+  letter-spacing: -0.025em;
+}
+
 .sidebar-link {
   display: flex;
   align-items: center;

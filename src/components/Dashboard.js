@@ -119,6 +119,10 @@ const Dashboard = () => {
         <div className="dashboard-body">
           <div className="dashboard-sidebar">
             <nav className="sidebar-nav">
+              <div className="sidebar-logo">
+                <img src="/logo.png" alt="KarmaSync" />
+                <span>KarmaSync</span>
+              </div>
               <Link to="/projects" className="sidebar-link">
                 <i className="fas fa-project-diagram"></i>
                 <span>Projects</span>

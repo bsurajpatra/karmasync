@@ -476,6 +476,10 @@ const TaskOverview = () => {
       <div className="projects-body">
         <div className="projects-sidebar">
           <nav className="sidebar-nav">
+            <div className="sidebar-logo">
+              <img src="/logo.png" alt="KarmaSync" />
+              <span>KarmaSync</span>
+            </div>
             <button className="sidebar-link" onClick={() => navigate(`/project/${project._id}/overview`)}>
               <i className="fas fa-home"></i>
               <span>Overview</span>

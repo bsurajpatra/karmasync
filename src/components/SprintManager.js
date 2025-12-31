@@ -28,7 +28,8 @@ const SprintManager = ({ projectId, currentUserRole }) => {
         description: '',
         goal: '',
         startDate: '',
-        endDate: ''
+        endDate: '',
+        status: 'planned'
     });
     const [warnings, setWarnings] = useState([]);
     const [sprintSearchTerm, setSprintSearchTerm] = useState('');
@@ -63,7 +64,8 @@ const SprintManager = ({ projectId, currentUserRole }) => {
             description: '',
             goal: '',
             startDate: '',
-            endDate: ''
+            endDate: '',
+            status: 'planned'
         });
         setShowModal(true);
     };
@@ -75,7 +77,8 @@ const SprintManager = ({ projectId, currentUserRole }) => {
             description: sprint.description || '',
             goal: sprint.goal || '',
             startDate: sprint.startDate.split('T')[0],
-            endDate: sprint.endDate.split('T')[0]
+            endDate: sprint.endDate.split('T')[0],
+            status: sprint.status
         });
         setShowModal(true);
     };
@@ -219,46 +222,59 @@ const SprintManager = ({ projectId, currentUserRole }) => {
                             </div>
 
                             <div className="sprint-actions">
-                                {isManager && (
-                                    <>
-                                        <button className="sprint-btn-sm" onClick={() => handleEditClick(sprint)}>
-                                            <i className="fas fa-edit"></i> Edit
-                                        </button>
-                                        <div className="status-dropdown">
-                                            <button className="sprint-btn-sm">
-                                                <i className="fas fa-sync-alt"></i> Status
-                                            </button>
-                                            <div className="status-menu">
-                                                {['planned', 'active', 'completed', 'cancelled'].filter(s => s !== sprint.status).map(status => (
-                                                    <button
-                                                        key={status}
-                                                        className="status-option"
-                                                        onClick={() => handleStatusChange(sprint._id, status)}
-                                                    >
-                                                        Mark as {status.charAt(0).toUpperCase() + status.slice(1)}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </>
-                                )}
-                                {['planned', 'active'].includes(sprint.status) && (
-                                    <div className="sprint-assign-actions">
-                                        <button className="sprint-btn-sm sprint-btn-primary" onClick={() => handleAssignClick(sprint, 'assign')}>
-                                            <i className="fas fa-plus"></i> Assign
-                                        </button>
-                                        <button className="sprint-btn-sm" onClick={() => handleAssignClick(sprint, 'remove')}>
-                                            <i className="fas fa-minus"></i> Remove
-                                        </button>
-                                    </div>
-                                )}
                                 <button
-                                    className="sprint-btn-sm"
+                                    className="sprint-btn-sm sprint-btn-view"
                                     onClick={() => navigate(`/project/${projectId}/tasks?sprint=${sprint._id}`)}
                                     title="View tasks assigned to this sprint"
                                 >
-                                    <i className="fas fa-external-link-alt"></i> Issues
+                                    <i className="fas fa-list-ul"></i> Issues
                                 </button>
+
+                                <div className="sprint-options-container">
+                                    <button className="sprint-btn-sm sprint-options-trigger">
+                                        <i className="fas fa-cog"></i> Options
+                                    </button>
+                                    <div className="sprint-options-menu">
+                                        {isManager && (
+                                            <>
+                                                <button className="option-item" onClick={() => handleEditClick(sprint)}>
+                                                    <i className="fas fa-edit"></i> Edit Sprint
+                                                </button>
+                                                <div className="option-divider"></div>
+                                                <div className="option-label">Management</div>
+                                                <button
+                                                    className="option-item"
+                                                    onClick={() => handleAssignClick(sprint, 'assign')}
+                                                    disabled={['completed', 'cancelled'].includes(sprint.status)}
+                                                >
+                                                    <i className="fas fa-plus-circle"></i> Assign Tasks
+                                                </button>
+                                                <button
+                                                    className="option-item"
+                                                    onClick={() => handleAssignClick(sprint, 'remove')}
+                                                >
+                                                    <i className="fas fa-minus-circle"></i> Remove Tasks
+                                                </button>
+                                                <div className="option-divider"></div>
+                                                <div className="option-label">Quick Status</div>
+                                                {['planned', 'active', 'completed', 'cancelled'].map(status => (
+                                                    sprint.status !== status && (
+                                                        <button
+                                                            key={status}
+                                                            className={`option-item status-${status}`}
+                                                            onClick={() => handleStatusChange(sprint._id, status)}
+                                                        >
+                                                            Mark as {status.charAt(0).toUpperCase() + status.slice(1)}
+                                                        </button>
+                                                    )
+                                                ))}
+                                            </>
+                                        )}
+                                        {!isManager && (
+                                            <div className="option-item disabled">No manager actions</div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -319,14 +335,56 @@ const SprintManager = ({ projectId, currentUserRole }) => {
                                         </div>
                                     </div>
                                     <div className="sprint-form-group">
+                                        <label>Status</label>
+                                        <select
+                                            className="sprint-input"
+                                            value={formData.status}
+                                            onChange={e => setFormData({ ...formData, status: e.target.value })}
+                                        >
+                                            <option value="planned">Planned</option>
+                                            <option value="active">Active</option>
+                                            <option value="completed">Completed</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
+                                    </div>
+                                    <div className="sprint-form-group">
                                         <label>Description</label>
                                         <textarea
                                             className="sprint-input"
-                                            rows="3"
+                                            rows="2"
                                             value={formData.description}
                                             onChange={e => setFormData({ ...formData, description: e.target.value })}
                                         />
                                     </div>
+
+                                    {selectedSprint && (
+                                        <div className="sprint-form-management">
+                                            <label className="management-label">Sprint Management</label>
+                                            <div className="management-actions">
+                                                <button
+                                                    type="button"
+                                                    className="sprint-btn-sm"
+                                                    onClick={() => {
+                                                        setShowModal(false);
+                                                        handleAssignClick(selectedSprint, 'assign');
+                                                    }}
+                                                    disabled={['completed', 'cancelled'].includes(selectedSprint.status)}
+                                                >
+                                                    <i className="fas fa-plus-circle"></i> Assign Tasks
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="sprint-btn-sm"
+                                                    onClick={() => {
+                                                        setShowModal(false);
+                                                        handleAssignClick(selectedSprint, 'remove');
+                                                    }}
+                                                >
+                                                    <i className="fas fa-minus-circle"></i> Remove Tasks
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="sprint-modal-footer">

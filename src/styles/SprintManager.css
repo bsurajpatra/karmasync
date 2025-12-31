@@ -60,42 +60,46 @@
 
 .sprints-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
 }
 
 .sprint-card {
     background: white;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1.25rem;
-    transition: all 0.2s ease;
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    gap: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     position: relative;
+    border-top: 4px solid transparent;
 }
 
 .sprint-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border-color: #cbd5e0;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     z-index: 5;
 }
 
 .sprint-card.active {
-    border-left: 4px solid #48bb78;
+    border-top-color: #48bb78;
 }
 
 .sprint-card.planned {
-    border-left: 4px solid #4299e1;
+    border-top-color: #4299e1;
 }
 
 .sprint-card.completed {
-    border-left: 4px solid #718096;
-    opacity: 0.9;
+    border-top-color: #718096;
 }
+
+.sprint-card.cancelled {
+    border-top-color: #f56565;
+}
+
 
 .sprint-status-badge {
     position: absolute;
@@ -158,10 +162,12 @@
 
 .sprint-actions {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     gap: 0.5rem;
-    margin-top: 0.5rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid #f7fafc;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
 }
 
 .sprint-assign-actions {
@@ -278,6 +284,35 @@
     box-shadow: 0 0 0 3px rgba(167, 112, 239, 0.1);
 }
 
+.sprint-form-management {
+    margin-top: 0.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #edf2f7;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.management-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #a0aec0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.management-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.management-actions .sprint-btn-sm {
+    flex: 1;
+    justify-content: center;
+    padding: 0.6rem;
+}
+
+
 .sprint-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -293,45 +328,129 @@
     border-top: 1px solid #edf2f7;
 }
 
-/* Status Change Menu */
-.status-dropdown {
+/* Sprint Options Dropdown */
+.sprint-options-container {
     position: relative;
     display: inline-block;
 }
 
-.status-menu {
+.sprint-options-menu {
     position: absolute;
     top: 100%;
     right: 0;
     margin-top: 0.5rem;
     background: white;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    min-width: 140px;
-    z-index: 10;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    min-width: 180px;
+    z-index: 100;
     padding: 0.5rem;
     display: none;
+    animation: fadeInScaleDown 0.2s ease-out;
 }
 
-.status-dropdown:hover .status-menu {
+.sprint-options-container:hover .sprint-options-menu,
+.sprint-options-container:focus-within .sprint-options-menu {
     display: block;
 }
 
-.status-option {
+.option-item {
     width: 100%;
-    padding: 0.5rem 0.75rem;
+    padding: 0.6rem 0.8rem;
     text-align: left;
     border: none;
     background: none;
     font-size: 0.85rem;
-    border-radius: 4px;
+    font-weight: 500;
+    color: #4a5568;
+    border-radius: 8px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
 }
 
-.status-option:hover {
-    background: #f7fafc;
+.option-item:hover {
+    background: #f8fafc;
+    color: #a770ef;
 }
+
+.option-item i {
+    font-size: 0.9rem;
+    width: 16px;
+    text-align: center;
+}
+
+.option-divider {
+    height: 1px;
+    background: #edf2f7;
+    margin: 0.4rem;
+}
+
+.option-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #a0aec0;
+    padding: 0.4rem 0.8rem 0.2rem 0.8rem;
+    letter-spacing: 0.05em;
+}
+
+.option-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.option-item.status-active:hover {
+    color: #38a169;
+    background: #f0fff4;
+}
+
+.option-item.status-planned:hover {
+    color: #3182ce;
+    background: #ebf8ff;
+}
+
+.option-item.status-completed:hover {
+    color: #718096;
+    background: #edf2f7;
+}
+
+.option-item.status-cancelled:hover {
+    color: #e53e3e;
+    background: #fff5f5;
+}
+
+@keyframes fadeInScaleDown {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.sprint-btn-view {
+    background: #f8fafc;
+    color: #1a365d;
+    border-color: #e2e8f0;
+}
+
+.sprint-btn-view:hover {
+    background: #e2e8f0;
+    color: #a770ef;
+}
+
+.sprint-options-trigger {
+    background: #f8fafc;
+    font-weight: 600;
+}
+
 
 /* Task Assignment UI */
 .task-assignment-modal {
