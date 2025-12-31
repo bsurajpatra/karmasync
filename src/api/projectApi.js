@@ -190,4 +190,31 @@ export const leaveProject = async (projectId) => {
   } catch (error) {
     throw error.response?.data || error.message;
   }
-}; 
+};
+
+export const addProjectTag = async (projectId, tagData) => {
+  const response = await axios.post(`${BASE_URL}/${projectId}/tags`, tagData, {
+    headers: {
+      ...getAuthHeader(),
+      'Content-Type': 'application/json'
+    }
+  });
+  return response.data;
+};
+
+export const updateProjectTag = async (projectId, tagId, tagData) => {
+  const response = await axios.put(`${BASE_URL}/${projectId}/tags/${tagId}`, tagData, {
+    headers: {
+      ...getAuthHeader(),
+      'Content-Type': 'application/json'
+    }
+  });
+  return response.data;
+};
+
+export const deleteProjectTag = async (projectId, tagId) => {
+  const response = await axios.delete(`${BASE_URL}/${projectId}/tags/${tagId}`, {
+    headers: getAuthHeader()
+  });
+  return response.data;
+};

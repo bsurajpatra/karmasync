@@ -4,6 +4,8 @@ import axios from 'axios';
 import { getTasks, createTask } from '../api/taskApi';
 import { getProjectById, addCollaborator, removeCollaborator, updateCollaboratorRole } from '../api/projectApi';
 import { getSprintsByProject } from '../api/sprintApi';
+import TagSelector from './TagSelector';
+import '../styles/Tags.css';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/TaskList.css';
 import '../styles/ProjectOverview.css';
@@ -19,6 +21,7 @@ const TaskList = () => {
   const [error, setError] = useState('');
   const [project, setProject] = useState(null);
   const [taskSearchTerm, setTaskSearchTerm] = useState('');
+  const [tagFilter, setTagFilter] = useState('all');
 
   // Issue Modal State
   const [showAddIssueModal, setShowAddIssueModal] = useState(false);
@@ -32,7 +35,8 @@ const TaskList = () => {
     deadline: '',
     customType: '',
     assignee: '',
-    sprintId: ''
+    sprintId: '',
+    tags: []
   });
   const [showCustomType, setShowCustomType] = useState(false);
   const [sprints, setSprints] = useState([]);
@@ -207,7 +211,8 @@ const TaskList = () => {
         deadline: '',
         customType: '',
         assignee: '',
-        sprintId: ''
+        sprintId: '',
+        tags: []
       });
     } catch (err) {
       setErrorMessage(err.message || 'Failed to create issue');
@@ -226,7 +231,8 @@ const TaskList = () => {
       deadline: '',
       customType: '',
       assignee: '',
-      sprintId: ''
+      sprintId: '',
+      tags: []
     });
   };
 
@@ -367,6 +373,28 @@ const TaskList = () => {
                     </div>
                   </div>
                   <div className="tasks-header-actions">
+                    {project?.tags?.length > 0 && (
+                      <div className="tag-filter-wrapper">
+                        <select
+                          className="tag-filter-select"
+                          value={tagFilter}
+                          onChange={(e) => setTagFilter(e.target.value)}
+                          style={{
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            border: '1px solid #e2e8f0',
+                            fontSize: '0.85rem',
+                            marginRight: '12px',
+                            outline: 'none'
+                          }}
+                        >
+                          <option value="all">All Tags</option>
+                          {project.tags.map(tag => (
+                            <option key={tag._id} value={tag._id}>{tag.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                     <button className="btn btn-primary" onClick={handleAddIssueClick}>
                       <i className="fas fa-plus"></i> Add Issue
                     </button>
@@ -431,8 +459,9 @@ const TaskList = () => {
                   (task.description && task.description.toLowerCase().includes(taskSearchTerm.toLowerCase()));
 
                 const matchesSprint = !sprintFilter || (task.sprintId && (task.sprintId._id === sprintFilter || task.sprintId === sprintFilter));
+                const matchesTag = tagFilter === 'all' || (task.tags && task.tags.includes(tagFilter));
 
-                return matchesSearch && matchesSprint;
+                return matchesSearch && matchesSprint && matchesTag;
               });
 
               if (filteredTasks.length === 0) {
@@ -473,6 +502,18 @@ const TaskList = () => {
                               <span className="task-status cancelled" title="Deadline exceeds sprint timeline">
                                 <i className="fas fa-exclamation-triangle"></i> Delayed
                               </span>
+                            )}
+                            {task.tags && task.tags.length > 0 && (
+                              <div className="task-row-tags" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                                {task.tags.map(tagId => {
+                                  const tag = project.tags?.find(t => t._id === tagId);
+                                  return tag ? (
+                                    <span key={tagId} className={`tag-chip ${tag.color}`}>
+                                      {tag.name}
+                                    </span>
+                                  ) : null;
+                                })}
+                              </div>
                             )}
                           </div>
                         </div>
@@ -566,6 +607,13 @@ const TaskList = () => {
                         <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
                       ))}
                     </select>
+                  </div>
+                  <div className="form-group issue-form__group">
+                    <TagSelector
+                      projectTags={project.tags || []}
+                      selectedTagIds={issueFormData.tags}
+                      onChange={(tags) => setIssueFormData(prev => ({ ...prev, tags }))}
+                    />
                   </div>
                 </div>
                 {project?.projectType === 'collaborative' && (

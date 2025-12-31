@@ -14,6 +14,9 @@ import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { getSprintsByProject } from '../api/sprintApi';
+import TagManager from './TagManager';
+import TagSelector from './TagSelector';
+import '../styles/Tags.css';
 
 const ROLE_TYPES = {
   MANAGER: 'manager',
@@ -48,7 +51,8 @@ const ProjectOverview = () => {
     deadline: '',
     customType: '',
     assignee: '',
-    sprintId: ''
+    sprintId: '',
+    tags: []
   });
   const [showCustomType, setShowCustomType] = useState(false);
   const [sprints, setSprints] = useState([]);
@@ -902,6 +906,14 @@ const ProjectOverview = () => {
                     <button type="submit" className="settings-submit-btn">Update Repository</button>
                   </form>
                 </div>
+
+                <div className="settings-group">
+                  <TagManager
+                    projectId={id}
+                    projectTags={project.tags || []}
+                    onTagsChange={(newTags) => setProject({ ...project, tags: newTags })}
+                  />
+                </div>
               </div>
 
               <div className="project-overview-section settings-danger-zone">
@@ -996,6 +1008,13 @@ const ProjectOverview = () => {
                         <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
                       ))}
                     </select>
+                  </div>
+                  <div className="form-group issue-form__group">
+                    <TagSelector
+                      projectTags={project.tags || []}
+                      selectedTagIds={issueFormData.tags}
+                      onChange={(tags) => setIssueFormData(prev => ({ ...prev, tags }))}
+                    />
                   </div>
                 </div>
 
@@ -1103,7 +1122,8 @@ const ProjectOverview = () => {
                         status: 'todo',
                         deadline: '',
                         customType: '',
-                        assignee: ''
+                        assignee: '',
+                        tags: []
                       });
                     }}
                   >

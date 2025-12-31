@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getTaskById, updateTask, deleteTask, addTaskComment, updateTaskStatus } from '../api/taskApi';
 import { getProjectById } from '../api/projectApi';
 import { getSprintsByProject } from '../api/sprintApi';
+import TagSelector from './TagSelector';
+import '../styles/Tags.css';
 import LoadingAnimation from './LoadingAnimation';
 
 import '../styles/ProjectOverview.css';
@@ -26,7 +28,8 @@ const TaskOverview = () => {
     status: '',
     deadline: '',
     customType: '',
-    assignee: ''
+    assignee: '',
+    tags: []
   });
   const [showCustomType, setShowCustomType] = useState(false);
   const [sprints, setSprints] = useState([]);
@@ -50,7 +53,8 @@ const TaskOverview = () => {
         type: taskData.type,
         status: taskData.status,
         deadline: taskData.deadline,
-        assignee: taskData.assignee?._id || ''
+        assignee: taskData.assignee?._id || '',
+        tags: taskData.tags || []
       });
 
       const projectId = taskData.projectId._id || taskData.projectId;
@@ -255,7 +259,8 @@ const TaskOverview = () => {
                     status: task.status,
                     deadline: task.deadline,
                     assignee: task.assignee?._id || '',
-                    sprintId: task.sprintId?._id || ''
+                    sprintId: task.sprintId?._id || '',
+                    tags: task.tags || []
                   });
                 }}
               >
@@ -374,6 +379,13 @@ const TaskOverview = () => {
                         </select>
                       </div>
                     </div>
+                    <div className="form-group-compact">
+                      <TagSelector
+                        projectTags={project.tags || []}
+                        selectedTagIds={formData.tags}
+                        onChange={(tags) => setFormData(prev => ({ ...prev, tags }))}
+                      />
+                    </div>
                   </>
                 )}
               </div>
@@ -390,7 +402,8 @@ const TaskOverview = () => {
                       type: task.type,
                       status: task.status,
                       deadline: task.deadline,
-                      assignee: task.assignee?._id || ''
+                      assignee: task.assignee?._id || '',
+                      tags: task.tags || []
                     });
                   }}
                 >
@@ -620,6 +633,21 @@ const TaskOverview = () => {
                     <div className="to-meta-item">
                       <span className="to-meta-label">Assigned to</span>
                       <span className="to-meta-value">{task.assignee.username || task.assignee.fullName || 'Unassigned'}</span>
+                    </div>
+                  )}
+                  {task.tags && task.tags.length > 0 && (
+                    <div className="to-meta-item">
+                      <span className="to-meta-label">Tags</span>
+                      <div className="to-meta-value" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                        {task.tags.map(tagId => {
+                          const tag = project.tags?.find(t => t._id === tagId);
+                          return tag ? (
+                            <span key={tagId} className={`tag-chip ${tag.color}`}>
+                              {tag.name}
+                            </span>
+                          ) : null;
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>

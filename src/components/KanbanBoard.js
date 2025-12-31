@@ -12,6 +12,8 @@ import '../styles/KanbanBoard.css';
 import '../styles/ProjectOverview.css';
 import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
+import TagSelector from './TagSelector';
+import '../styles/Tags.css';
 
 const KanbanBoard = () => {
   const navigate = useNavigate();
@@ -36,7 +38,8 @@ const KanbanBoard = () => {
     deadline: '',
     customType: '',
     assignee: '',
-    sprintId: ''
+    sprintId: '',
+    tags: []
   });
   const [showCustomType, setShowCustomType] = useState(false);
   const [sprints, setSprints] = useState([]);
@@ -58,6 +61,7 @@ const KanbanBoard = () => {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [removingCollaborator, setRemovingCollaborator] = useState(null);
   const [showSelfRemoveModal, setShowSelfRemoveModal] = useState(false);
+  const [tagFilter, setTagFilter] = useState('all');
 
   useEffect(() => {
     // Detect mobile device by screen width
@@ -343,7 +347,8 @@ const KanbanBoard = () => {
         deadline: issueFormData.deadline,
         projectId: projectId,
         assignee: issueFormData.assignee || null,
-        sprintId: issueFormData.sprintId || null
+        sprintId: issueFormData.sprintId || null,
+        tags: issueFormData.tags || []
       };
 
       console.log('Creating task with data:', taskData);
@@ -373,7 +378,8 @@ const KanbanBoard = () => {
         deadline: '',
         customType: '',
         assignee: '',
-        sprintId: ''
+        sprintId: '',
+        tags: []
       });
       setError('');
     } catch (err) {
@@ -655,6 +661,18 @@ const KanbanBoard = () => {
                 <span className="kbn-issue-card__id">#{task.serialNumber}</span>
                 <h3>{task.title}</h3>
               </div>
+              {task.tags && task.tags.length > 0 && (
+                <div className="kbn-issue-card__row kbn-issue-card__row--tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
+                  {task.tags.map(tagId => {
+                    const tag = project.tags?.find(t => t._id === tagId);
+                    return tag ? (
+                      <span key={tagId} className={`tag-chip ${tag.color}`}>
+                        {tag.name}
+                      </span>
+                    ) : null;
+                  })}
+                </div>
+              )}
               {project?.projectType === 'collaborative' && task.assignee && (
                 <div className="kbn-issue-card__row kbn-issue-card__row--assignee">
                   <div className="kbn-issue-card__assignee">
@@ -687,8 +705,9 @@ const KanbanBoard = () => {
             </div>
           ))}
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 
   return (
@@ -752,7 +771,28 @@ const KanbanBoard = () => {
         <div className="project-overview-container kb-main-container">
           <div className="kb-actions-header">
             <div className="kb-header-left">
-              {/* Optional labels or Breadcrumbs could go here */}
+              {project?.tags?.length > 0 && (
+                <div className="tag-filter-wrapper">
+                  <select
+                    className="tag-filter-select"
+                    value={tagFilter}
+                    onChange={(e) => setTagFilter(e.target.value)}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      border: '1px solid #e2e8f0',
+                      fontSize: '0.85rem',
+                      outline: 'none',
+                      background: 'white'
+                    }}
+                  >
+                    <option value="all">All Tags</option>
+                    {project.tags.map(tag => (
+                      <option key={tag._id} value={tag._id}>{tag.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
             <div className="kb-header-right">
               <button
@@ -773,9 +813,15 @@ const KanbanBoard = () => {
           </div>
 
           <div className="kbn-board-container">
-            {Object.entries(boards).map(([status, board]) => (
-              renderBoard(status, board)
-            ))}
+            {Object.entries(boards).map(([status, board]) => {
+              const filteredBoard = {
+                ...board,
+                items: board.items.filter(task =>
+                  tagFilter === 'all' || (task.tags && task.tags.includes(tagFilter))
+                )
+              };
+              return renderBoard(status, filteredBoard);
+            })}
           </div>
         </div>
       </div>
@@ -1133,7 +1179,6 @@ const KanbanBoard = () => {
                         name="deadline"
                         value={issueFormData.deadline}
                         onChange={handleIssueFormChange}
-                        className="form-control"
                       />
                     </div>
                   </div>
@@ -1147,6 +1192,13 @@ const KanbanBoard = () => {
                           <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
                         ))}
                       </select>
+                    </div>
+                    <div className="form-group issue-form__group">
+                      <TagSelector
+                        projectTags={project.tags || []}
+                        selectedTagIds={issueFormData.tags}
+                        onChange={(tags) => setIssueFormData(prev => ({ ...prev, tags }))}
+                      />
                     </div>
                   </div>
 
@@ -1213,7 +1265,7 @@ const KanbanBoard = () => {
                 </form>
               </div>
             </div>
-          </div>
+          </div >
         )
       }
 
