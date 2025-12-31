@@ -203,7 +203,6 @@ const SprintManager = ({ projectId, currentUserRole }) => {
                 <div className="no-sprints">
                     <i className="fas fa-running"></i>
                     <p>{sprintSearchTerm ? 'No sprints match your search.' : 'No sprints planned yet.'}</p>
-                    {isManager && !sprintSearchTerm && <button className="sprint-btn-sm" onClick={handleCreateClick}>Start by creating one</button>}
                 </div>
             ) : (
                 <div className="sprints-grid">
