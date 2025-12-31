@@ -14,6 +14,7 @@ import '../styles/IssueModal.css';
 import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
 import TagSelector from './TagSelector';
+import * as storyApi from '../api/userStoryApi';
 import '../styles/Tags.css';
 
 const KanbanBoard = () => {
@@ -40,8 +41,10 @@ const KanbanBoard = () => {
     customType: '',
     assignee: '',
     sprintId: '',
+    storyId: '',
     tags: []
   });
+  const [stories, setStories] = useState([]);
   const [showCustomType, setShowCustomType] = useState(false);
   const [sprints, setSprints] = useState([]);
   const [newBoardName, setNewBoardName] = useState('');
@@ -120,14 +123,16 @@ const KanbanBoard = () => {
 
   const fetchProjectAndTasks = async () => {
     try {
-      const [projectData, tasksData, sprintsData] = await Promise.all([
+      const [projectData, tasksData, sprintsData, storiesData] = await Promise.all([
         getProjectById(projectId),
         getTasks(projectId),
-        getSprintsByProject(projectId)
+        getSprintsByProject(projectId),
+        storyApi.getStoriesByProject(projectId)
       ]);
 
       setProject(projectData);
       setSprints(sprintsData);
+      setStories(storiesData);
 
       const groupedTasks = {
         todo: {
@@ -696,6 +701,12 @@ const KanbanBoard = () => {
                     {task.sprintId.name}
                   </span>
                 )}
+                {task.storyId && (
+                  <span className="kbn-issue-card__type" style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', background: '#ebf8ff', color: '#2b6cb0', border: '1px solid #bee3f8' }}>
+                    <i className="fas fa-book" style={{ fontSize: '0.6rem', marginRight: '3px' }}></i>
+                    {stories.find(s => s._id === (task.storyId._id || task.storyId))?.title || 'Story'}
+                  </span>
+                )}
                 {task.deadline && (
                   <div className="kbn-issue-card__deadline">
                     <i className="far fa-clock"></i>
@@ -751,6 +762,10 @@ const KanbanBoard = () => {
             <button className="sidebar-link" onClick={() => navigate(`/project/${projectId}/overview?view=sprints`)}>
               <i className="fas fa-running"></i>
               <span>Sprints</span>
+            </button>
+            <button className="sidebar-link" onClick={() => navigate(`/project/${projectId}/overview?view=stories`)}>
+              <i className="fas fa-book"></i>
+              <span>User Stories</span>
             </button>
             {project.projectType === 'collaborative' && (
               <button className="sidebar-link" onClick={handleManageCollaboratorsClick}>
@@ -1085,7 +1100,8 @@ const KanbanBoard = () => {
                       status: 'todo',
                       deadline: '',
                       customType: '',
-                      assignee: ''
+                      assignee: '',
+                      storyId: ''
                     });
                   }}
                 >
@@ -1182,6 +1198,24 @@ const KanbanBoard = () => {
                         <option value="">No Sprint (Backlog)</option>
                         {sprints.map((s) => (
                           <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="ni-mod-form-row">
+                    <div className="ni-mod-form-group">
+                      <label htmlFor="storyId">User Story</label>
+                      <select
+                        id="storyId"
+                        name="storyId"
+                        value={issueFormData.storyId}
+                        onChange={handleIssueFormChange}
+                        className="ni-mod-select"
+                      >
+                        <option value="">No Story (Independent Task)</option>
+                        {stories.map((s) => (
+                          <option key={s._id} value={s._id}>{s.title} ({s.status})</option>
                         ))}
                       </select>
                     </div>

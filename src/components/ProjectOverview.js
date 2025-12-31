@@ -13,6 +13,8 @@ import { searchUsers } from '../api/userApi';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import * as storyApi from '../api/userStoryApi';
+import StoryManager from './StoryManager';
 import { getSprintsByProject } from '../api/sprintApi';
 import TagManager from './TagManager';
 import TagSelector from './TagSelector';
@@ -71,7 +73,8 @@ const ProjectOverview = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
-  const [activeView, setActiveView] = useState('overview'); // 'overview' or 'settings'
+  const [stories, setStories] = useState([]);
+  const [activeView, setActiveView] = useState('overview'); // 'overview' or 'settings' or 'sprints' or 'stories'
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -82,6 +85,8 @@ const ProjectOverview = () => {
       setActiveView('settings');
     } else if (view === 'sprints') {
       setActiveView('sprints');
+    } else if (view === 'stories') {
+      setActiveView('stories');
     } else {
       setActiveView('overview');
     }
@@ -113,6 +118,9 @@ const ProjectOverview = () => {
 
       const sprintsData = await getSprintsByProject(id);
       setSprints(sprintsData);
+
+      const storiesData = await storyApi.getStoriesByProject(id);
+      setStories(storiesData);
 
       setError('');
     } catch (err) {
@@ -682,6 +690,13 @@ const ProjectOverview = () => {
               <i className="fas fa-running"></i>
               <span>Sprints</span>
             </button>
+            <button
+              className={`sidebar-link ${activeView === 'stories' ? 'active' : ''}`}
+              onClick={() => navigate(`/project/${id}/overview?view=stories`)}
+            >
+              <i className="fas fa-book"></i>
+              <span>User Stories</span>
+            </button>
             {project.projectType === 'collaborative' && (
               <button className="sidebar-link" onClick={handleCollaboratorClick}>
                 <i className="fas fa-users-cog"></i>
@@ -808,49 +823,56 @@ const ProjectOverview = () => {
                 </div>
               )}
 
-              <div className="project-overview-section issues-overview-section">
-                <div className="issues-overview-header">
-                  <h2>Issues Overview</h2>
+              <div className="project-overview-section" style={{ background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid #f1f5f9' }}>
+                <div className="section-header" style={{ marginBottom: '1.5rem' }}>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#2c3e50', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <i className="fas fa-chart-pie" style={{ color: '#a770ef' }}></i>
+                    User Stories Progress
+                  </h2>
                 </div>
-                <div className="issues-overview">
-                  <div className="issues-stats">
-                    <div className="total-issues">
-                      <span className="issues-count">{taskCount}</span>
-                      <span className="issues-label">Total Issues</span>
+                <div className="stories-overview-content" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
+                  {stories.length > 0 ? (
+                    stories.map(story => (
+                      <div key={story._id} className="story-progress-card" style={{ padding: '1.25rem', background: '#f8fafc', border: '1px solid #edf2f7', borderRadius: '14px', transition: 'transform 0.2s' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', fontSize: '0.9rem' }}>
+                          <span style={{ fontWeight: 700, color: '#4a5568', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '160px' }} title={story.title}>
+                            {story.title}
+                          </span>
+                          <span style={{ fontWeight: 800, color: '#a770ef' }}>{story.progress}%</span>
+                        </div>
+                        <div style={{ height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                          <div style={{
+                            height: '100%',
+                            width: `${story.progress}%`,
+                            background: 'linear-gradient(90deg, #a770ef 0%, #cf8bf3 100%)',
+                            borderRadius: '4px',
+                            transition: 'width 1s ease-in-out'
+                          }}></div>
+                        </div>
+                        <div style={{ marginTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>
+                            {story.status}
+                          </span>
+                          <i className="fas fa-chevron-right" style={{ fontSize: '0.7rem', color: '#cbd5e0' }}></i>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
+                      <i className="fas fa-layer-group" style={{ fontSize: '2rem', marginBottom: '1rem', opacity: 0.3 }}></i>
+                      <p>No user stories established for this project.</p>
                     </div>
-                  </div>
-                  <div className="chart-container">
-                    {boardStats.length > 0 ? (
-                      <ResponsiveContainer width="100%" height={180}>
-                        <PieChart>
-                          <Pie
-                            data={boardStats}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            outerRadius={60}
-                            fill="#8884d8"
-                            dataKey="value"
-                            label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                          >
-                            {boardStats.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip formatter={(value, name) => [`${value} issues`, name]} />
-                          <Legend />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    ) : (
-                      <div className="no-data-chart">0 Issues Found</div>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
             </>
           ) : activeView === 'sprints' ? (
             <div className="project-overview-section" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
               <SprintManager projectId={id} currentUserRole={project.currentUserRole} />
+            </div>
+          ) : activeView === 'stories' ? (
+            <div className="project-overview-section" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
+              <StoryManager projectId={id} currentUserRole={project.currentUserRole} />
             </div>
           ) : (
             <div className="settings-view">
@@ -950,7 +972,7 @@ const ProjectOverview = () => {
           )}
           <Footer />
         </div>
-      </div>
+      </div >
 
       {showAddIssueModal && (
         <div className="modal-overlay issue-modal-overlay">
@@ -1136,278 +1158,284 @@ const ProjectOverview = () => {
         </div>
       )}
 
-      {showAddCollaborator && (
-        <div className="settings-dialog-overlay">
-          <div className="settings-dialog-content settings-dialog-wide">
-            <div className="settings-dialog-header">
-              <h3>Manage Collaborators</h3>
-              <button
-                className="settings-dialog-close"
-                onClick={() => {
-                  setShowAddCollaborator(false);
-                  setSelectedUser(null);
-                  setSearchTerm('');
-                  setSearchResults([]);
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div className="settings-dialog-body">
-              {error && <div className="error-message">{error}</div>}
-              <div className="collab-tabs">
+      {
+        showAddCollaborator && (
+          <div className="settings-dialog-overlay">
+            <div className="settings-dialog-content settings-dialog-wide">
+              <div className="settings-dialog-header">
+                <h3>Manage Collaborators</h3>
                 <button
-                  className={`collab-tab ${!selectedUser ? 'active' : ''}`}
-                  onClick={() => setSelectedUser(null)}
+                  className="settings-dialog-close"
+                  onClick={() => {
+                    setShowAddCollaborator(false);
+                    setSelectedUser(null);
+                    setSearchTerm('');
+                    setSearchResults([]);
+                  }}
                 >
-                  <i className="fas fa-plus"></i> Add Collaborator
-                </button>
-                <button
-                  className={`collab-tab ${selectedUser ? 'active' : ''}`}
-                  onClick={() => setSelectedUser(project.collaborators[0]?.userId)}
-                >
-                  <i className="fas fa-users-cog"></i> Manage Team
+                  ×
                 </button>
               </div>
-
-              {selectedUser ? (
-                <div className="collab-manage-wrapper">
-                  <div className="collab-list">
-                    {project.collaborators && project.collaborators.map((collab) => (
-                      <div key={collab.userId._id} className="collab-manage-item">
-                        <div className="collab-user-info">
-                          <span className="collab-name">{collab.userId.fullName || 'N/A'}</span>
-                          <span className="collab-username">{collab.userId.username}</span>
-                          <span className="collab-email">{collab.userId.email}</span>
-                          <span className={`collab-role ${collab.role}`}>
-                            {collab.role === 'manager' ? 'Project Manager' : 'Developer'}
-                          </span>
-                        </div>
-                        <div className="collab-actions">
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => {
-                              if (!user || !user._id) {
-                                setErrorMessage('Please wait while we load your user information');
-                                setShowErrorModal(true);
-                                return;
-                              }
-
-                              if (project.currentUserRole !== 'manager') {
-                                setErrorMessage('Only Project Managers can update roles');
-                                setShowErrorModal(true);
-                                return;
-                              }
-
-                              if (collab.userId._id === user._id) {
-                                setErrorMessage('Self-role change is not allowed');
-                                setShowErrorModal(true);
-                                return;
-                              }
-
-                              setSelectedUser(collab.userId);
-                              setIsUpdatingRole(true);
-                              setShowRoleModal(true);
-                            }}
-                          >
-                            <i className="fas fa-user-edit"></i> Update Role
-                          </button>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => {
-                              if (!user || !user._id) {
-                                setErrorMessage('Please wait while we load your user information');
-                                setShowErrorModal(true);
-                                return;
-                              }
-
-                              const isCreator = project.createdBy._id === user._id;
-                              const isManager = project.currentUserRole === 'manager';
-
-                              if (!isCreator && !isManager) {
-                                setErrorMessage('Only Project Managers can remove collaborators');
-                                setShowErrorModal(true);
-                                return;
-                              }
-
-                              if (collab.userId._id === user._id) {
-                                setShowSelfRemoveModal(true);
-                                return;
-                              }
-
-                              setRemovingCollaborator(collab);
-                              setShowRemoveModal(true);
-                            }}
-                          >
-                            <i className="fas fa-user-minus"></i> Remove
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              <div className="settings-dialog-body">
+                {error && <div className="error-message">{error}</div>}
+                <div className="collab-tabs">
+                  <button
+                    className={`collab-tab ${!selectedUser ? 'active' : ''}`}
+                    onClick={() => setSelectedUser(null)}
+                  >
+                    <i className="fas fa-plus"></i> Add Collaborator
+                  </button>
+                  <button
+                    className={`collab-tab ${selectedUser ? 'active' : ''}`}
+                    onClick={() => setSelectedUser(project.collaborators[0]?.userId)}
+                  >
+                    <i className="fas fa-users-cog"></i> Manage Team
+                  </button>
                 </div>
-              ) : (
-                <div className="collab-search-wrapper">
-                  <input
-                    type="text"
-                    placeholder="Search users by username or email"
-                    value={searchTerm}
-                    onChange={handleSearch}
-                    className="collab-search-field"
-                  />
-                  {searchResults.length > 0 && (
-                    <div className="collab-search-results">
-                      {searchResults.map(user => (
-                        <div
-                          key={user._id}
-                          className="collab-search-item"
-                          onClick={() => handleAddCollaborator(user)}
-                        >
+
+                {selectedUser ? (
+                  <div className="collab-manage-wrapper">
+                    <div className="collab-list">
+                      {project.collaborators && project.collaborators.map((collab) => (
+                        <div key={collab.userId._id} className="collab-manage-item">
                           <div className="collab-user-info">
-                            <span className="collab-username">{user.username}</span>
-                            <span className="collab-email">{user.email}</span>
+                            <span className="collab-name">{collab.userId.fullName || 'N/A'}</span>
+                            <span className="collab-username">{collab.userId.username}</span>
+                            <span className="collab-email">{collab.userId.email}</span>
+                            <span className={`collab-role ${collab.role}`}>
+                              {collab.role === 'manager' ? 'Project Manager' : 'Developer'}
+                            </span>
                           </div>
-                          <i className="fas fa-chevron-right"></i>
+                          <div className="collab-actions">
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => {
+                                if (!user || !user._id) {
+                                  setErrorMessage('Please wait while we load your user information');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+
+                                if (project.currentUserRole !== 'manager') {
+                                  setErrorMessage('Only Project Managers can update roles');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+
+                                if (collab.userId._id === user._id) {
+                                  setErrorMessage('Self-role change is not allowed');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+
+                                setSelectedUser(collab.userId);
+                                setIsUpdatingRole(true);
+                                setShowRoleModal(true);
+                              }}
+                            >
+                              <i className="fas fa-user-edit"></i> Update Role
+                            </button>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => {
+                                if (!user || !user._id) {
+                                  setErrorMessage('Please wait while we load your user information');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+
+                                const isCreator = project.createdBy._id === user._id;
+                                const isManager = project.currentUserRole === 'manager';
+
+                                if (!isCreator && !isManager) {
+                                  setErrorMessage('Only Project Managers can remove collaborators');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+
+                                if (collab.userId._id === user._id) {
+                                  setShowSelfRemoveModal(true);
+                                  return;
+                                }
+
+                                setRemovingCollaborator(collab);
+                                setShowRemoveModal(true);
+                              }}
+                            >
+                              <i className="fas fa-user-minus"></i> Remove
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
-                  )}
-                  {searchTerm.length >= 2 && !searchLoading && searchResults.length === 0 && (
-                    <div className="collab-no-results">No users found</div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-
-      {showRemoveModal && removingCollaborator && (
-        <div className="settings-dialog-overlay z-top">
-          <div className="settings-dialog-content">
-            <div className="settings-dialog-header">
-              <h2>Remove Collaborator</h2>
-              <button
-                className="settings-dialog-close"
-                onClick={() => {
-                  setShowRemoveModal(false);
-                  setRemovingCollaborator(null);
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div className="settings-dialog-body">
-              <p>Are you sure you want to remove this collaborator?</p>
-              <div className="collab-to-remove">
-                <strong>User:</strong> {removingCollaborator.userId.username}
-                <br />
-                <strong>Email:</strong> {removingCollaborator.userId.email}
-                <br />
-                <strong>Role:</strong> {removingCollaborator.role === 'manager' ? 'Project Manager' : 'Developer'}
+                  </div>
+                ) : (
+                  <div className="collab-search-wrapper">
+                    <input
+                      type="text"
+                      placeholder="Search users by username or email"
+                      value={searchTerm}
+                      onChange={handleSearch}
+                      className="collab-search-field"
+                    />
+                    {searchResults.length > 0 && (
+                      <div className="collab-search-results">
+                        {searchResults.map(user => (
+                          <div
+                            key={user._id}
+                            className="collab-search-item"
+                            onClick={() => handleAddCollaborator(user)}
+                          >
+                            <div className="collab-user-info">
+                              <span className="collab-username">{user.username}</span>
+                              <span className="collab-email">{user.email}</span>
+                            </div>
+                            <i className="fas fa-chevron-right"></i>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {searchTerm.length >= 2 && !searchLoading && searchResults.length === 0 && (
+                      <div className="collab-no-results">No users found</div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
-            <div className="settings-dialog-actions">
-              <button
-                className="btn btn-secondary"
-                onClick={() => {
-                  setShowRemoveModal(false);
-                  setRemovingCollaborator(null);
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn btn-danger"
-                onClick={() => {
-                  if (!user || !user._id) {
-                    setErrorMessage('Please wait while we load your user information');
-                    setShowErrorModal(true);
-                    return;
-                  }
+          </div>
+        )
+      }
 
-                  const isCreator = project.createdBy._id === user._id;
-                  const isManager = project.currentUserRole === 'manager';
 
-                  if (!isCreator && !isManager) {
-                    setErrorMessage('Only Project Managers can remove collaborators');
-                    setShowErrorModal(true);
-                    return;
-                  }
+      {
+        showRemoveModal && removingCollaborator && (
+          <div className="settings-dialog-overlay z-top">
+            <div className="settings-dialog-content">
+              <div className="settings-dialog-header">
+                <h2>Remove Collaborator</h2>
+                <button
+                  className="settings-dialog-close"
+                  onClick={() => {
+                    setShowRemoveModal(false);
+                    setRemovingCollaborator(null);
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="settings-dialog-body">
+                <p>Are you sure you want to remove this collaborator?</p>
+                <div className="collab-to-remove">
+                  <strong>User:</strong> {removingCollaborator.userId.username}
+                  <br />
+                  <strong>Email:</strong> {removingCollaborator.userId.email}
+                  <br />
+                  <strong>Role:</strong> {removingCollaborator.role === 'manager' ? 'Project Manager' : 'Developer'}
+                </div>
+              </div>
+              <div className="settings-dialog-actions">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setShowRemoveModal(false);
+                    setRemovingCollaborator(null);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => {
+                    if (!user || !user._id) {
+                      setErrorMessage('Please wait while we load your user information');
+                      setShowErrorModal(true);
+                      return;
+                    }
 
-                  if (removingCollaborator.userId._id === user._id) {
-                    setShowSelfRemoveModal(true);
-                    return;
-                  }
+                    const isCreator = project.createdBy._id === user._id;
+                    const isManager = project.currentUserRole === 'manager';
 
-                  handleRemoveCollaborator();
-                }}
-              >
-                Remove Collaborator
-              </button>
+                    if (!isCreator && !isManager) {
+                      setErrorMessage('Only Project Managers can remove collaborators');
+                      setShowErrorModal(true);
+                      return;
+                    }
+
+                    if (removingCollaborator.userId._id === user._id) {
+                      setShowSelfRemoveModal(true);
+                      return;
+                    }
+
+                    handleRemoveCollaborator();
+                  }}
+                >
+                  Remove Collaborator
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
 
-      {showRoleModal && (
-        <div className="settings-dialog-overlay">
-          <div className="settings-dialog-content">
-            <div className="settings-dialog-header">
-              <h2>Select Role for {selectedUser?.username}</h2>
-              <button
-                className="settings-dialog-close"
-                onClick={() => {
-                  setShowRoleModal(false);
-                  setSelectedUser(null);
-                  setIsUpdatingRole(false);
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div className="settings-dialog-body">
-              {isAddingCollaborator ? (
-                <div className="loading-container">
-                  <LoadingAnimation message={isUpdatingRole ? "Updating role..." : "Adding collaborator..."} />
-                </div>
-              ) : (
-                <div className="role-options">
-                  <button
-                    className="role-option manager"
-                    onClick={() => handleRoleSelect('manager')}
-                  >
-                    <h4>Project Manager</h4>
-                    <p>Full access to project management</p>
-                    <ul>
-                      <li>Create, edit, and delete tasks</li>
-                      <li>Manage project details</li>
-                      <li>Manage collaborators</li>
-                      <li>Full commenting access</li>
-                    </ul>
-                  </button>
-                  <button
-                    className="role-option developer"
-                    onClick={() => handleRoleSelect('developer')}
-                  >
-                    <h4>Developer</h4>
-                    <p>Task execution and updates</p>
-                    <ul>
-                      <li>View and update task status</li>
-                      <li>Full commenting access</li>
-                      <li>Limited project access</li>
-                    </ul>
-                  </button>
-                </div>
-              )}
+      {
+        showRoleModal && (
+          <div className="settings-dialog-overlay">
+            <div className="settings-dialog-content">
+              <div className="settings-dialog-header">
+                <h2>Select Role for {selectedUser?.username}</h2>
+                <button
+                  className="settings-dialog-close"
+                  onClick={() => {
+                    setShowRoleModal(false);
+                    setSelectedUser(null);
+                    setIsUpdatingRole(false);
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="settings-dialog-body">
+                {isAddingCollaborator ? (
+                  <div className="loading-container">
+                    <LoadingAnimation message={isUpdatingRole ? "Updating role..." : "Adding collaborator..."} />
+                  </div>
+                ) : (
+                  <div className="role-options">
+                    <button
+                      className="role-option manager"
+                      onClick={() => handleRoleSelect('manager')}
+                    >
+                      <h4>Project Manager</h4>
+                      <p>Full access to project management</p>
+                      <ul>
+                        <li>Create, edit, and delete tasks</li>
+                        <li>Manage project details</li>
+                        <li>Manage collaborators</li>
+                        <li>Full commenting access</li>
+                      </ul>
+                    </button>
+                    <button
+                      className="role-option developer"
+                      onClick={() => handleRoleSelect('developer')}
+                    >
+                      <h4>Developer</h4>
+                      <p>Task execution and updates</p>
+                      <ul>
+                        <li>View and update task status</li>
+                        <li>Full commenting access</li>
+                        <li>Limited project access</li>
+                      </ul>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
-    </div>
+    </div >
   );
 };
 

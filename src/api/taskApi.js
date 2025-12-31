@@ -28,10 +28,10 @@ export const getTaskById = async (id) => {
   try {
     console.log('Making GET request to /api/tasks/' + id);
     const response = await axios.get(`${config.API_URL}/api/tasks/${id}`, {
-    headers: getAuthHeader()
-  });
+      headers: getAuthHeader()
+    });
     console.log('GET /api/tasks/' + id + ' response:', response.data);
-  return response.data;
+    return response.data;
   } catch (error) {
     console.error('Error in getTaskById:', error.response || error);
     throw error;
@@ -75,10 +75,10 @@ export const updateTaskStatus = async (id, status) => {
       headers: error.response?.headers,
       config: error.config
     });
-    
+
     throw new Error(
-      error.response?.data?.message || 
-      error.message || 
+      error.response?.data?.message ||
+      error.message ||
       'Failed to update task status'
     );
   }
@@ -130,7 +130,7 @@ export const addTaskComment = async (taskId, comment) => {
 
 export const getTasksByProject = async (projectId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks`, {
+    const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/tasks`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,

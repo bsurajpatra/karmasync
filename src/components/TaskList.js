@@ -5,6 +5,7 @@ import { getTasks, createTask } from '../api/taskApi';
 import { getProjectById, addCollaborator, removeCollaborator, updateCollaboratorRole } from '../api/projectApi';
 import { getSprintsByProject } from '../api/sprintApi';
 import TagSelector from './TagSelector';
+import * as storyApi from '../api/userStoryApi';
 import '../styles/Tags.css';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/TaskList.css';
@@ -37,8 +38,10 @@ const TaskList = () => {
     customType: '',
     assignee: '',
     sprintId: '',
+    storyId: '',
     tags: []
   });
+  const [stories, setStories] = useState([]);
   const [showCustomType, setShowCustomType] = useState(false);
   const [sprints, setSprints] = useState([]);
 
@@ -66,6 +69,8 @@ const TaskList = () => {
       setProject(data);
       const sprintsData = await getSprintsByProject(projectId);
       setSprints(sprintsData);
+      const storiesData = await storyApi.getStoriesByProject(projectId);
+      setStories(storiesData);
     } catch (err) {
       console.error('Error fetching project:', err);
     }
@@ -322,6 +327,10 @@ const TaskList = () => {
               <i className="fas fa-running"></i>
               <span>Sprints</span>
             </button>
+            <button className="sidebar-link" onClick={() => navigate(`/project/${project._id}/overview?view=stories`)}>
+              <i className="fas fa-book"></i>
+              <span>User Stories</span>
+            </button>
             {project.projectType === 'collaborative' && (
               <button
                 className="sidebar-link"
@@ -494,6 +503,12 @@ const TaskList = () => {
                                 <i className="fas fa-exclamation-triangle"></i> Delayed
                               </span>
                             )}
+                            {task.storyId && (
+                              <span className="task-status" style={{ background: '#ebf8ff', color: '#2b6cb0', border: '1px solid #bee3f8' }}>
+                                <i className="fas fa-book" style={{ fontSize: '0.75rem', marginRight: '4px' }}></i>
+                                {stories.find(s => s._id === (task.storyId._id || task.storyId))?.title || 'Story'}
+                              </span>
+                            )}
                             {task.tags && task.tags.length > 0 && (
                               <div className="task-row-tags" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                                 {task.tags.map(tagId => {
@@ -597,6 +612,24 @@ const TaskList = () => {
                         <option value="">No Sprint (Backlog)</option>
                         {sprints.map((s) => (
                           <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="ni-mod-form-row">
+                    <div className="ni-mod-form-group">
+                      <label htmlFor="storyId">User Story</label>
+                      <select
+                        id="storyId"
+                        name="storyId"
+                        value={issueFormData.storyId}
+                        onChange={handleIssueFormChange}
+                        className="ni-mod-select"
+                      >
+                        <option value="">No Story (Independent Task)</option>
+                        {stories.map((s) => (
+                          <option key={s._id} value={s._id}>{s.title} ({s.status})</option>
                         ))}
                       </select>
                     </div>

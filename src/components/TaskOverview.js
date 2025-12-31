@@ -4,6 +4,7 @@ import { getTaskById, updateTask, deleteTask, addTaskComment, updateTaskStatus }
 import { getProjectById } from '../api/projectApi';
 import { getSprintsByProject } from '../api/sprintApi';
 import TagSelector from './TagSelector';
+import * as storyApi from '../api/userStoryApi';
 import '../styles/Tags.css';
 import LoadingAnimation from './LoadingAnimation';
 
@@ -30,8 +31,11 @@ const TaskOverview = () => {
     deadline: '',
     customType: '',
     assignee: '',
+    sprintId: '',
+    storyId: '',
     tags: []
   });
+  const [stories, setStories] = useState([]);
   const [showCustomType, setShowCustomType] = useState(false);
   const [sprints, setSprints] = useState([]);
   const [isEditingStatus, setIsEditingStatus] = useState(false);
@@ -55,6 +59,8 @@ const TaskOverview = () => {
         status: taskData.status,
         deadline: taskData.deadline,
         assignee: taskData.assignee?._id || '',
+        sprintId: taskData.sprintId?._id || '',
+        storyId: taskData.storyId?._id || taskData.storyId || '',
         tags: taskData.tags || []
       });
 
@@ -64,6 +70,9 @@ const TaskOverview = () => {
 
       const sprintsData = await getSprintsByProject(projectId);
       setSprints(sprintsData);
+
+      const storiesData = await storyApi.getStoriesByProject(projectId);
+      setStories(storiesData);
 
       setError('');
     } catch (err) {
@@ -261,6 +270,7 @@ const TaskOverview = () => {
                     deadline: task.deadline,
                     assignee: task.assignee?._id || '',
                     sprintId: task.sprintId?._id || '',
+                    storyId: task.storyId?._id || task.storyId || '',
                     tags: task.tags || []
                   });
                 }}
@@ -343,18 +353,32 @@ const TaskOverview = () => {
                       className="ni-mod-input"
                     />
                   </div>
+                </div>
+                <div className="ni-mod-form-row">
                   <div className="ni-mod-form-group">
                     <label htmlFor="sprintId">Sprint</label>
-                    <select
-                      id="sprintId"
-                      name="sprintId"
-                      value={formData.sprintId}
-                      onChange={handleInputChange}
-                      className="ni-mod-select"
-                    >
+                    <select id="sprintId" name="sprintId" value={formData.sprintId} onChange={handleInputChange} className="ni-mod-select">
                       <option value="">No Sprint (Backlog)</option>
                       {sprints.map((s) => (
                         <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="ni-mod-form-row">
+                  <div className="ni-mod-form-group">
+                    <label htmlFor="storyId">User Story</label>
+                    <select
+                      id="storyId"
+                      name="storyId"
+                      value={formData.storyId}
+                      onChange={handleInputChange}
+                      className="ni-mod-select"
+                    >
+                      <option value="">No Story (Independent Task)</option>
+                      {stories.map((s) => (
+                        <option key={s._id} value={s._id}>{s.title} ({s.status})</option>
                       ))}
                     </select>
                   </div>
@@ -404,6 +428,7 @@ const TaskOverview = () => {
                         deadline: task.deadline,
                         assignee: task.assignee?._id || '',
                         sprintId: task.sprintId?._id || '',
+                        storyId: task.storyId?._id || task.storyId || '',
                         tags: task.tags || []
                       });
                     }}
@@ -492,6 +517,10 @@ const TaskOverview = () => {
               <i className="fas fa-running"></i>
               <span>Sprints</span>
             </button>
+            <button className="sidebar-link" onClick={() => navigate(`/project/${project._id}/overview?view=stories`)}>
+              <i className="fas fa-book"></i>
+              <span>User Stories</span>
+            </button>
             <button className="sidebar-link" onClick={() => navigate(`/project/${project._id}/overview?view=settings`)}>
               <i className="fas fa-cog"></i>
               <span>Settings</span>
@@ -550,6 +579,12 @@ const TaskOverview = () => {
                             task.type === 'feature' ? 'Feature' :
                               task.type === 'documentation' ? 'Documentation' :
                                 task.type.charAt(0).toUpperCase() + task.type.slice(1)}
+                    </span>
+                  </div>
+                  <div className="to-meta-item">
+                    <span className="to-meta-label">User Story</span>
+                    <span className="to-meta-value">
+                      {task.storyId ? (stories.find(s => s._id === (task.storyId?._id || task.storyId))?.title || 'Story') : 'None'}
                     </span>
                   </div>
                   <div className="to-meta-item">
