@@ -9,6 +9,7 @@ import LoadingAnimation from './LoadingAnimation';
 
 import '../styles/ProjectOverview.css';
 import '../styles/TaskOverviewCompact.css';
+import '../styles/IssueModal.css';
 import Footer from './Footer';
 
 const TaskOverview = () => {
@@ -189,29 +190,29 @@ const TaskOverview = () => {
   };
 
   const ErrorModal = () => (
-    <div className="modal-overlay">
-      <div className="modal-content error-modal">
-        <div className="modal-header">
-          <h2>Access Denied</h2>
+    <div className="ni-mod-overlay">
+      <div className="ni-mod-content" style={{ maxWidth: '400px' }}>
+        <div className="ni-mod-header" style={{ background: '#fff5f5' }}>
+          <h2 className="ni-mod-title" style={{ color: '#c53030' }}>Access Denied</h2>
           <button
-            className="modal-close"
+            className="ni-mod-close"
             onClick={() => {
               setShowErrorModal(false);
               setErrorMessage('');
             }}
           >
-            ×
+            &times;
           </button>
         </div>
-        <div className="modal-body">
-          <div className="error-icon">
+        <div className="ni-mod-body" style={{ textAlign: 'center', padding: '1.5rem' }}>
+          <div className="error-icon" style={{ fontSize: '3rem', color: '#f56565', marginBottom: '1rem' }}>
             <i className="fas fa-exclamation-circle"></i>
           </div>
-          <p className="error-message">{errorMessage}</p>
+          <p className="error-message" style={{ color: '#4a5568', fontWeight: '500' }}>{errorMessage}</p>
         </div>
-        <div className="modal-actions">
+        <div className="ni-mod-actions">
           <button
-            className="btn btn-secondary"
+            className="ni-mod-btn-secondary"
             onClick={() => {
               setShowErrorModal(false);
               setErrorMessage('');
@@ -244,12 +245,12 @@ const TaskOverview = () => {
 
       {/* Edit Modal */}
       {editing && (
-        <div className="to-modal-overlay">
-          <div className="to-modal-content">
-            <div className="to-modal-header">
-              <h2>Edit Issue</h2>
+        <div className="ni-mod-overlay">
+          <div className="ni-mod-content">
+            <div className="ni-mod-header">
+              <h2 className="ni-mod-title">Edit Issue</h2>
               <button
-                className="to-modal-close"
+                className="ni-mod-close"
                 onClick={() => {
                   setEditing(false);
                   setFormData({
@@ -264,13 +265,13 @@ const TaskOverview = () => {
                   });
                 }}
               >
-                ×
+                &times;
               </button>
             </div>
-            <form onSubmit={handleSubmit}>
-              <div className="to-modal-body">
-                <div className="to-form-row">
-                  <div className="to-form-group">
+            <div className="ni-mod-body">
+              <form onSubmit={handleSubmit} className="ni-mod-form">
+                <div className="ni-mod-form-row">
+                  <div className="ni-mod-form-group">
                     <label htmlFor="title">Title</label>
                     <input
                       type="text"
@@ -278,35 +279,18 @@ const TaskOverview = () => {
                       name="title"
                       value={formData.title}
                       onChange={handleInputChange}
-                      className="to-input"
+                      className="ni-mod-input"
                       required
                     />
                   </div>
-                </div>
-
-                <div className="to-form-row">
-                  <div className="to-form-group">
-                    <label htmlFor="description">Description</label>
-                    <textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      className="to-input"
-                      rows="2"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-row-compact">
-                  <div className="form-group-compact">
+                  <div className="ni-mod-form-group">
                     <label htmlFor="type">Type</label>
                     <select
                       id="type"
                       name="type"
                       value={showCustomType ? 'custom' : formData.type}
                       onChange={handleInputChange}
-                      className="to-input"
+                      className="ni-mod-select"
                       required
                     >
                       <option value="tech">Technical</option>
@@ -316,19 +300,39 @@ const TaskOverview = () => {
                       <option value="documentation">Documentation</option>
                       <option value="custom">Custom Type</option>
                     </select>
-                    {showCustomType && (
-                      <input
-                        type="text"
-                        name="customType"
-                        value={formData.customType}
-                        onChange={handleInputChange}
-                        className="to-input"
-                        placeholder="Enter custom issue type"
-                        required
-                      />
-                    )}
                   </div>
-                  <div className="form-group-compact">
+                </div>
+
+                {showCustomType && (
+                  <div className="ni-mod-form-group">
+                    <label htmlFor="customType">Custom Type</label>
+                    <input
+                      type="text"
+                      name="customType"
+                      value={formData.customType}
+                      onChange={handleInputChange}
+                      className="ni-mod-input"
+                      placeholder="Enter custom issue type"
+                      required
+                    />
+                  </div>
+                )}
+
+                <div className="ni-mod-form-group">
+                  <label htmlFor="description">Description</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    className="ni-mod-textarea"
+                    rows="2"
+                    placeholder="Issue description"
+                  />
+                </div>
+
+                <div className="ni-mod-form-row">
+                  <div className="ni-mod-form-group">
                     <label htmlFor="deadline">Deadline</label>
                     <input
                       type="date"
@@ -336,105 +340,104 @@ const TaskOverview = () => {
                       name="deadline"
                       value={formData.deadline}
                       onChange={handleInputChange}
-                      className="to-input"
+                      className="ni-mod-input"
+                    />
+                  </div>
+                  <div className="ni-mod-form-group">
+                    <label htmlFor="sprintId">Sprint</label>
+                    <select
+                      id="sprintId"
+                      name="sprintId"
+                      value={formData.sprintId}
+                      onChange={handleInputChange}
+                      className="ni-mod-select"
+                    >
+                      <option value="">No Sprint (Backlog)</option>
+                      {sprints.map((s) => (
+                        <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="ni-mod-form-row">
+                  {project?.projectType === 'collaborative' && (
+                    <div className="ni-mod-form-group">
+                      <label htmlFor="assignee">Assignee</label>
+                      <select
+                        id="assignee"
+                        name="assignee"
+                        value={formData.assignee}
+                        onChange={handleInputChange}
+                        className="ni-mod-select"
+                      >
+                        <option value="">Select Assignee</option>
+                        {project.collaborators.map((collab) => (
+                          <option key={collab.userId._id} value={collab.userId._id}>
+                            {collab.userId.username}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  <div className="ni-mod-form-group">
+                    <TagSelector
+                      projectTags={project.tags || []}
+                      selectedTagIds={formData.tags}
+                      onChange={(tags) => setFormData(prev => ({ ...prev, tags }))}
                     />
                   </div>
                 </div>
 
-                {project?.projectType === 'collaborative' && (
-                  <>
-                    <div className="form-row-compact">
-                      <div className="form-group-compact">
-                        <label htmlFor="assignee">Assignee</label>
-                        <select
-                          id="assignee"
-                          name="assignee"
-                          value={formData.assignee}
-                          onChange={handleInputChange}
-                          className="to-input"
-                        >
-                          <option value="">Select Assignee</option>
-                          {project.collaborators.map((collab) => (
-                            <option key={collab.userId._id} value={collab.userId._id}>
-                              {collab.userId.username}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    <div className="form-row-compact">
-                      <div className="form-group-compact">
-                        <label htmlFor="sprintId">Sprint</label>
-                        <select
-                          id="sprintId"
-                          name="sprintId"
-                          value={formData.sprintId}
-                          onChange={handleInputChange}
-                          className="to-input"
-                        >
-                          <option value="">No Sprint (Backlog)</option>
-                          {sprints.map((s) => (
-                            <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    <div className="form-group-compact">
-                      <TagSelector
-                        projectTags={project.tags || []}
-                        selectedTagIds={formData.tags}
-                        onChange={(tags) => setFormData(prev => ({ ...prev, tags }))}
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-              <div className="to-modal-actions">
-                <button type="submit" className="to-btn-primary">Save Changes</button>
-                <button
-                  type="button"
-                  className="to-btn-secondary"
-                  onClick={() => {
-                    setEditing(false);
-                    setFormData({
-                      title: task.title,
-                      description: task.description,
-                      type: task.type,
-                      status: task.status,
-                      deadline: task.deadline,
-                      assignee: task.assignee?._id || '',
-                      tags: task.tags || []
-                    });
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                <div className="ni-mod-actions">
+                  <button type="submit" className="ni-mod-btn-primary">Save Changes</button>
+                  <button
+                    type="button"
+                    className="ni-mod-btn-secondary"
+                    onClick={() => {
+                      setEditing(false);
+                      setFormData({
+                        title: task.title,
+                        description: task.description,
+                        type: task.type,
+                        status: task.status,
+                        deadline: task.deadline,
+                        assignee: task.assignee?._id || '',
+                        sprintId: task.sprintId?._id || '',
+                        tags: task.tags || []
+                      });
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
 
       {/* Danger Zone Modal */}
       {showDangerModal && (
-        <div className="to-modal-overlay">
-          <div className="to-modal-content to-modal-danger">
-            <div className="to-modal-header">
-              <h2>Danger Zone</h2>
-              <button className="to-modal-close" onClick={() => setShowDangerModal(false)}>
-                ×
+        <div className="ni-mod-overlay">
+          <div className="ni-mod-content ni-mod-danger" style={{ maxWidth: '450px' }}>
+            <div className="ni-mod-header" style={{ background: '#fff5f5' }}>
+              <h2 className="ni-mod-title" style={{ color: '#c53030' }}>Danger Zone</h2>
+              <button className="ni-mod-close" onClick={() => setShowDangerModal(false)}>
+                &times;
               </button>
             </div>
-            <div className="to-modal-body">
-              <div className="to-danger-warning">
-                <i className="fas fa-exclamation-triangle"></i>
-                <h3>Delete this issue</h3>
-                <p>Once you delete this issue, there is no going back. Please be certain.</p>
+            <div className="ni-mod-body">
+              <div className="to-danger-warning" style={{ textAlign: 'center', padding: '1rem' }}>
+                <i className="fas fa-exclamation-triangle" style={{ fontSize: '3rem', color: '#f56565', marginBottom: '1rem' }}></i>
+                <h3 style={{ color: '#2d3748', marginBottom: '0.5rem' }}>Delete this issue</h3>
+                <p style={{ color: '#718096' }}>Once you delete this issue, there is no going back. Please be certain.</p>
               </div>
             </div>
-            <div className="to-modal-actions">
+            <div className="ni-mod-actions" style={{ background: '#f8fafc' }}>
               <button
-                className="to-btn-danger"
+                className="ni-mod-btn-primary"
+                style={{ background: '#e53e3e' }}
                 onClick={() => {
                   setShowDangerModal(false);
                   setShowDeleteConfirm(true);
@@ -443,7 +446,7 @@ const TaskOverview = () => {
                 <i className="fas fa-trash"></i> Delete Issue
               </button>
               <button
-                className="to-btn-secondary"
+                className="ni-mod-btn-secondary"
                 onClick={() => setShowDangerModal(false)}
               >
                 Cancel
@@ -700,35 +703,23 @@ const TaskOverview = () => {
 
 
       {showDeleteConfirm && (
-        <div className="dc-overlay">
-          <div className="dc-modal">
-            <div className="dc-header">
-              <div className="dc-icon-wrapper">
-                <i className="fas fa-exclamation-triangle"></i>
-              </div>
-              <h2 className="dc-title">Delete Issue</h2>
+        <div className="ni-mod-overlay">
+          <div className="ni-mod-content" style={{ maxWidth: '400px' }}>
+            <div className="ni-mod-header">
+              <h2 className="ni-mod-title">Final Confirmation</h2>
+              <button className="ni-mod-close" onClick={() => setShowDeleteConfirm(false)}>&times;</button>
             </div>
-            <div className="dc-body">
-              <p className="dc-message">Are you sure you want to permanently delete this issue?</p>
-              <div className="dc-item-preview">
-                <span className="dc-label">Selected:</span>
-                <span className="dc-value">"{task.title}"</span>
+            <div className="ni-mod-body">
+              <p style={{ color: '#4a5568', marginBottom: '1rem' }}>Are you sure you want to permanently delete this issue?</p>
+              <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1rem' }}>
+                <span style={{ fontSize: '0.8rem', color: '#718096', display: 'block' }}>Selected:</span>
+                <span style={{ fontWeight: '600', color: '#2d3748' }}>"{task.title}"</span>
               </div>
-              <p className="dc-warning">This action cannot be undone.</p>
+              <p style={{ color: '#e53e3e', fontSize: '0.85rem', fontWeight: '500' }}>This action cannot be undone.</p>
             </div>
-            <div className="dc-actions">
-              <button
-                className="dc-btn-cancel"
-                onClick={() => setShowDeleteConfirm(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="dc-btn-delete"
-                onClick={handleDelete}
-              >
-                Delete Issue
-              </button>
+            <div className="ni-mod-actions">
+              <button className="ni-mod-btn-secondary" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
+              <button className="ni-mod-btn-primary" style={{ background: '#e53e3e' }} onClick={handleDelete}>Delete Issue</button>
             </div>
           </div>
         </div>

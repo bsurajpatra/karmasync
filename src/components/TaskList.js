@@ -9,6 +9,7 @@ import '../styles/Tags.css';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/TaskList.css';
 import '../styles/ProjectOverview.css';
+import '../styles/IssueModal.css';
 import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
 
@@ -21,7 +22,7 @@ const TaskList = () => {
   const [error, setError] = useState('');
   const [project, setProject] = useState(null);
   const [taskSearchTerm, setTaskSearchTerm] = useState('');
-  const [tagFilter, setTagFilter] = useState('all');
+  const [tagFilter, setTagFilter] = useState([]);
 
   // Issue Modal State
   const [showAddIssueModal, setShowAddIssueModal] = useState(false);
@@ -374,25 +375,15 @@ const TaskList = () => {
                   </div>
                   <div className="tasks-header-actions">
                     {project?.tags?.length > 0 && (
-                      <div className="tag-filter-wrapper">
-                        <select
-                          className="tag-filter-select"
-                          value={tagFilter}
-                          onChange={(e) => setTagFilter(e.target.value)}
-                          style={{
-                            padding: '6px 12px',
-                            borderRadius: '6px',
-                            border: '1px solid #e2e8f0',
-                            fontSize: '0.85rem',
-                            marginRight: '12px',
-                            outline: 'none'
-                          }}
-                        >
-                          <option value="all">All Tags</option>
-                          {project.tags.map(tag => (
-                            <option key={tag._id} value={tag._id}>{tag.name}</option>
-                          ))}
-                        </select>
+                      <div className="tag-filter-wrapper" style={{ marginRight: '12px', position: 'relative', zIndex: 1000 }}>
+                        <TagSelector
+                          projectTags={project.tags || []}
+                          selectedTagIds={tagFilter}
+                          onChange={(tags) => setTagFilter(tags)}
+                          label=""
+                          placeholder="Filter tags..."
+                          compact
+                        />
                       </div>
                     )}
                     <button className="btn btn-primary" onClick={handleAddIssueClick}>
@@ -459,7 +450,7 @@ const TaskList = () => {
                   (task.description && task.description.toLowerCase().includes(taskSearchTerm.toLowerCase()));
 
                 const matchesSprint = !sprintFilter || (task.sprintId && (task.sprintId._id === sprintFilter || task.sprintId === sprintFilter));
-                const matchesTag = tagFilter === 'all' || (task.tags && task.tags.includes(tagFilter));
+                const matchesTag = tagFilter.length === 0 || (task.tags && tagFilter.some(id => task.tags.includes(id)));
 
                 return matchesSearch && matchesSprint && matchesTag;
               });
@@ -543,296 +534,304 @@ const TaskList = () => {
         </div>
       </div>
 
-      {showAddIssueModal && (
-        <div className="modal-overlay issue-modal-overlay">
-          <div className="modal-content issue-modal issue-modal--tasks">
-            <div className="modal-header issue-modal__header">
-              <h2 className="issue-modal__title">Add New Issue</h2>
-              <button className="modal-close issue-modal__close-btn" onClick={handleModalClose}>&times;</button>
-            </div>
-            <div className="modal-body issue-modal__body">
-              <form onSubmit={handleIssueFormSubmit} className="issue-form issue-form--tasks">
-                {/* Form Inputs similar to original */}
-                <div className="form-row issue-form__row">
-                  <div className="form-group issue-form__group">
-                    <label htmlFor="title">Title</label>
-                    <input
-                      type="text"
-                      id="title"
-                      name="title"
-                      value={issueFormData.title}
-                      onChange={handleIssueFormChange}
-                      required
-                      className="form-control issue-input issue-input--title"
-                    />
-                  </div>
-                  <div className="form-group issue-form__group">
-                    <label htmlFor="type">Type</label>
-                    <select id="type" name="type" value={showCustomType ? 'custom' : issueFormData.type} onChange={handleIssueFormChange} className="form-control">
-                      <option value="tech">Technical</option>
-                      <option value="review">Review</option>
-                      <option value="bug">Bug</option>
-                      <option value="feature">Feature</option>
-                      <option value="documentation">Documentation</option>
-                      <option value="custom">Custom Type</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-row issue-form__row">
-                  <div className="form-group issue-form__group">
-                    <label htmlFor="description">Description</label>
-                    <textarea id="description" name="description" value={issueFormData.description} onChange={handleIssueFormChange} className="form-control" rows="2" />
-                  </div>
-                </div>
-                <div className="form-row issue-form__row">
-                  <div className="form-group issue-form__group">
-                    <label htmlFor="status">Status</label>
-                    <select id="status" name="status" value={issueFormData.status} onChange={handleIssueFormChange} className="form-control">
-                      <option value="todo">To Do</option>
-                      <option value="doing">Doing</option>
-                      <option value="done">Done</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="deadline">Deadline</label>
-                    <input type="date" id="deadline" name="deadline" value={issueFormData.deadline} onChange={handleIssueFormChange} className="form-control" />
-                  </div>
-                </div>
-                <div className="form-row issue-form__row">
-                  <div className="form-group issue-form__group">
-                    <label htmlFor="sprintId">Sprint</label>
-                    <select id="sprintId" name="sprintId" value={issueFormData.sprintId} onChange={handleIssueFormChange} className="form-control">
-                      <option value="">No Sprint (Backlog)</option>
-                      {sprints.map((s) => (
-                        <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="form-group issue-form__group">
-                    <TagSelector
-                      projectTags={project.tags || []}
-                      selectedTagIds={issueFormData.tags}
-                      onChange={(tags) => setIssueFormData(prev => ({ ...prev, tags }))}
-                    />
-                  </div>
-                </div>
-                {project?.projectType === 'collaborative' && (
-                  <div className="form-row issue-form__row">
-                    <div className="form-group issue-form__group">
-                      <label htmlFor="assignee">Assignee</label>
-                      <select id="assignee" name="assignee" value={issueFormData.assignee} onChange={handleIssueFormChange} className="form-control">
-                        <option value="">Select Assignee</option>
-                        {project.collaborators.map((collab) => (
-                          <option key={collab.userId._id} value={collab.userId._id}>{collab.userId.username}</option>
-                        ))}
+      {
+        showAddIssueModal && (
+          <div className="ni-mod-overlay">
+            <div className="ni-mod-content">
+              <div className="ni-mod-header">
+                <h2 className="ni-mod-title">Add New Issue</h2>
+                <button className="ni-mod-close" onClick={handleModalClose}>&times;</button>
+              </div>
+              <div className="ni-mod-body">
+                <form onSubmit={handleIssueFormSubmit} className="ni-mod-form">
+                  <div className="ni-mod-form-row">
+                    <div className="ni-mod-form-group">
+                      <label htmlFor="title">Title</label>
+                      <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        value={issueFormData.title}
+                        onChange={handleIssueFormChange}
+                        required
+                        className="ni-mod-input"
+                        placeholder="Issue title"
+                      />
+                    </div>
+                    <div className="ni-mod-form-group">
+                      <label htmlFor="type">Type</label>
+                      <select id="type" name="type" value={showCustomType ? 'custom' : issueFormData.type} onChange={handleIssueFormChange} className="ni-mod-select">
+                        <option value="tech">Technical</option>
+                        <option value="review">Review</option>
+                        <option value="bug">Bug</option>
+                        <option value="feature">Feature</option>
+                        <option value="documentation">Documentation</option>
+                        <option value="custom">Custom Type</option>
                       </select>
                     </div>
                   </div>
-                )}
-                {showCustomType && (
-                  <div className="form-row issue-form__row">
-                    <div className="form-group issue-form__group">
-                      <label htmlFor="customType">Custom Type</label>
-                      <input type="text" name="customType" value={issueFormData.customType} onChange={handleIssueFormChange} className="form-control" required />
+                  <div className="ni-mod-form-row">
+                    <div className="ni-mod-form-group">
+                      <label htmlFor="description">Description</label>
+                      <textarea id="description" name="description" value={issueFormData.description} onChange={handleIssueFormChange} className="ni-mod-textarea" rows="2" placeholder="Issue description" />
                     </div>
                   </div>
-                )}
-                <div className="modal-actions issue-modal__actions">
-                  <button type="submit" className="btn btn-primary issue-modal__primary-btn">Create Issue</button>
-                  <button type="button" className="btn btn-secondary issue-modal__secondary-btn" onClick={handleModalClose}>Cancel</button>
-                </div>
-              </form>
+                  <div className="ni-mod-form-row">
+                    <div className="ni-mod-form-group">
+                      <label htmlFor="status">Status</label>
+                      <select id="status" name="status" value={issueFormData.status} onChange={handleIssueFormChange} className="ni-mod-select">
+                        <option value="todo">To Do</option>
+                        <option value="doing">Doing</option>
+                        <option value="done">Done</option>
+                      </select>
+                    </div>
+                    <div className="ni-mod-form-group">
+                      <label htmlFor="deadline">Deadline</label>
+                      <input type="date" id="deadline" name="deadline" value={issueFormData.deadline} onChange={handleIssueFormChange} className="ni-mod-input" />
+                    </div>
+                  </div>
+                  <div className="ni-mod-form-row">
+                    <div className="ni-mod-form-group">
+                      <label htmlFor="sprintId">Sprint</label>
+                      <select id="sprintId" name="sprintId" value={issueFormData.sprintId} onChange={handleIssueFormChange} className="ni-mod-select">
+                        <option value="">No Sprint (Backlog)</option>
+                        {sprints.map((s) => (
+                          <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="ni-mod-form-group">
+                      <TagSelector
+                        projectTags={project.tags || []}
+                        selectedTagIds={issueFormData.tags}
+                        onChange={(tags) => setIssueFormData(prev => ({ ...prev, tags }))}
+                      />
+                    </div>
+                  </div>
+                  {project?.projectType === 'collaborative' && (
+                    <div className="ni-mod-form-row">
+                      <div className="ni-mod-form-group">
+                        <label htmlFor="assignee">Assignee</label>
+                        <select id="assignee" name="assignee" value={issueFormData.assignee} onChange={handleIssueFormChange} className="ni-mod-select">
+                          <option value="">Select Assignee</option>
+                          {project.collaborators.map((collab) => (
+                            <option key={collab.userId._id} value={collab.userId._id}>{collab.userId.username}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  )}
+                  {showCustomType && (
+                    <div className="ni-mod-form-row">
+                      <div className="ni-mod-form-group">
+                        <label htmlFor="customType">Custom Type</label>
+                        <input type="text" name="customType" value={issueFormData.customType} onChange={handleIssueFormChange} className="ni-mod-input" required />
+                      </div>
+                    </div>
+                  )}
+                  <div className="ni-mod-actions">
+                    <button type="submit" className="ni-mod-btn-primary">Create Issue</button>
+                    <button type="button" className="ni-mod-btn-secondary" onClick={handleModalClose}>Cancel</button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
-      {showAddCollaborator && (
-        <div className="settings-dialog-overlay">
-          <div className="settings-dialog-content settings-dialog-wide">
-            <div className="settings-dialog-header">
-              <h3>Manage Collaborators</h3>
-              <button
-                className="settings-dialog-close"
-                onClick={() => {
-                  setShowAddCollaborator(false);
-                  setSelectedUser(null);
-                  setSearchTerm('');
-                  setSearchResults([]);
-                  setIsUpdatingRole(false);
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div className="settings-dialog-body">
-              <div className="collab-tabs">
+      {
+        showAddCollaborator && (
+          <div className="settings-dialog-overlay">
+            <div className="settings-dialog-content settings-dialog-wide">
+              <div className="settings-dialog-header">
+                <h3>Manage Collaborators</h3>
                 <button
-                  className={`collab-tab ${!selectedUser ? 'active' : ''}`}
-                  onClick={() => setSelectedUser(null)}
+                  className="settings-dialog-close"
+                  onClick={() => {
+                    setShowAddCollaborator(false);
+                    setSelectedUser(null);
+                    setSearchTerm('');
+                    setSearchResults([]);
+                    setIsUpdatingRole(false);
+                  }}
                 >
-                  <i className="fas fa-plus"></i> Add Collaborator
+                  ×
                 </button>
-                {project.collaborators.length > 0 && (
-                  <button
-                    className={`collab-tab ${selectedUser ? 'active' : ''}`}
-                    onClick={() => setSelectedUser(project.collaborators[0]?.userId)}
-                  >
-                    <i className="fas fa-users-cog"></i> Manage Team
-                  </button>
-                )}
               </div>
-              {selectedUser ? (
-                <div className="collab-manage-wrapper">
-                  <div className="collab-list">
-                    {project.collaborators.map((collab) => (
-                      <div key={collab.userId._id} className="collab-manage-item">
-                        <div className="collab-user-info">
-                          <span className="collab-name">{collab.userId.fullName || 'N/A'}</span>
-                          <span className="collab-username">{collab.userId.username}</span>
-                          <span className="collab-role {collab.role}">
-                            {collab.role === 'manager' ? 'Project Manager' : 'Developer'}
-                          </span>
-                        </div>
-                        <div className="collab-actions">
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => {
-                              if (!user || !user._id) {
-                                setErrorMessage('Please wait while we load your user information');
-                                setShowErrorModal(true);
-                                return;
-                              }
-                              if (project.currentUserRole !== 'manager') {
-                                setErrorMessage('Only Project Managers can update roles');
-                                setShowErrorModal(true);
-                                return;
-                              }
-                              if (collab.userId._id === user._id) {
-                                setErrorMessage('Self-role change is not allowed');
-                                setShowErrorModal(true);
-                                return;
-                              }
-                              setSelectedUser(collab.userId);
-                              setIsUpdatingRole(true);
-                              setShowRoleModal(true);
-                            }}
-                          >
-                            <i className="fas fa-user-edit"></i> Update Role
-                          </button>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => {
-                              const isCreator = project.createdBy && user && project.createdBy._id === user._id;
-                              const isManager = project.currentUserRole === 'manager';
-                              if (!isCreator && !isManager) {
-                                setErrorMessage('Only Project Managers can remove collaborators');
-                                setShowErrorModal(true);
-                                return;
-                              }
-                              if (collab.userId._id === user._id) {
-                                setShowSelfRemoveModal(true);
-                                return;
-                              }
-                              setRemovingCollaborator(collab);
-                              setShowRemoveModal(true);
-                            }}
-                          >
-                            <i className="fas fa-user-minus"></i> Remove
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              <div className="settings-dialog-body">
+                <div className="collab-tabs">
+                  <button
+                    className={`collab-tab ${!selectedUser ? 'active' : ''}`}
+                    onClick={() => setSelectedUser(null)}
+                  >
+                    <i className="fas fa-plus"></i> Add Collaborator
+                  </button>
+                  {project.collaborators.length > 0 && (
+                    <button
+                      className={`collab-tab ${selectedUser ? 'active' : ''}`}
+                      onClick={() => setSelectedUser(project.collaborators[0]?.userId)}
+                    >
+                      <i className="fas fa-users-cog"></i> Manage Team
+                    </button>
+                  )}
                 </div>
-              ) : (
-                <div className="collab-search-wrapper">
-                  <input
-                    type="text"
-                    placeholder="Search users"
-                    value={searchTerm}
-                    onChange={handleSearch}
-                    className="collab-search-field"
-                  />
-                  {searchResults.length > 0 && (
-                    <div className="collab-search-results">
-                      {searchResults.map(u => (
-                        <div
-                          key={u._id}
-                          className="collab-search-item"
-                          onClick={() => handleAddCollaborator(u)}
-                        >
+                {selectedUser ? (
+                  <div className="collab-manage-wrapper">
+                    <div className="collab-list">
+                      {project.collaborators.map((collab) => (
+                        <div key={collab.userId._id} className="collab-manage-item">
                           <div className="collab-user-info">
-                            <span className="collab-username">{u.username}</span>
-                            <span className="collab-email">{u.email}</span>
+                            <span className="collab-name">{collab.userId.fullName || 'N/A'}</span>
+                            <span className="collab-username">{collab.userId.username}</span>
+                            <span className="collab-role {collab.role}">
+                              {collab.role === 'manager' ? 'Project Manager' : 'Developer'}
+                            </span>
                           </div>
-                          <i className="fas fa-chevron-right"></i>
+                          <div className="collab-actions">
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => {
+                                if (!user || !user._id) {
+                                  setErrorMessage('Please wait while we load your user information');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+                                if (project.currentUserRole !== 'manager') {
+                                  setErrorMessage('Only Project Managers can update roles');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+                                if (collab.userId._id === user._id) {
+                                  setErrorMessage('Self-role change is not allowed');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+                                setSelectedUser(collab.userId);
+                                setIsUpdatingRole(true);
+                                setShowRoleModal(true);
+                              }}
+                            >
+                              <i className="fas fa-user-edit"></i> Update Role
+                            </button>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => {
+                                const isCreator = project.createdBy && user && project.createdBy._id === user._id;
+                                const isManager = project.currentUserRole === 'manager';
+                                if (!isCreator && !isManager) {
+                                  setErrorMessage('Only Project Managers can remove collaborators');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+                                if (collab.userId._id === user._id) {
+                                  setShowSelfRemoveModal(true);
+                                  return;
+                                }
+                                setRemovingCollaborator(collab);
+                                setShowRemoveModal(true);
+                              }}
+                            >
+                              <i className="fas fa-user-minus"></i> Remove
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
-                  )}
-                  {searchTerm.length >= 2 && !searchLoading && searchResults.length === 0 && (
-                    <div className="collab-no-results">No users found</div>
-                  )}
-                </div>
-              )}
+                  </div>
+                ) : (
+                  <div className="collab-search-wrapper">
+                    <input
+                      type="text"
+                      placeholder="Search users"
+                      value={searchTerm}
+                      onChange={handleSearch}
+                      className="collab-search-field"
+                    />
+                    {searchResults.length > 0 && (
+                      <div className="collab-search-results">
+                        {searchResults.map(u => (
+                          <div
+                            key={u._id}
+                            className="collab-search-item"
+                            onClick={() => handleAddCollaborator(u)}
+                          >
+                            <div className="collab-user-info">
+                              <span className="collab-username">{u.username}</span>
+                              <span className="collab-email">{u.email}</span>
+                            </div>
+                            <i className="fas fa-chevron-right"></i>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {searchTerm.length >= 2 && !searchLoading && searchResults.length === 0 && (
+                      <div className="collab-no-results">No users found</div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
-      {showRoleModal && (
-        <div className="settings-dialog-overlay">
-          <div className="settings-dialog-content">
-            <div className="settings-dialog-header">
-              <h2>Select Role for {selectedUser?.username}</h2>
-              <button
-                className="settings-dialog-close"
-                onClick={() => {
-                  setShowRoleModal(false);
-                  setSelectedUser(null);
-                  setIsUpdatingRole(false);
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div className="settings-dialog-body">
-              {isAddingCollaborator ? (
-                <LoadingAnimation message={isUpdatingRole ? 'Updating role...' : 'Adding...'} />
-              ) : (
-                <div className="role-options">
-                  <button className="role-option manager" onClick={() => handleRoleSelect('manager')}>
-                    <h4>Project Manager</h4><p>Full access</p>
-                  </button>
-                  <button className="role-option developer" onClick={() => handleRoleSelect('developer')}>
-                    <h4>Developer</h4><p>Task execution</p>
-                  </button>
-                </div>
-              )}
+      {
+        showRoleModal && (
+          <div className="settings-dialog-overlay">
+            <div className="settings-dialog-content">
+              <div className="settings-dialog-header">
+                <h2>Select Role for {selectedUser?.username}</h2>
+                <button
+                  className="settings-dialog-close"
+                  onClick={() => {
+                    setShowRoleModal(false);
+                    setSelectedUser(null);
+                    setIsUpdatingRole(false);
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="settings-dialog-body">
+                {isAddingCollaborator ? (
+                  <LoadingAnimation message={isUpdatingRole ? 'Updating role...' : 'Adding...'} />
+                ) : (
+                  <div className="role-options">
+                    <button className="role-option manager" onClick={() => handleRoleSelect('manager')}>
+                      <h4>Project Manager</h4><p>Full access</p>
+                    </button>
+                    <button className="role-option developer" onClick={() => handleRoleSelect('developer')}>
+                      <h4>Developer</h4><p>Task execution</p>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
-      {showRemoveModal && removingCollaborator && (
-        <div className="settings-dialog-overlay z-top">
-          <div className="settings-dialog-content">
-            <div className="settings-dialog-header">
-              <h2>Remove Collaborator</h2>
-              <button className="settings-dialog-close" onClick={() => setShowRemoveModal(false)}>×</button>
-            </div>
-            <div className="settings-dialog-body">
-              <p>Remove {removingCollaborator.userId.username}?</p>
-            </div>
-            <div className="settings-dialog-actions">
-              <button className="btn btn-secondary" onClick={() => setShowRemoveModal(false)}>Cancel</button>
-              <button className="btn btn-danger" onClick={handleRemoveCollaborator}>Remove</button>
+      {
+        showRemoveModal && removingCollaborator && (
+          <div className="settings-dialog-overlay z-top">
+            <div className="settings-dialog-content">
+              <div className="settings-dialog-header">
+                <h2>Remove Collaborator</h2>
+                <button className="settings-dialog-close" onClick={() => setShowRemoveModal(false)}>×</button>
+              </div>
+              <div className="settings-dialog-body">
+                <p>Remove {removingCollaborator.userId.username}?</p>
+              </div>
+              <div className="settings-dialog-actions">
+                <button className="btn btn-secondary" onClick={() => setShowRemoveModal(false)}>Cancel</button>
+                <button className="btn btn-danger" onClick={handleRemoveCollaborator}>Remove</button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 };
 

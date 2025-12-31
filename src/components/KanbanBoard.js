@@ -10,6 +10,7 @@ import BoardManager from './BoardManager';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/KanbanBoard.css';
 import '../styles/ProjectOverview.css';
+import '../styles/IssueModal.css';
 import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
 import TagSelector from './TagSelector';
@@ -61,7 +62,7 @@ const KanbanBoard = () => {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [removingCollaborator, setRemovingCollaborator] = useState(null);
   const [showSelfRemoveModal, setShowSelfRemoveModal] = useState(false);
-  const [tagFilter, setTagFilter] = useState('all');
+  const [tagFilter, setTagFilter] = useState([]);
 
   useEffect(() => {
     // Detect mobile device by screen width
@@ -772,25 +773,15 @@ const KanbanBoard = () => {
           <div className="kb-actions-header">
             <div className="kb-header-left">
               {project?.tags?.length > 0 && (
-                <div className="tag-filter-wrapper">
-                  <select
-                    className="tag-filter-select"
-                    value={tagFilter}
-                    onChange={(e) => setTagFilter(e.target.value)}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '6px',
-                      border: '1px solid #e2e8f0',
-                      fontSize: '0.85rem',
-                      outline: 'none',
-                      background: 'white'
-                    }}
-                  >
-                    <option value="all">All Tags</option>
-                    {project.tags.map(tag => (
-                      <option key={tag._id} value={tag._id}>{tag.name}</option>
-                    ))}
-                  </select>
+                <div className="tag-filter-wrapper" style={{ position: 'relative', zIndex: 1000 }}>
+                  <TagSelector
+                    projectTags={project.tags || []}
+                    selectedTagIds={tagFilter}
+                    onChange={(tags) => setTagFilter(tags)}
+                    label=""
+                    placeholder="Filter tags..."
+                    compact
+                  />
                 </div>
               )}
             </div>
@@ -817,7 +808,7 @@ const KanbanBoard = () => {
               const filteredBoard = {
                 ...board,
                 items: board.items.filter(task =>
-                  tagFilter === 'all' || (task.tags && task.tags.includes(tagFilter))
+                  tagFilter.length === 0 || (task.tags && tagFilter.some(id => task.tags.includes(id)))
                 )
               };
               return renderBoard(status, filteredBoard);
@@ -1078,12 +1069,12 @@ const KanbanBoard = () => {
 
       {
         showAddIssueModal && (
-          <div className="modal-overlay issue-modal-overlay">
-            <div className="modal-content issue-modal issue-modal--kanban">
-              <div className="modal-header issue-modal__header">
-                <h2 className="issue-modal__title">Add New Issue</h2>
+          <div className="ni-mod-overlay">
+            <div className="ni-mod-content">
+              <div className="ni-mod-header">
+                <h2 className="ni-mod-title">Add New Issue</h2>
                 <button
-                  className="modal-close issue-modal__close-btn"
+                  className="ni-mod-close"
                   onClick={() => {
                     setShowAddIssueModal(false);
                     setShowCustomType(false);
@@ -1101,10 +1092,10 @@ const KanbanBoard = () => {
                   &times;
                 </button>
               </div>
-              <div className="modal-body issue-modal__body">
-                <form onSubmit={handleIssueFormSubmit} className="issue-form issue-form--kanban">
-                  <div className="form-row issue-form__row">
-                    <div className="form-group issue-form__group">
+              <div className="ni-mod-body">
+                <form onSubmit={handleIssueFormSubmit} className="ni-mod-form">
+                  <div className="ni-mod-form-row">
+                    <div className="ni-mod-form-group">
                       <label htmlFor="title">Title</label>
                       <input
                         type="text"
@@ -1113,19 +1104,19 @@ const KanbanBoard = () => {
                         value={issueFormData.title}
                         onChange={handleIssueFormChange}
                         required
-                        className="form-control issue-input issue-input--title"
+                        className="ni-mod-input"
                         placeholder="Enter issue title"
                       />
                     </div>
 
-                    <div className="form-group issue-form__group">
+                    <div className="ni-mod-form-group">
                       <label htmlFor="type">Type</label>
                       <select
                         id="type"
                         name="type"
                         value={showCustomType ? 'custom' : issueFormData.type}
                         onChange={handleIssueFormChange}
-                        className="form-control"
+                        className="ni-mod-select"
                       >
                         <option value="tech">Technical</option>
                         <option value="review">Review</option>
@@ -1137,28 +1128,28 @@ const KanbanBoard = () => {
                     </div>
                   </div>
 
-                  <div className="form-group issue-form__group">
+                  <div className="ni-mod-form-group">
                     <label htmlFor="description">Description</label>
                     <textarea
                       id="description"
                       name="description"
                       value={issueFormData.description}
                       onChange={handleIssueFormChange}
-                      className="form-control"
+                      className="ni-mod-textarea"
                       rows="2"
                       placeholder="Enter issue description"
                     />
                   </div>
 
-                  <div className="form-row issue-form__row">
-                    <div className="form-group issue-form__group">
+                  <div className="ni-mod-form-row">
+                    <div className="ni-mod-form-group">
                       <label htmlFor="status">Status</label>
                       <select
                         id="status"
                         name="status"
                         value={issueFormData.status}
                         onChange={handleIssueFormChange}
-                        className="form-control"
+                        className="ni-mod-select"
                       >
                         <option value="todo">To Do</option>
                         <option value="doing">Doing</option>
@@ -1171,7 +1162,7 @@ const KanbanBoard = () => {
                       </select>
                     </div>
 
-                    <div className="form-group issue-form__group">
+                    <div className="ni-mod-form-group">
                       <label htmlFor="deadline">Deadline</label>
                       <input
                         type="date"
@@ -1179,21 +1170,22 @@ const KanbanBoard = () => {
                         name="deadline"
                         value={issueFormData.deadline}
                         onChange={handleIssueFormChange}
+                        className="ni-mod-input"
                       />
                     </div>
                   </div>
 
-                  <div className="form-row issue-form__row">
-                    <div className="form-group issue-form__group">
+                  <div className="ni-mod-form-row">
+                    <div className="ni-mod-form-group">
                       <label htmlFor="sprintId">Sprint</label>
-                      <select id="sprintId" name="sprintId" value={issueFormData.sprintId} onChange={handleIssueFormChange} className="form-control">
+                      <select id="sprintId" name="sprintId" value={issueFormData.sprintId} onChange={handleIssueFormChange} className="ni-mod-select">
                         <option value="">No Sprint (Backlog)</option>
                         {sprints.map((s) => (
                           <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
                         ))}
                       </select>
                     </div>
-                    <div className="form-group issue-form__group">
+                    <div className="ni-mod-form-group">
                       <TagSelector
                         projectTags={project.tags || []}
                         selectedTagIds={issueFormData.tags}
@@ -1203,7 +1195,7 @@ const KanbanBoard = () => {
                   </div>
 
                   {showCustomType && (
-                    <div className="form-group issue-form__group">
+                    <div className="ni-mod-form-group">
                       <label htmlFor="customType">Custom Type</label>
                       <input
                         type="text"
@@ -1211,7 +1203,7 @@ const KanbanBoard = () => {
                         name="customType"
                         value={issueFormData.customType}
                         onChange={handleIssueFormChange}
-                        className="form-control custom-type-input"
+                        className="ni-mod-input"
                         placeholder="Enter custom issue type"
                         required
                       />
@@ -1219,14 +1211,14 @@ const KanbanBoard = () => {
                   )}
 
                   {project?.projectType === 'collaborative' && (
-                    <div className="form-group issue-form__group">
+                    <div className="ni-mod-form-group">
                       <label htmlFor="assignee">Assignee</label>
                       <select
                         id="assignee"
                         name="assignee"
                         value={issueFormData.assignee}
                         onChange={handleIssueFormChange}
-                        className="form-control"
+                        className="ni-mod-select"
                       >
                         <option value="">Select Assignee</option>
                         {project.collaborators.map((collab) => (
@@ -1238,13 +1230,13 @@ const KanbanBoard = () => {
                     </div>
                   )}
 
-                  <div className="modal-actions issue-modal__actions">
-                    <button type="submit" className="btn btn-primary issue-modal__primary-btn">
+                  <div className="ni-mod-actions">
+                    <button type="submit" className="ni-mod-btn-primary">
                       Create Issue
                     </button>
                     <button
                       type="button"
-                      className="btn btn-secondary issue-modal__secondary-btn"
+                      className="ni-mod-btn-secondary"
                       onClick={() => {
                         setShowAddIssueModal(false);
                         setShowCustomType(false);
@@ -1265,7 +1257,7 @@ const KanbanBoard = () => {
                 </form>
               </div>
             </div>
-          </div >
+          </div>
         )
       }
 

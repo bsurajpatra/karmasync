@@ -3,7 +3,7 @@ import '../styles/Tags.css';
 
 const TAG_COLORS = ['blue', 'purple', 'green', 'yellow', 'orange', 'red', 'gray', 'black'];
 
-const TagSelector = ({ projectTags, selectedTagIds, onChange }) => {
+const TagSelector = ({ projectTags, selectedTagIds, onChange, label = "Tags", placeholder = "Select tags...", compact = false }) => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef(null);
 
@@ -32,23 +32,26 @@ const TagSelector = ({ projectTags, selectedTagIds, onChange }) => {
     const selectedTags = projectTags.filter(tag => selectedTagIds.includes(tag._id));
 
     return (
-        <div className="tag-selector-container" ref={containerRef}>
-            <label style={{ fontSize: '0.95rem', fontWeight: 600, color: '#2d3748', marginBottom: '8px', display: 'block' }}>Tags</label>
+        <div className={`tag-selector-container ${compact ? 'tag-selector--compact' : ''}`} ref={containerRef}>
+            {label && <label style={{ fontSize: '0.95rem', fontWeight: 600, color: '#2d3748', marginBottom: '8px', display: 'block' }}>{label}</label>}
             <div
                 className="tag-selector-input-wrapper"
                 onClick={() => setIsOpen(!isOpen)}
+                style={compact ? { minHeight: '36px', padding: '4px 10px' } : {}}
             >
-                {selectedTags.length > 0 ? (
-                    selectedTags.map(tag => (
-                        <span key={tag._id} className={`selected-tag-item ${tag.color}`}>
-                            {tag.name}
-                            <span className="selected-tag-remove" onClick={(e) => removeTag(e, tag._id)}>&times;</span>
-                        </span>
-                    ))
-                ) : (
-                    <span style={{ color: '#a0aec0', fontSize: '0.95rem', padding: '4px 0' }}>Select tags...</span>
-                )}
-                <i className={`fas fa-chevron-${isOpen ? 'up' : 'down'}`} style={{ marginLeft: 'auto', alignSelf: 'center', fontSize: '0.8rem', color: '#a0aec0' }}></i>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', flex: 1 }}>
+                    {selectedTags.length > 0 ? (
+                        selectedTags.map(tag => (
+                            <span key={tag._id} className={`selected-tag-item ${tag.color}`} style={compact ? { fontSize: '0.7rem', padding: '2px 6px' } : {}}>
+                                {tag.name}
+                                <span className="selected-tag-remove" onClick={(e) => removeTag(e, tag._id)}>&times;</span>
+                            </span>
+                        ))
+                    ) : (
+                        <span style={{ color: '#a0aec0', fontSize: compact ? '0.85rem' : '0.95rem', padding: '2px 0' }}>{placeholder}</span>
+                    )}
+                </div>
+                <i className={`fas fa-chevron-${isOpen ? 'up' : 'down'}`} style={{ marginLeft: '8px', alignSelf: 'center', fontSize: '0.8rem', color: '#a0aec0' }}></i>
             </div>
 
             {isOpen && (
