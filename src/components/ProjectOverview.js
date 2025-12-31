@@ -849,7 +849,7 @@ const ProjectOverview = () => {
               </div>
             </>
           ) : activeView === 'sprints' ? (
-            <div className="project-overview-section">
+            <div className="project-overview-section" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
               <SprintManager projectId={id} currentUserRole={project.currentUserRole} />
             </div>
           ) : (
