@@ -4,6 +4,7 @@ import { getProjectById, updateProject, deleteProject, removeCollaborator, addCo
 import { getTasks, createTask } from '../api/taskApi';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import LoadingAnimation from './LoadingAnimation';
+import SprintManager from './SprintManager';
 import '../styles/ProjectOverview.css';
 import '../styles/ProjectSettings.css';
 import '../styles/Dashboard.css';
@@ -12,6 +13,7 @@ import { searchUsers } from '../api/userApi';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { getSprintsByProject } from '../api/sprintApi';
 
 const ROLE_TYPES = {
   MANAGER: 'manager',
@@ -45,9 +47,11 @@ const ProjectOverview = () => {
     status: 'todo',
     deadline: '',
     customType: '',
-    assignee: ''
+    assignee: '',
+    sprintId: ''
   });
   const [showCustomType, setShowCustomType] = useState(false);
+  const [sprints, setSprints] = useState([]);
   const [showAddCollaborator, setShowAddCollaborator] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -72,7 +76,9 @@ const ProjectOverview = () => {
 
     if (view === 'settings') {
       setActiveView('settings');
-    } else if (view === 'overview') {
+    } else if (view === 'sprints') {
+      setActiveView('sprints');
+    } else {
       setActiveView('overview');
     }
 
@@ -100,6 +106,10 @@ const ProjectOverview = () => {
       setGithubLink(data.githubLink || '');
       setTitle(data.title || '');
       setDescription(data.description || '');
+
+      const sprintsData = await getSprintsByProject(id);
+      setSprints(sprintsData);
+
       setError('');
     } catch (err) {
       console.error('Error fetching project:', err);
@@ -325,6 +335,10 @@ const ProjectOverview = () => {
         type: validatedValue,
         customType: validatedValue
       }));
+    } else if (name === 'assignee') {
+      setIssueFormData(prev => ({ ...prev, assignee: value || null }));
+    } else if (name === 'sprintId') {
+      setIssueFormData(prev => ({ ...prev, sprintId: value || null }));
     } else {
       setIssueFormData(prev => ({
         ...prev,
@@ -369,7 +383,8 @@ const ProjectOverview = () => {
         status: 'todo',
         deadline: '',
         customType: '',
-        assignee: ''
+        assignee: '',
+        sprintId: ''
       });
       setError('');
     } catch (err) {
@@ -643,7 +658,7 @@ const ProjectOverview = () => {
           <nav className="sidebar-nav">
             <button
               className={`sidebar-link ${activeView === 'overview' ? 'active' : ''}`}
-              onClick={() => setActiveView('overview')}
+              onClick={() => navigate(`/project/${id}/overview?view=overview`)}
             >
               <i className="fas fa-home"></i>
               <span>Overview</span>
@@ -656,6 +671,13 @@ const ProjectOverview = () => {
               <i className="fas fa-list-ul"></i>
               <span>View Issues</span>
             </button>
+            <button
+              className={`sidebar-link ${activeView === 'sprints' ? 'active' : ''}`}
+              onClick={() => navigate(`/project/${id}/overview?view=sprints`)}
+            >
+              <i className="fas fa-running"></i>
+              <span>Sprints</span>
+            </button>
             {project.projectType === 'collaborative' && (
               <button className="sidebar-link" onClick={handleCollaboratorClick}>
                 <i className="fas fa-users-cog"></i>
@@ -664,7 +686,7 @@ const ProjectOverview = () => {
             )}
             <button
               className={`sidebar-link ${activeView === 'settings' ? 'active' : ''}`}
-              onClick={() => setActiveView('settings')}
+              onClick={() => navigate(`/project/${id}/overview?view=settings`)}
             >
               <i className="fas fa-cog"></i>
               <span>Settings</span>
@@ -822,6 +844,10 @@ const ProjectOverview = () => {
                 </div>
               </div>
             </>
+          ) : activeView === 'sprints' ? (
+            <div className="project-overview-section">
+              <SprintManager projectId={id} currentUserRole={project.currentUserRole} />
+            </div>
           ) : (
             <div className="settings-view">
               <div className="project-overview-section">
@@ -951,6 +977,24 @@ const ProjectOverview = () => {
                       <option value="feature">Feature</option>
                       <option value="documentation">Documentation</option>
                       <option value="custom">Custom Type</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-row issue-form__row">
+                  <div className="form-group issue-form__group">
+                    <label htmlFor="sprintId">Sprint</label>
+                    <select
+                      id="sprintId"
+                      name="sprintId"
+                      value={issueFormData.sprintId}
+                      onChange={handleIssueFormChange}
+                      className="form-control"
+                    >
+                      <option value="">No Sprint (Backlog)</option>
+                      {sprints.map((s) => (
+                        <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
+                      ))}
                     </select>
                   </div>
                 </div>

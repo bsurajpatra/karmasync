@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getProjectById, addCustomBoard, deleteCustomBoard, removeCollaborator, addCollaborator, updateCollaboratorRole } from '../api/projectApi';
 import { getTasks, updateTaskStatus, createTask } from '../api/taskApi';
 import { searchUsers } from '../api/userApi';
+import { getSprintsByProject } from '../api/sprintApi';
 import axios from 'axios';
 import BoardManager from './BoardManager';
 import LoadingAnimation from './LoadingAnimation';
@@ -34,9 +35,11 @@ const KanbanBoard = () => {
     status: 'todo',
     deadline: '',
     customType: '',
-    assignee: ''
+    assignee: '',
+    sprintId: ''
   });
   const [showCustomType, setShowCustomType] = useState(false);
+  const [sprints, setSprints] = useState([]);
   const [newBoardName, setNewBoardName] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -112,12 +115,14 @@ const KanbanBoard = () => {
 
   const fetchProjectAndTasks = async () => {
     try {
-      const [projectData, tasksData] = await Promise.all([
+      const [projectData, tasksData, sprintsData] = await Promise.all([
         getProjectById(projectId),
-        getTasks(projectId)
+        getTasks(projectId),
+        getSprintsByProject(projectId)
       ]);
 
       setProject(projectData);
+      setSprints(sprintsData);
 
       const groupedTasks = {
         todo: {
@@ -314,6 +319,11 @@ const KanbanBoard = () => {
         type: validatedValue,
         customType: validatedValue
       }));
+    } else if (name === 'assignee' || name === 'sprintId') {
+      setIssueFormData(prev => ({
+        ...prev,
+        [name]: value || null
+      }));
     } else {
       setIssueFormData(prev => ({
         ...prev,
@@ -331,7 +341,9 @@ const KanbanBoard = () => {
         type: issueFormData.type,
         status: issueFormData.status,
         deadline: issueFormData.deadline,
-        projectId: projectId
+        projectId: projectId,
+        assignee: issueFormData.assignee || null,
+        sprintId: issueFormData.sprintId || null
       };
 
       console.log('Creating task with data:', taskData);
@@ -360,7 +372,8 @@ const KanbanBoard = () => {
         status: 'todo',
         deadline: '',
         customType: '',
-        assignee: ''
+        assignee: '',
+        sprintId: ''
       });
       setError('');
     } catch (err) {
@@ -659,6 +672,11 @@ const KanbanBoard = () => {
                           task.type === 'documentation' ? 'Documentation' :
                             task.type ? task.type.charAt(0).toUpperCase() + task.type.slice(1) : 'Task'}
                 </span>
+                {task.sprintId && (
+                  <span className={`kbn-issue-card__type kbn-issue-card__type--${task.sprintId.status}`} style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem' }}>
+                    {task.sprintId.name}
+                  </span>
+                )}
                 {task.deadline && (
                   <div className="kbn-issue-card__deadline">
                     <i className="far fa-clock"></i>
@@ -710,6 +728,10 @@ const KanbanBoard = () => {
               <i className="fas fa-list-ul"></i>
               <span>View Issues</span>
             </button>
+            <button className="sidebar-link" onClick={() => navigate(`/project/${projectId}/overview?view=sprints`)}>
+              <i className="fas fa-running"></i>
+              <span>Sprints</span>
+            </button>
             {project.projectType === 'collaborative' && (
               <button className="sidebar-link" onClick={handleManageCollaboratorsClick}>
                 <i className="fas fa-users-cog"></i>
@@ -727,11 +749,10 @@ const KanbanBoard = () => {
             </button>
           </nav>
         </div>
-
         <div className="project-overview-container kb-main-container">
           <div className="kb-actions-header">
             <div className="kb-header-left">
-              {/* Actions space */}
+              {/* Optional labels or Breadcrumbs could go here */}
             </div>
             <div className="kb-header-right">
               <button
@@ -756,7 +777,6 @@ const KanbanBoard = () => {
               renderBoard(status, board)
             ))}
           </div>
-
         </div>
       </div>
 
@@ -809,382 +829,402 @@ const KanbanBoard = () => {
         </div>
       )}
 
-      {showAddCollaborator && (
-        <div className="settings-dialog-overlay">
-          <div className="settings-dialog-content settings-dialog-wide">
-            <div className="settings-dialog-header">
-              <h3>Manage Collaborators</h3>
-              <button
-                className="settings-dialog-close"
-                onClick={() => {
-                  setShowAddCollaborator(false);
-                  setSelectedUser(null);
-                  setSearchTerm('');
-                  setSearchResults([]);
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div className="settings-dialog-body">
-              {error && <div className="error-message">{error}</div>}
-              <div className="collab-tabs">
+      {
+        showAddCollaborator && (
+          <div className="settings-dialog-overlay">
+            <div className="settings-dialog-content settings-dialog-wide">
+              <div className="settings-dialog-header">
+                <h3>Manage Collaborators</h3>
                 <button
-                  className={`collab-tab ${!selectedUser ? 'active' : ''}`}
-                  onClick={() => setSelectedUser(null)}
+                  className="settings-dialog-close"
+                  onClick={() => {
+                    setShowAddCollaborator(false);
+                    setSelectedUser(null);
+                    setSearchTerm('');
+                    setSearchResults([]);
+                  }}
                 >
-                  <i className="fas fa-plus"></i> Add Collaborator
+                  ×
                 </button>
-                {project.collaborators.length > 0 && (
-                  <button
-                    className={`collab-tab ${selectedUser ? 'active' : ''}`}
-                    onClick={() => setSelectedUser(project.collaborators[0]?.userId)}
-                  >
-                    <i className="fas fa-users-cog"></i> Manage Team
-                  </button>
-                )}
               </div>
-              {selectedUser ? (
-                <div className="collab-manage-wrapper">
-                  <div className="collab-list">
-                    {project.collaborators.map((collab) => (
-                      <div key={collab.userId._id} className="collab-manage-item">
-                        <div className="collab-user-info">
-                          <span className="collab-name">{collab.userId.fullName || 'N/A'}</span>
-                          <span className="collab-username">{collab.userId.username}</span>
-                          <span className={`collab-role ${collab.role}`}>
-                            {collab.role === 'manager' ? 'Project Manager' : 'Developer'}
-                          </span>
-                        </div>
-                        <div className="collab-actions">
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => {
-                              if (!user || !user._id) {
-                                setErrorMessage('Please wait while we load your user information');
-                                setShowErrorModal(true);
-                                return;
-                              }
-                              if (project.currentUserRole !== 'manager') {
-                                setErrorMessage('Only Project Managers can update roles');
-                                setShowErrorModal(true);
-                                return;
-                              }
-                              if (collab.userId._id === user._id) {
-                                setErrorMessage('Self-role change is not allowed');
-                                setShowErrorModal(true);
-                                return;
-                              }
-                              setSelectedUser(collab.userId);
-                              setIsUpdatingRole(true);
-                              setShowRoleModal(true);
-                            }}
-                          >
-                            <i className="fas fa-user-edit"></i> Update Role
-                          </button>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => {
-                              if (!user || !user._id) {
-                                setErrorMessage('Please wait while we load your user information');
-                                setShowErrorModal(true);
-                                return;
-                              }
-                              const isCreator = project.createdBy && project.createdBy._id === user._id;
-                              const isManager = project.currentUserRole === 'manager';
-                              if (!isCreator && !isManager) {
-                                setErrorMessage('Only Project Managers can remove collaborators');
-                                setShowErrorModal(true);
-                                return;
-                              }
-                              if (collab.userId._id === user._id) {
-                                setShowSelfRemoveModal(true);
-                                return;
-                              }
-                              setRemovingCollaborator(collab);
-                              setShowRemoveModal(true);
-                            }}
-                          >
-                            <i className="fas fa-user-minus"></i> Remove
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              <div className="settings-dialog-body">
+                {error && <div className="error-message">{error}</div>}
+                <div className="collab-tabs">
+                  <button
+                    className={`collab-tab ${!selectedUser ? 'active' : ''}`}
+                    onClick={() => setSelectedUser(null)}
+                  >
+                    <i className="fas fa-plus"></i> Add Collaborator
+                  </button>
+                  {project.collaborators.length > 0 && (
+                    <button
+                      className={`collab-tab ${selectedUser ? 'active' : ''}`}
+                      onClick={() => setSelectedUser(project.collaborators[0]?.userId)}
+                    >
+                      <i className="fas fa-users-cog"></i> Manage Team
+                    </button>
+                  )}
                 </div>
-              ) : (
-                <div className="collab-search-wrapper">
-                  <input
-                    type="text"
-                    placeholder="Search users by username or email"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="collab-search-field"
-                  />
-                  {searchResults.length > 0 && (
-                    <div className="collab-search-results">
-                      {searchResults.map(user => (
-                        <div
-                          key={user._id}
-                          className="collab-search-item"
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setShowRoleModal(true);
-                          }}
-                        >
+                {selectedUser ? (
+                  <div className="collab-manage-wrapper">
+                    <div className="collab-list">
+                      {project.collaborators.map((collab) => (
+                        <div key={collab.userId._id} className="collab-manage-item">
                           <div className="collab-user-info">
-                            <span className="collab-username">{user.username}</span>
-                            <span className="collab-email">{user.email}</span>
+                            <span className="collab-name">{collab.userId.fullName || 'N/A'}</span>
+                            <span className="collab-username">{collab.userId.username}</span>
+                            <span className={`collab-role ${collab.role}`}>
+                              {collab.role === 'manager' ? 'Project Manager' : 'Developer'}
+                            </span>
                           </div>
-                          <i className="fas fa-chevron-right"></i>
+                          <div className="collab-actions">
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => {
+                                if (!user || !user._id) {
+                                  setErrorMessage('Please wait while we load your user information');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+                                if (project.currentUserRole !== 'manager') {
+                                  setErrorMessage('Only Project Managers can update roles');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+                                if (collab.userId._id === user._id) {
+                                  setErrorMessage('Self-role change is not allowed');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+                                setSelectedUser(collab.userId);
+                                setIsUpdatingRole(true);
+                                setShowRoleModal(true);
+                              }}
+                            >
+                              <i className="fas fa-user-edit"></i> Update Role
+                            </button>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => {
+                                if (!user || !user._id) {
+                                  setErrorMessage('Please wait while we load your user information');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+                                const isCreator = project.createdBy && project.createdBy._id === user._id;
+                                const isManager = project.currentUserRole === 'manager';
+                                if (!isCreator && !isManager) {
+                                  setErrorMessage('Only Project Managers can remove collaborators');
+                                  setShowErrorModal(true);
+                                  return;
+                                }
+                                if (collab.userId._id === user._id) {
+                                  setShowSelfRemoveModal(true);
+                                  return;
+                                }
+                                setRemovingCollaborator(collab);
+                                setShowRemoveModal(true);
+                              }}
+                            >
+                              <i className="fas fa-user-minus"></i> Remove
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
-                  )}
-                  {searchTerm.length >= 2 && !searchLoading && searchResults.length === 0 && (
-                    <div className="collab-no-results">No users found</div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showRoleModal && (
-        <div className="settings-dialog-overlay">
-          <div className="settings-dialog-content">
-            <div className="settings-dialog-header">
-              <h2>Select Role for {selectedUser?.username}</h2>
-              <button
-                className="settings-dialog-close"
-                onClick={() => {
-                  setShowRoleModal(false);
-                  setSelectedUser(null);
-                  setIsUpdatingRole(false);
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div className="settings-dialog-body">
-              {isAddingCollaborator ? (
-                <div className="loading-container">
-                  <LoadingAnimation message={isUpdatingRole ? "Updating role..." : "Adding collaborator..."} />
-                </div>
-              ) : (
-                <div className="role-options">
-                  <button
-                    className="role-option manager"
-                    onClick={() => handleRoleSelect('manager')}
-                  >
-                    <h4>Project Manager</h4>
-                    <p>Full access to project management</p>
-                    <ul>
-                      <li>Create, edit, and delete tasks</li>
-                      <li>Manage project details</li>
-                      <li>Manage collaborators</li>
-                      <li>Full commenting access</li>
-                    </ul>
-                  </button>
-                  <button
-                    className="role-option developer"
-                    onClick={() => handleRoleSelect('developer')}
-                  >
-                    <h4>Developer</h4>
-                    <p>Task execution and updates</p>
-                    <ul>
-                      <li>View and update task status</li>
-                      <li>Full commenting access</li>
-                      <li>Limited project access</li>
-                    </ul>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showAddIssueModal && (
-        <div className="modal-overlay issue-modal-overlay">
-          <div className="modal-content issue-modal issue-modal--kanban">
-            <div className="modal-header issue-modal__header">
-              <h2 className="issue-modal__title">Add New Issue</h2>
-              <button
-                className="modal-close issue-modal__close-btn"
-                onClick={() => {
-                  setShowAddIssueModal(false);
-                  setShowCustomType(false);
-                  setIssueFormData({
-                    title: '',
-                    description: '',
-                    type: 'tech',
-                    status: 'todo',
-                    deadline: '',
-                    customType: '',
-                    assignee: ''
-                  });
-                }}
-              >
-                &times;
-              </button>
-            </div>
-            <div className="modal-body issue-modal__body">
-              <form onSubmit={handleIssueFormSubmit} className="issue-form issue-form--kanban">
-                <div className="form-row issue-form__row">
-                  <div className="form-group issue-form__group">
-                    <label htmlFor="title">Title</label>
+                  </div>
+                ) : (
+                  <div className="collab-search-wrapper">
                     <input
                       type="text"
-                      id="title"
-                      name="title"
-                      value={issueFormData.title}
-                      onChange={handleIssueFormChange}
-                      required
-                      className="form-control issue-input issue-input--title"
-                      placeholder="Enter issue title"
+                      placeholder="Search users by username or email"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="collab-search-field"
                     />
-                  </div>
-
-                  <div className="form-group issue-form__group">
-                    <label htmlFor="type">Type</label>
-                    <select
-                      id="type"
-                      name="type"
-                      value={showCustomType ? 'custom' : issueFormData.type}
-                      onChange={handleIssueFormChange}
-                      className="form-control"
-                    >
-                      <option value="tech">Technical</option>
-                      <option value="review">Review</option>
-                      <option value="bug">Bug</option>
-                      <option value="feature">Feature</option>
-                      <option value="documentation">Documentation</option>
-                      <option value="custom">Custom Type</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="form-group issue-form__group">
-                  <label htmlFor="description">Description</label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={issueFormData.description}
-                    onChange={handleIssueFormChange}
-                    className="form-control"
-                    rows="2"
-                    placeholder="Enter issue description"
-                  />
-                </div>
-
-                <div className="form-row issue-form__row">
-                  <div className="form-group issue-form__group">
-                    <label htmlFor="status">Status</label>
-                    <select
-                      id="status"
-                      name="status"
-                      value={issueFormData.status}
-                      onChange={handleIssueFormChange}
-                      className="form-control"
-                    >
-                      <option value="todo">To Do</option>
-                      <option value="doing">Doing</option>
-                      <option value="done">Done</option>
-                      {project?.customBoards?.map(board => (
-                        <option key={board.id} value={board.id}>
-                          {board.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group issue-form__group">
-                    <label htmlFor="deadline">Deadline</label>
-                    <input
-                      type="date"
-                      id="deadline"
-                      name="deadline"
-                      value={issueFormData.deadline}
-                      onChange={handleIssueFormChange}
-                      className="form-control"
-                    />
-                  </div>
-                </div>
-
-                {showCustomType && (
-                  <div className="form-group issue-form__group">
-                    <label htmlFor="customType">Custom Type</label>
-                    <input
-                      type="text"
-                      id="customType"
-                      name="customType"
-                      value={issueFormData.customType}
-                      onChange={handleIssueFormChange}
-                      className="form-control custom-type-input"
-                      placeholder="Enter custom issue type"
-                      required
-                    />
+                    {searchResults.length > 0 && (
+                      <div className="collab-search-results">
+                        {searchResults.map(user => (
+                          <div
+                            key={user._id}
+                            className="collab-search-item"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowRoleModal(true);
+                            }}
+                          >
+                            <div className="collab-user-info">
+                              <span className="collab-username">{user.username}</span>
+                              <span className="collab-email">{user.email}</span>
+                            </div>
+                            <i className="fas fa-chevron-right"></i>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {searchTerm.length >= 2 && !searchLoading && searchResults.length === 0 && (
+                      <div className="collab-no-results">No users found</div>
+                    )}
                   </div>
                 )}
-
-                {project?.projectType === 'collaborative' && (
-                  <div className="form-group issue-form__group">
-                    <label htmlFor="assignee">Assignee</label>
-                    <select
-                      id="assignee"
-                      name="assignee"
-                      value={issueFormData.assignee}
-                      onChange={handleIssueFormChange}
-                      className="form-control"
-                    >
-                      <option value="">Select Assignee</option>
-                      {project.collaborators.map((collab) => (
-                        <option key={collab.userId._id} value={collab.userId._id}>
-                          {collab.userId.username}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                <div className="modal-actions issue-modal__actions">
-                  <button type="submit" className="btn btn-primary issue-modal__primary-btn">
-                    Create Issue
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary issue-modal__secondary-btn"
-                    onClick={() => {
-                      setShowAddIssueModal(false);
-                      setShowCustomType(false);
-                      setIssueFormData({
-                        title: '',
-                        description: '',
-                        type: 'tech',
-                        status: 'todo',
-                        deadline: '',
-                        customType: '',
-                        assignee: ''
-                      });
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
-      {selectedIssue && (
-        <div className="task-modal">
-        </div>
-      )}
+      {
+        showRoleModal && (
+          <div className="settings-dialog-overlay">
+            <div className="settings-dialog-content">
+              <div className="settings-dialog-header">
+                <h2>Select Role for {selectedUser?.username}</h2>
+                <button
+                  className="settings-dialog-close"
+                  onClick={() => {
+                    setShowRoleModal(false);
+                    setSelectedUser(null);
+                    setIsUpdatingRole(false);
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="settings-dialog-body">
+                {isAddingCollaborator ? (
+                  <div className="loading-container">
+                    <LoadingAnimation message={isUpdatingRole ? "Updating role..." : "Adding collaborator..."} />
+                  </div>
+                ) : (
+                  <div className="role-options">
+                    <button
+                      className="role-option manager"
+                      onClick={() => handleRoleSelect('manager')}
+                    >
+                      <h4>Project Manager</h4>
+                      <p>Full access to project management</p>
+                      <ul>
+                        <li>Create, edit, and delete tasks</li>
+                        <li>Manage project details</li>
+                        <li>Manage collaborators</li>
+                        <li>Full commenting access</li>
+                      </ul>
+                    </button>
+                    <button
+                      className="role-option developer"
+                      onClick={() => handleRoleSelect('developer')}
+                    >
+                      <h4>Developer</h4>
+                      <p>Task execution and updates</p>
+                      <ul>
+                        <li>View and update task status</li>
+                        <li>Full commenting access</li>
+                        <li>Limited project access</li>
+                      </ul>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        showAddIssueModal && (
+          <div className="modal-overlay issue-modal-overlay">
+            <div className="modal-content issue-modal issue-modal--kanban">
+              <div className="modal-header issue-modal__header">
+                <h2 className="issue-modal__title">Add New Issue</h2>
+                <button
+                  className="modal-close issue-modal__close-btn"
+                  onClick={() => {
+                    setShowAddIssueModal(false);
+                    setShowCustomType(false);
+                    setIssueFormData({
+                      title: '',
+                      description: '',
+                      type: 'tech',
+                      status: 'todo',
+                      deadline: '',
+                      customType: '',
+                      assignee: ''
+                    });
+                  }}
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="modal-body issue-modal__body">
+                <form onSubmit={handleIssueFormSubmit} className="issue-form issue-form--kanban">
+                  <div className="form-row issue-form__row">
+                    <div className="form-group issue-form__group">
+                      <label htmlFor="title">Title</label>
+                      <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        value={issueFormData.title}
+                        onChange={handleIssueFormChange}
+                        required
+                        className="form-control issue-input issue-input--title"
+                        placeholder="Enter issue title"
+                      />
+                    </div>
+
+                    <div className="form-group issue-form__group">
+                      <label htmlFor="type">Type</label>
+                      <select
+                        id="type"
+                        name="type"
+                        value={showCustomType ? 'custom' : issueFormData.type}
+                        onChange={handleIssueFormChange}
+                        className="form-control"
+                      >
+                        <option value="tech">Technical</option>
+                        <option value="review">Review</option>
+                        <option value="bug">Bug</option>
+                        <option value="feature">Feature</option>
+                        <option value="documentation">Documentation</option>
+                        <option value="custom">Custom Type</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-group issue-form__group">
+                    <label htmlFor="description">Description</label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={issueFormData.description}
+                      onChange={handleIssueFormChange}
+                      className="form-control"
+                      rows="2"
+                      placeholder="Enter issue description"
+                    />
+                  </div>
+
+                  <div className="form-row issue-form__row">
+                    <div className="form-group issue-form__group">
+                      <label htmlFor="status">Status</label>
+                      <select
+                        id="status"
+                        name="status"
+                        value={issueFormData.status}
+                        onChange={handleIssueFormChange}
+                        className="form-control"
+                      >
+                        <option value="todo">To Do</option>
+                        <option value="doing">Doing</option>
+                        <option value="done">Done</option>
+                        {project?.customBoards?.map(board => (
+                          <option key={board.id} value={board.id}>
+                            {board.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group issue-form__group">
+                      <label htmlFor="deadline">Deadline</label>
+                      <input
+                        type="date"
+                        id="deadline"
+                        name="deadline"
+                        value={issueFormData.deadline}
+                        onChange={handleIssueFormChange}
+                        className="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row issue-form__row">
+                    <div className="form-group issue-form__group">
+                      <label htmlFor="sprintId">Sprint</label>
+                      <select id="sprintId" name="sprintId" value={issueFormData.sprintId} onChange={handleIssueFormChange} className="form-control">
+                        <option value="">No Sprint (Backlog)</option>
+                        {sprints.map((s) => (
+                          <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {showCustomType && (
+                    <div className="form-group issue-form__group">
+                      <label htmlFor="customType">Custom Type</label>
+                      <input
+                        type="text"
+                        id="customType"
+                        name="customType"
+                        value={issueFormData.customType}
+                        onChange={handleIssueFormChange}
+                        className="form-control custom-type-input"
+                        placeholder="Enter custom issue type"
+                        required
+                      />
+                    </div>
+                  )}
+
+                  {project?.projectType === 'collaborative' && (
+                    <div className="form-group issue-form__group">
+                      <label htmlFor="assignee">Assignee</label>
+                      <select
+                        id="assignee"
+                        name="assignee"
+                        value={issueFormData.assignee}
+                        onChange={handleIssueFormChange}
+                        className="form-control"
+                      >
+                        <option value="">Select Assignee</option>
+                        {project.collaborators.map((collab) => (
+                          <option key={collab.userId._id} value={collab.userId._id}>
+                            {collab.userId.username}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  <div className="modal-actions issue-modal__actions">
+                    <button type="submit" className="btn btn-primary issue-modal__primary-btn">
+                      Create Issue
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary issue-modal__secondary-btn"
+                      onClick={() => {
+                        setShowAddIssueModal(false);
+                        setShowCustomType(false);
+                        setIssueFormData({
+                          title: '',
+                          description: '',
+                          type: 'tech',
+                          status: 'todo',
+                          deadline: '',
+                          customType: '',
+                          assignee: ''
+                        });
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        selectedIssue && (
+          <div className="task-modal">
+          </div>
+        )
+      }
       <Footer />
-    </div>
+    </div >
   );
 };
 

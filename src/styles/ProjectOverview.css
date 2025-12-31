@@ -8,6 +8,25 @@
   position: relative;
 }
 
+/* Global Warnings */
+.deadline-warning-text {
+  color: #c53030 !important;
+  font-weight: 600;
+}
+
+.deadline-warning-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #fff5f5;
+  color: #c53030;
+  border: 1px solid #feb2b2;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 /* Header Styles */
 .po-header {
   width: 100%;
@@ -798,7 +817,7 @@
 }
 
 /* Modal Styles */
- .modal-overlay {
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -822,7 +841,7 @@
   background-color: rgba(0, 0, 0, 0.7);
 }
 
- .modal-content {
+.modal-content {
   background: white;
   padding: 24px;
   border-radius: 12px;

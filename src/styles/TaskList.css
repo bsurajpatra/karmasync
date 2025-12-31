@@ -23,6 +23,13 @@
   align-items: center;
 }
 
+.tasks-header-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex: 1;
+}
+
 .tasks-header h2 {
   margin: 0;
   font-size: 1.4rem;
@@ -55,21 +62,19 @@
 /* Task Row Compact */
 .task-row-compact {
   background: white;
-  border-radius: 4px;
-  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
   border: 1px solid #e2e8f0;
   transition: all 0.2s ease;
   cursor: pointer;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  /* Vertical Center */
-  gap: 0.5rem;
-  min-height: 2rem;
+  gap: 1rem;
+  min-height: 3.5rem;
   overflow: hidden;
-  /* Prevent overflow */
 }
 
 .task-row-compact:hover {
@@ -174,6 +179,11 @@
   align-items: center;
   gap: 0.3rem;
   height: 100%;
+}
+
+.deadline-warning-text {
+  color: #c53030 !important;
+  font-weight: 600;
 }
 
 /* Show Deadline on Tablet */

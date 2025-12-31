@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getTaskById, updateTask, deleteTask, addTaskComment, updateTaskStatus } from '../api/taskApi';
 import { getProjectById } from '../api/projectApi';
+import { getSprintsByProject } from '../api/sprintApi';
 import LoadingAnimation from './LoadingAnimation';
 
 import '../styles/ProjectOverview.css';
@@ -28,6 +29,7 @@ const TaskOverview = () => {
     assignee: ''
   });
   const [showCustomType, setShowCustomType] = useState(false);
+  const [sprints, setSprints] = useState([]);
   const [isEditingStatus, setIsEditingStatus] = useState(false);
   const [newStatus, setNewStatus] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -54,6 +56,10 @@ const TaskOverview = () => {
       const projectId = taskData.projectId._id || taskData.projectId;
       const projectData = await getProjectById(projectId);
       setProject(projectData);
+
+      const sprintsData = await getSprintsByProject(projectId);
+      setSprints(sprintsData);
+
       setError('');
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -101,7 +107,8 @@ const TaskOverview = () => {
     try {
       const updatedTask = await updateTask(taskId, {
         ...formData,
-        assignee: formData.assignee || task.assignee?._id || task.assignee
+        assignee: formData.assignee || task.assignee?._id || task.assignee,
+        sprintId: formData.sprintId || null
       });
 
       const refreshedTask = await getTaskById(taskId);
@@ -247,7 +254,8 @@ const TaskOverview = () => {
                     type: task.type,
                     status: task.status,
                     deadline: task.deadline,
-                    assignee: task.assignee?._id || ''
+                    assignee: task.assignee?._id || '',
+                    sprintId: task.sprintId?._id || ''
                   });
                 }}
               >
@@ -329,25 +337,44 @@ const TaskOverview = () => {
                 </div>
 
                 {project?.projectType === 'collaborative' && (
-                  <div className="form-row-compact">
-                    <div className="form-group-compact">
-                      <label htmlFor="assignee">Assignee</label>
-                      <select
-                        id="assignee"
-                        name="assignee"
-                        value={formData.assignee}
-                        onChange={handleInputChange}
-                        className="to-input"
-                      >
-                        <option value="">Select Assignee</option>
-                        {project.collaborators.map((collab) => (
-                          <option key={collab.userId._id} value={collab.userId._id}>
-                            {collab.userId.username}
-                          </option>
-                        ))}
-                      </select>
+                  <>
+                    <div className="form-row-compact">
+                      <div className="form-group-compact">
+                        <label htmlFor="assignee">Assignee</label>
+                        <select
+                          id="assignee"
+                          name="assignee"
+                          value={formData.assignee}
+                          onChange={handleInputChange}
+                          className="to-input"
+                        >
+                          <option value="">Select Assignee</option>
+                          {project.collaborators.map((collab) => (
+                            <option key={collab.userId._id} value={collab.userId._id}>
+                              {collab.userId.username}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                  </div>
+                    <div className="form-row-compact">
+                      <div className="form-group-compact">
+                        <label htmlFor="sprintId">Sprint</label>
+                        <select
+                          id="sprintId"
+                          name="sprintId"
+                          value={formData.sprintId}
+                          onChange={handleInputChange}
+                          className="to-input"
+                        >
+                          <option value="">No Sprint (Backlog)</option>
+                          {sprints.map((s) => (
+                            <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
               <div className="to-modal-actions">
@@ -433,6 +460,27 @@ const TaskOverview = () => {
       <div className="projects-body">
         <div className="projects-sidebar">
           <nav className="sidebar-nav">
+            <button className="sidebar-link" onClick={() => navigate(`/project/${project._id}/overview`)}>
+              <i className="fas fa-home"></i>
+              <span>Overview</span>
+            </button>
+            <button className="sidebar-link" onClick={() => navigate(`/project/${project._id}/kanban`)}>
+              <i className="fas fa-columns"></i>
+              <span>Kanban Board</span>
+            </button>
+            <button className="sidebar-link" onClick={() => navigate(`/project/${project._id}/tasks`)}>
+              <i className="fas fa-list-ul"></i>
+              <span>View Issues</span>
+            </button>
+            <button className="sidebar-link" onClick={() => navigate(`/project/${project._id}/overview?view=sprints`)}>
+              <i className="fas fa-running"></i>
+              <span>Sprints</span>
+            </button>
+            <button className="sidebar-link" onClick={() => navigate(`/project/${project._id}/overview?view=settings`)}>
+              <i className="fas fa-cog"></i>
+              <span>Settings</span>
+            </button>
+            <div className="sidebar-divider"></div>
             <button className="sidebar-link" onClick={handleEditClick}>
               <i className="fas fa-edit"></i>
               <span>Edit Issue</span>
@@ -470,6 +518,12 @@ const TaskOverview = () => {
                   <div className="to-meta-item">
                     <span className="to-meta-label">Issue ID</span>
                     <span className="to-meta-value">#{task.serialNumber}</span>
+                  </div>
+                  <div className="to-meta-item">
+                    <span className="to-meta-label">Sprint</span>
+                    <span className="to-meta-value">
+                      {task.sprintId ? task.sprintId.name : 'Backlog'}
+                    </span>
                   </div>
                   <div className="to-meta-item">
                     <span className="to-meta-label">Type</span>
@@ -541,7 +595,25 @@ const TaskOverview = () => {
                   {task.deadline && (
                     <div className="to-meta-item">
                       <span className="to-meta-label">Deadline</span>
-                      <span className="to-meta-value">{new Date(task.deadline).toLocaleDateString()}</span>
+                      <span className={`to-meta-value ${task.sprintId && task.sprintId.endDate && new Date(task.deadline) > new Date(task.sprintId.endDate) ? 'deadline-warning-text' : ''}`}>
+                        {new Date(task.deadline).toLocaleDateString()}
+                        {task.sprintId && task.sprintId.endDate && new Date(task.deadline) > new Date(task.sprintId.endDate) && (
+                          <span className="deadline-warning-badge" style={{
+                            marginLeft: '10px',
+                            fontSize: '0.7rem',
+                            background: '#fff5f5',
+                            color: '#e53e3e',
+                            padding: '2px 8px',
+                            borderRadius: '4px',
+                            border: '1px solid #feb2b2',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}>
+                            <i className="fas fa-exclamation-triangle"></i> Exceeds Sprint
+                          </span>
+                        )}
+                      </span>
                     </div>
                   )}
                   {project.projectType === 'collaborative' && task.assignee && (

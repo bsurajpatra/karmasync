@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { getTasks, createTask } from '../api/taskApi';
 import { getProjectById, addCollaborator, removeCollaborator, updateCollaboratorRole } from '../api/projectApi';
+import { getSprintsByProject } from '../api/sprintApi';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/TaskList.css';
 import '../styles/ProjectOverview.css';
@@ -17,6 +18,7 @@ const TaskList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [project, setProject] = useState(null);
+  const [taskSearchTerm, setTaskSearchTerm] = useState('');
 
   // Issue Modal State
   const [showAddIssueModal, setShowAddIssueModal] = useState(false);
@@ -29,9 +31,11 @@ const TaskList = () => {
     status: 'todo',
     deadline: '',
     customType: '',
-    assignee: ''
+    assignee: '',
+    sprintId: ''
   });
   const [showCustomType, setShowCustomType] = useState(false);
+  const [sprints, setSprints] = useState([]);
 
   // Collaborator Modal State
   const [showAddCollaborator, setShowAddCollaborator] = useState(false);
@@ -55,6 +59,8 @@ const TaskList = () => {
     try {
       const data = await getProjectById(projectId);
       setProject(data);
+      const sprintsData = await getSprintsByProject(projectId);
+      setSprints(sprintsData);
     } catch (err) {
       console.error('Error fetching project:', err);
     }
@@ -171,6 +177,8 @@ const TaskList = () => {
       setIssueFormData(prev => ({ ...prev, type: validatedValue, customType: validatedValue }));
     } else if (name === 'assignee') {
       setIssueFormData(prev => ({ ...prev, assignee: value || null }));
+    } else if (name === 'sprintId') {
+      setIssueFormData(prev => ({ ...prev, sprintId: value || null }));
     } else {
       setIssueFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -198,7 +206,8 @@ const TaskList = () => {
         status: 'todo',
         deadline: '',
         customType: '',
-        assignee: ''
+        assignee: '',
+        sprintId: ''
       });
     } catch (err) {
       setErrorMessage(err.message || 'Failed to create issue');
@@ -216,7 +225,8 @@ const TaskList = () => {
       status: 'todo',
       deadline: '',
       customType: '',
-      assignee: ''
+      assignee: '',
+      sprintId: ''
     });
   };
 
@@ -297,9 +307,13 @@ const TaskList = () => {
               <i className="fas fa-columns"></i>
               <span>Kanban Board</span>
             </button>
-            <button className="sidebar-link active" onClick={() => { }}>
+            <button className="sidebar-link active" onClick={() => navigate(`/project/${projectId}/tasks`)}>
               <i className="fas fa-list-ul"></i>
               <span>View Issues</span>
+            </button>
+            <button className="sidebar-link" onClick={() => navigate(`/project/${projectId}/overview?view=sprints`)}>
+              <i className="fas fa-running"></i>
+              <span>Sprints</span>
             </button>
             {project.projectType === 'collaborative' && (
               <button
@@ -332,60 +346,157 @@ const TaskList = () => {
 
         <div className="project-overview-container">
           <div className="tasks-list-content">
-            <div className="tasks-header">
-              <div className="tasks-header-content">
-                <h2>Project Issues</h2>
-                <div className="tasks-header-actions">
-                  <button className="btn btn-primary" onClick={handleAddIssueClick}>
-                    <i className="fas fa-plus"></i> Add Issue
-                  </button>
-                </div>
-              </div>
-            </div>
+            {(() => {
+              const urlParams = new URLSearchParams(window.location.search);
+              const sprintFilter = urlParams.get('sprint');
+              const activeSprint = sprints.find(s => s._id === sprintFilter);
 
-            {tasks.length === 0 ? (
-              <div className="no-tasks">
-                <p>No issues found</p>
-                <strong>Create your first issue to get started!</strong>
-              </div>
-            ) : (
-              <div className="tasks-container-compact">
-                {tasks.map(task => (
-                  <div
-                    key={task._id}
-                    className="task-row-compact"
-                    onClick={() => navigate(`/task/${task._id}`)}
-                  >
-                    <div className="task-item-header">
-                      <h3>
-                        <span className="task-id">#{task.serialNumber}</span>
-                        {task.title}
-                      </h3>
-                      <div className="task-badges">
-                        <span className={`task-status ${task.status}`}>
-                          {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="task-meta">
-                      <span className="task-date-text">
-                        Created: {new Date(task.createdAt).toLocaleDateString()}
-                      </span>
-                      {task.deadline && (
-                        <span className="task-deadline-text">
-                          Deadline: {new Date(task.deadline).toLocaleDateString()}
-                        </span>
-                      )}
-                      {project?.projectType === 'collaborative' && task.assignee && (
-                        <span className="task-assignee">
-                          Assigned to: {task.assignee.username || task.assignee.fullName || 'Unassigned'}
-                        </span>
-                      )}
+              return (
+                <div className="tasks-header" style={{ marginBottom: activeSprint ? '0.5rem' : '1.5rem' }}>
+                  <div className="tasks-header-left">
+                    <h2>Project Issues</h2>
+                    <div className="sprint-search-wrapper">
+                      <i className="fas fa-search"></i>
+                      <input
+                        type="text"
+                        placeholder="Search issues..."
+                        value={taskSearchTerm}
+                        onChange={(e) => setTaskSearchTerm(e.target.value)}
+                        className="sprint-search-input"
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                  <div className="tasks-header-actions">
+                    <button className="btn btn-primary" onClick={handleAddIssueClick}>
+                      <i className="fas fa-plus"></i> Add Issue
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {(() => {
+              const urlParams = new URLSearchParams(window.location.search);
+              const sprintFilter = urlParams.get('sprint');
+              const activeSprint = sprints.find(s => s._id === sprintFilter);
+
+              if (activeSprint) {
+                return (
+                  <div className="active-filter-banner" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    background: '#ebf8ff',
+                    padding: '8px 15px',
+                    borderRadius: '6px',
+                    marginBottom: '1.5rem',
+                    border: '1px solid #bee3f8',
+                    fontSize: '0.9rem',
+                    color: '#2b6cb0'
+                  }}>
+                    <i className="fas fa-filter"></i>
+                    <span>Showing issues for sprint: <strong>{activeSprint.name}</strong></span>
+                    <button
+                      onClick={() => navigate(`/project/${projectId}/tasks`)}
+                      style={{
+                        marginLeft: 'auto',
+                        background: '#3182ce',
+                        color: 'white',
+                        border: 'none',
+                        padding: '4px 10px',
+                        borderRadius: '4px',
+                        fontSize: '0.8rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px'
+                      }}
+                    >
+                      <i className="fas fa-times"></i> Clear Filter
+                    </button>
+                  </div>
+                );
+              }
+              return null;
+            })()}
+
+            {(() => {
+              const urlParams = new URLSearchParams(window.location.search);
+              const sprintFilter = urlParams.get('sprint');
+
+              const filteredTasks = tasks.filter(task => {
+                const matchesSearch =
+                  task.title.toLowerCase().includes(taskSearchTerm.toLowerCase()) ||
+                  task.serialNumber.toString().includes(taskSearchTerm) ||
+                  (task.description && task.description.toLowerCase().includes(taskSearchTerm.toLowerCase()));
+
+                const matchesSprint = !sprintFilter || (task.sprintId && (task.sprintId._id === sprintFilter || task.sprintId === sprintFilter));
+
+                return matchesSearch && matchesSprint;
+              });
+
+              if (filteredTasks.length === 0) {
+                return (
+                  <div className="no-tasks">
+                    <p>{taskSearchTerm || sprintFilter ? 'No issues match your filters' : 'No issues found'}</p>
+                    <strong>{(!taskSearchTerm && !sprintFilter) ? 'Create your first issue to get started!' : 'Try adjusting your search.'}</strong>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="tasks-container-compact">
+                  {filteredTasks.map(task => {
+                    const isDelayed = task.deadline && task.sprintId && task.sprintId.endDate &&
+                      new Date(task.deadline) > new Date(task.sprintId.endDate);
+                    return (
+                      <div
+                        key={task._id}
+                        className="task-row-compact"
+                        onClick={() => navigate(`/task/${task._id}`)}
+                      >
+                        <div className="task-item-header">
+                          <h3>
+                            <span className="task-id">#{task.serialNumber}</span>
+                            {task.title}
+                          </h3>
+                          <div className="task-badges">
+                            <span className={`task-status ${task.status}`}>
+                              {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                            </span>
+                            {task.sprintId && (
+                              <span className={`task-status ${task.sprintId.status}`}>
+                                {task.sprintId.name}
+                              </span>
+                            )}
+                            {isDelayed && (
+                              <span className="task-status cancelled" title="Deadline exceeds sprint timeline">
+                                <i className="fas fa-exclamation-triangle"></i> Delayed
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="task-meta">
+                          <span className="task-date-text">
+                            Created: {new Date(task.createdAt).toLocaleDateString()}
+                          </span>
+                          {task.deadline && (
+                            <span className={`task-deadline-text ${isDelayed ? 'deadline-warning-text' : ''}`}>
+                              Deadline: {new Date(task.deadline).toLocaleDateString()}
+                            </span>
+                          )}
+                          {project?.projectType === 'collaborative' && task.assignee && (
+                            <span className="task-assignee">
+                              Assigned to: {task.assignee.username || task.assignee.fullName || 'Unassigned'}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
           <Footer />
         </div>
@@ -444,6 +555,17 @@ const TaskList = () => {
                   <div className="form-group">
                     <label htmlFor="deadline">Deadline</label>
                     <input type="date" id="deadline" name="deadline" value={issueFormData.deadline} onChange={handleIssueFormChange} className="form-control" />
+                  </div>
+                </div>
+                <div className="form-row issue-form__row">
+                  <div className="form-group issue-form__group">
+                    <label htmlFor="sprintId">Sprint</label>
+                    <select id="sprintId" name="sprintId" value={issueFormData.sprintId} onChange={handleIssueFormChange} className="form-control">
+                      <option value="">No Sprint (Backlog)</option>
+                      {sprints.map((s) => (
+                        <option key={s._id} value={s._id}>{s.name} ({s.status})</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 {project?.projectType === 'collaborative' && (
