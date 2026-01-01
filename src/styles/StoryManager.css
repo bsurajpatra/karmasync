@@ -158,7 +158,7 @@
 
 .progress-thumb {
     height: 100%;
-    background: linear-gradient(90deg, #a770ef 0%, #cf8bf3 100%);
+    background: linear-gradient(90deg, #4a90e2 0%, #70a1ff 100%);
     border-radius: 4px;
     transition: width 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
 }
@@ -178,7 +178,7 @@
 }
 
 .meta-pill i {
-    color: #a770ef;
+    color: #4a90e2;
     font-size: 0.85rem;
 }
 
@@ -326,9 +326,9 @@
 }
 
 .form-input-styled:focus {
-    border-color: #a770ef;
+    border-color: #4a90e2;
     background: white;
-    box-shadow: 0 0 0 4px rgba(167, 112, 239, 0.1);
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
     outline: none;
 }
 
@@ -399,14 +399,14 @@
 }
 
 .btn-premium-primary {
-    background: linear-gradient(135deg, #a770ef 0%, #cf8bf3 100%);
+    background: linear-gradient(135deg, #4a90e2 0%, #70a1ff 100%);
     color: white;
-    box-shadow: 0 4px 12px rgba(167, 112, 239, 0.3);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
 }
 
 .btn-premium-primary:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(167, 112, 239, 0.4);
+    box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4);
 }
 
 .btn-premium-secondary {

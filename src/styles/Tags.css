@@ -140,7 +140,7 @@
 
 .color-option.selected {
     transform: scale(1.15);
-    box-shadow: 0 0 0 2px #a770ef;
+    box-shadow: 0 0 0 2px #4a90e2;
 }
 
 /* Multi-select Tag Input */

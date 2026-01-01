@@ -140,9 +140,9 @@
 }
 
 .po-edit-input:focus {
-  border-color: #a770ef;
+  border-color: #4a90e2;
   background: white;
-  box-shadow: 0 0 0 3px rgba(167, 112, 239, 0.1);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
 .po-form-actions {
@@ -161,15 +161,15 @@
 }
 
 .po-btn-save {
-  background: linear-gradient(135deg, #a770ef 0%, #cf8bf3 100%);
+  background: linear-gradient(135deg, #4a90e2 0%, #70a1ff 100%);
   color: white;
   border: none;
-  box-shadow: 0 2px 5px rgba(167, 112, 239, 0.2);
+  box-shadow: 0 2px 5px rgba(74, 144, 226, 0.2);
 }
 
 .po-btn-save:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(167, 112, 239, 0.3);
+  box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
 }
 
 .po-btn-cancel {
@@ -231,7 +231,7 @@
   width: 260px;
   flex-shrink: 0;
   background: #f8f8f8;
-  border-right: 2px solid #a770ef;
+  border-right: 2px solid #4a90e2;
   padding: 2rem 1rem;
   height: calc(100vh - 64px);
   display: flex;
@@ -292,15 +292,15 @@
 .sidebar-link i {
   width: 24px;
   text-align: center;
-  color: #a770ef;
+  color: #4a90e2;
   font-size: 1.2rem;
 }
 
 .sidebar-link:hover {
-  background: linear-gradient(135deg, #a770ef 0%, #cf8bf3 100%);
+  background: linear-gradient(135deg, #4a90e2 0%, #70a1ff 100%);
   color: white;
   transform: translateX(5px);
-  box-shadow: 0 4px 10px rgba(167, 112, 239, 0.3);
+  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
 }
 
 .sidebar-link:hover i {
@@ -308,9 +308,9 @@
 }
 
 .sidebar-link.active {
-  background: linear-gradient(135deg, #a770ef 0%, #cf8bf3 100%);
+  background: linear-gradient(135deg, #4a90e2 0%, #70a1ff 100%);
   color: white;
-  box-shadow: 0 4px 10px rgba(167, 112, 239, 0.3);
+  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
 }
 
 .sidebar-link.active i {
@@ -811,15 +811,15 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #a770ef 0%, #cf8bf3 100%);
+  background: linear-gradient(135deg, #4a90e2 0%, #70a1ff 100%);
   color: white;
-  box-shadow: 0 4px 10px rgba(167, 112, 239, 0.2);
+  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
 }
 
 .btn-secondary {
   background: white;
-  color: #a770ef;
-  border: 2px solid #a770ef;
+  color: #4a90e2;
+  border: 2px solid #4a90e2;
 }
 
 .btn:hover {

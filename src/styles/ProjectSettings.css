@@ -62,16 +62,16 @@
 .settings-form .edit-textarea:focus,
 .settings-form .github-input:focus {
     outline: none;
-    border-color: #a770ef;
+    border-color: #4a90e2;
     background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(167, 112, 239, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Submit Buttons */
 .settings-submit-btn {
     align-self: flex-end;
     padding: 0.6rem 1.5rem;
-    background: linear-gradient(135deg, #a770ef 0%, #cf8bf3 100%);
+    background: linear-gradient(135deg, #4a90e2 0%, #70a1ff 100%);
     color: white;
     font-weight: 600;
     font-size: 0.9rem;
@@ -79,13 +79,13 @@
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(167, 112, 239, 0.25);
+    box-shadow: 0 2px 4px rgba(74, 144, 226, 0.25);
     margin-top: 0.5rem;
 }
 
 .settings-submit-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(167, 112, 239, 0.35);
+    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.35);
 }
 
 .settings-submit-btn:active {

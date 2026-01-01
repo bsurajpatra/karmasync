@@ -98,8 +98,8 @@
 
 .btn-outline-primary {
   background: transparent;
-  border: 2px solid #a770ef;
-  color: #a770ef;
+  border: 2px solid #4a90e2;
+  color: #4a90e2;
   background: linear-gradient(white, white) padding-box,
     var(--primary-gradient) border-box;
   border: 2px solid transparent;
@@ -116,13 +116,13 @@
   background: none;
   border: none;
   padding: 0;
-  color: #a770ef;
+  color: #4a90e2;
   text-decoration: none;
   transition: var(--transition);
 }
 
 .btn-link:hover {
-  color: #fdb99b;
+  color: #a4c8f0;
   text-decoration: underline;
 }
 
@@ -134,13 +134,13 @@ input[type="submit"].btn {
 
 /* Auth Links */
 .text-primary {
-  color: #a770ef !important;
+  color: #4a90e2 !important;
   text-decoration: none;
   transition: var(--transition);
 }
 
 .text-primary:hover {
-  color: #fdb99b !important;
+  color: #a4c8f0 !important;
   text-decoration: underline;
 }
 
@@ -178,9 +178,9 @@ input[type="submit"].btn {
   opacity: 0.8;
   margin: 2px;
   cursor: pointer;
-  color: #a770ef;
-  color: -webkit-linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef);
-  color: linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef);
+  color: #4a90e2;
+  color: -webkit-linear-gradient(to right, #a4c8f0, #70a1ff, #4a90e2);
+  color: linear-gradient(to right, #a4c8f0, #70a1ff, #4a90e2);
 }
 
 .btn-timer-ctrl:hover {
@@ -190,9 +190,9 @@ input[type="submit"].btn {
 .checkButton {
   opacity: 0.8;
   cursor: pointer;
-  color: #a770ef;
-  color: -webkit-linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef);
-  color: linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef);
+  color: #4a90e2;
+  color: -webkit-linear-gradient(to right, #a4c8f0, #70a1ff, #4a90e2);
+  color: linear-gradient(to right, #a4c8f0, #70a1ff, #4a90e2);
 }
 
 .checkButton:hover {
@@ -349,7 +349,7 @@ input[type="submit"].btn {
   font-size: 1.4rem;
   padding: 1.1rem 2rem;
   border-radius: 50px;
-  background: linear-gradient(135deg, #a770ef 0%, #cf8bf3 50%, #fdb99b 100%);
+  background: linear-gradient(135deg, #4a90e2 0%, #70a1ff 50%, #a4c8f0 100%);
   color: white;
   border: none;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -391,7 +391,7 @@ input[type="submit"].btn {
   position: relative;
   overflow: hidden;
   background: linear-gradient(white, white) padding-box,
-    linear-gradient(135deg, #a770ef, #cf8bf3, #fdb99b) border-box;
+    linear-gradient(135deg, #4a90e2, #70a1ff, #a4c8f0) border-box;
   border: 3px solid transparent;
   border-radius: 20px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
@@ -475,8 +475,8 @@ input[type="submit"].btn {
 }
 
 .team-member {
-  background: linear-gradient(135deg, rgba(167, 112, 239, 0.15), rgba(207, 139, 243, 0.15), rgba(253, 185, 155, 0.15)) padding-box,
-    linear-gradient(135deg, #a770ef, #cf8bf3, #fdb99b) border-box;
+  background: linear-gradient(135deg, rgba(74, 144, 226, 0.15), rgba(112, 161, 255, 0.15), rgba(164, 200, 240, 0.15)) padding-box,
+    linear-gradient(135deg, #4a90e2, #70a1ff, #a4c8f0) border-box;
   border: 3px solid transparent;
   border-radius: 20px;
   padding: 2.5rem;
@@ -494,7 +494,7 @@ input[type="submit"].btn {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(167, 112, 239, 0.05), rgba(207, 139, 243, 0.05), rgba(253, 185, 155, 0.05));
+  background: linear-gradient(135deg, rgba(74, 144, 226, 0.05), rgba(112, 161, 255, 0.05), rgba(164, 200, 240, 0.05));
   opacity: 0;
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 0;
@@ -502,10 +502,10 @@ input[type="submit"].btn {
 
 .team-member:hover {
   transform: translateY(-10px) scale(1.03);
-  box-shadow: 0 20px 40px rgba(167, 112, 239, 0.3);
+  box-shadow: 0 20px 40px rgba(74, 144, 226, 0.3);
   border: 3px solid transparent;
-  background: linear-gradient(135deg, rgba(253, 185, 155, 0.25), rgba(207, 139, 243, 0.25), rgba(167, 112, 239, 0.25)) padding-box,
-    linear-gradient(135deg, #fdb99b, #cf8bf3, #a770ef) border-box;
+  background: linear-gradient(135deg, rgba(164, 200, 240, 0.25), rgba(112, 161, 255, 0.25), rgba(74, 144, 226, 0.25)) padding-box,
+    linear-gradient(135deg, #a4c8f0, #70a1ff, #4a90e2) border-box;
 }
 
 .team-member:hover::before {
