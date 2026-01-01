@@ -333,7 +333,7 @@ const Profile = () => {
               <i className="fas fa-tasks"></i>
               <span>My To-dos</span>
             </Link>
-            <Link to="/profile" className="sidebar-link active" style={{ background: 'linear-gradient(135deg, #a770ef 0%, #cf8bf3 100%)', color: 'white', boxShadow: '0 4px 10px rgba(167, 112, 239, 0.3)' }}>
+            <Link to="/profile" className="sidebar-link active" style={{ background: 'linear-gradient(135deg, #4a90e2 0%, #70a1ff 100%)', color: 'white', boxShadow: '0 4px 10px rgba(74, 144, 226, 0.3)' }}>
               <i className="fas fa-user" style={{ color: 'white' }}></i>
               <span>Profile</span>
             </Link>

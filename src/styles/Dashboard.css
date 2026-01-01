@@ -725,9 +725,9 @@
   background: transparent !important;
   color: rgb(0, 0, 0);
   text-align: center;
-  padding: 1rem;
-  font-size: 0.9rem;
-  border-top: 1px solid rgb(0, 0, 0);
+  padding: 0.4rem;
+  font-size: 0.75rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   font-weight: 500;
   width: 100%;
 }

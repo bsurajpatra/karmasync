@@ -826,7 +826,7 @@ const ProjectOverview = () => {
               <div className="project-overview-section" style={{ background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid #f1f5f9' }}>
                 <div className="section-header" style={{ marginBottom: '1.5rem' }}>
                   <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#2c3e50', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <i className="fas fa-chart-pie" style={{ color: '#a770ef' }}></i>
+                    <i className="fas fa-chart-pie" style={{ color: '#4a90e2' }}></i>
                     User Stories Progress
                   </h2>
                 </div>
@@ -838,13 +838,13 @@ const ProjectOverview = () => {
                           <span style={{ fontWeight: 700, color: '#4a5568', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '160px' }} title={story.title}>
                             {story.title}
                           </span>
-                          <span style={{ fontWeight: 800, color: '#a770ef' }}>{story.progress}%</span>
+                          <span style={{ fontWeight: 800, color: '#4a90e2' }}>{story.progress}%</span>
                         </div>
                         <div style={{ height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
                           <div style={{
                             height: '100%',
                             width: `${story.progress}%`,
-                            background: 'linear-gradient(90deg, #a770ef 0%, #cf8bf3 100%)',
+                            background: 'linear-gradient(90deg, #4a90e2 0%, #70a1ff 100%)',
                             borderRadius: '4px',
                             transition: 'width 1s ease-in-out'
                           }}></div>

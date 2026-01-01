@@ -38,15 +38,15 @@ const LoadingAnimation = ({ message = 'Loading...' }) => {
       height: '100%',
       borderRadius: '50%',
       border: '4px solid transparent',
-      borderTopColor: '#a770ef',
+      borderTopColor: '#4a90e2',
       animation: 'rotate 1.5s linear infinite'
     },
     circle2: {
-      borderTopColor: '#cf8bf3',
+      borderTopColor: '#70a1ff',
       animationDelay: '-0.5s'
     },
     circle3: {
-      borderTopColor: '#fdb99b',
+      borderTopColor: '#a4c8f0',
       animationDelay: '-1s'
     },
     syncIcon: {

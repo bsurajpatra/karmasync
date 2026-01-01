@@ -288,7 +288,7 @@ const StoryManager = ({ projectId, currentUserRole }) => {
                                                             cursor: isManager ? 'pointer' : 'default',
                                                             opacity: isManager ? 1 : 0.8,
                                                             marginBottom: '0.5rem',
-                                                            borderLeft: isChecked ? '4px solid #a770ef' : '1px solid #f1f5f9'
+                                                            borderLeft: isChecked ? '4px solid #4a90e2' : '1px solid #f1f5f9'
                                                         }}
                                                         onClick={() => {
                                                             if (!isManager) return;
@@ -312,8 +312,8 @@ const StoryManager = ({ projectId, currentUserRole }) => {
                                                                 display: 'flex',
                                                                 alignItems: 'center',
                                                                 justifyContent: 'center',
-                                                                background: isChecked ? '#a770ef' : 'white',
-                                                                borderColor: isChecked ? '#a770ef' : '#e2e8f0'
+                                                                background: isChecked ? '#4a90e2' : 'white',
+                                                                borderColor: isChecked ? '#4a90e2' : '#e2e8f0'
                                                             }}>
                                                                 {isChecked && <i className="fas fa-check" style={{ color: 'white', fontSize: '0.65rem' }}></i>}
                                                             </div>
