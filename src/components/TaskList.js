@@ -17,7 +17,7 @@ import { useAuth } from '../context/AuthContext';
 const TaskList = () => {
   const { id: projectId } = useParams();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -798,11 +798,22 @@ const TaskList = () => {
                         ))}
                       </div>
                     )}
-                    {searchTerm.length >= 2 && !searchLoading && searchResults.length === 0 && (
-                      <div className="collab-no-results">No users found</div>
-                    )}
                   </div>
                 )}
+              </div>
+              <div className="settings-dialog-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setShowAddCollaborator(false);
+                    setSelectedUser(null);
+                    setSearchTerm('');
+                    setSearchResults([]);
+                    setIsUpdatingRole(false);
+                  }}
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>
@@ -811,34 +822,31 @@ const TaskList = () => {
 
       {
         showRoleModal && (
-          <div className="settings-dialog-overlay">
+          <div className="settings-dialog-overlay z-top">
             <div className="settings-dialog-content">
               <div className="settings-dialog-header">
-                <h2>Select Role for {selectedUser?.username}</h2>
-                <button
-                  className="settings-dialog-close"
-                  onClick={() => {
-                    setShowRoleModal(false);
-                    setSelectedUser(null);
-                    setIsUpdatingRole(false);
-                  }}
-                >
-                  ×
-                </button>
+                <h3>Select Role for {selectedUser?.username}</h3>
+                <button className="settings-dialog-close" onClick={() => setShowRoleModal(false)}>×</button>
               </div>
               <div className="settings-dialog-body">
-                {isAddingCollaborator ? (
-                  <LoadingAnimation message={isUpdatingRole ? 'Updating role...' : 'Adding...'} />
-                ) : (
-                  <div className="role-options">
-                    <button className="role-option manager" onClick={() => handleRoleSelect('manager')}>
-                      <h4>Project Manager</h4><p>Full access</p>
-                    </button>
-                    <button className="role-option developer" onClick={() => handleRoleSelect('developer')}>
-                      <h4>Developer</h4><p>Task execution</p>
-                    </button>
-                  </div>
-                )}
+                <div className="role-options">
+                  <button
+                    className="role-option"
+                    onClick={() => handleRoleSelect('manager')}
+                    disabled={isAddingCollaborator}
+                  >
+                    <div className="role-name">Project Manager</div>
+                    <div className="role-desc">Full access to manage project, tasks, and team members.</div>
+                  </button>
+                  <button
+                    className="role-option"
+                    onClick={() => handleRoleSelect('developer')}
+                    disabled={isAddingCollaborator}
+                  >
+                    <div className="role-name">Developer</div>
+                    <div className="role-desc">Can view issues, update status, and add comments.</div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -846,25 +854,25 @@ const TaskList = () => {
       }
 
       {
-        showRemoveModal && removingCollaborator && (
+        showRemoveModal && (
           <div className="settings-dialog-overlay z-top">
             <div className="settings-dialog-content">
               <div className="settings-dialog-header">
-                <h2>Remove Collaborator</h2>
+                <h3>Remove Collaborator</h3>
                 <button className="settings-dialog-close" onClick={() => setShowRemoveModal(false)}>×</button>
               </div>
               <div className="settings-dialog-body">
-                <p>Remove {removingCollaborator.userId.username}?</p>
+                <p>Are you sure you want to remove <strong>{removingCollaborator?.userId.username}</strong> from this project?</p>
               </div>
               <div className="settings-dialog-actions">
-                <button className="btn btn-secondary" onClick={() => setShowRemoveModal(false)}>Cancel</button>
                 <button className="btn btn-danger" onClick={handleRemoveCollaborator}>Remove</button>
+                <button className="btn btn-secondary" onClick={() => setShowRemoveModal(false)}>Cancel</button>
               </div>
             </div>
           </div>
         )
       }
-    </div >
+    </div>
   );
 };
 

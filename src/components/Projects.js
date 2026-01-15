@@ -197,7 +197,7 @@ const Projects = () => {
             {error && <div className="error-message">{error}</div>}
             <div className="projects-list-container">
               <div className="projects-content-header">
-                <h2>Overview</h2>
+                <h2>Projects</h2>
                 <button
                   className="create-project-button"
                   onClick={() => setShowTypeModal(true)}

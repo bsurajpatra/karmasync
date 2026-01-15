@@ -7,6 +7,8 @@ import Footer from './Footer';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import '../styles/ProjectOverview.css';
 import '../styles/ProfileCompact.css';
+import '../styles/Dashboard.css';
+import LogoutModal from './LogoutModal';
 
 const DeleteAccountModal = ({ isOpen, onClose, onConfirm }) => {
   const [deleteText, setDeleteText] = useState('');
@@ -89,6 +91,7 @@ const Profile = () => {
     confirm: false
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     console.log('Profile component mounted');
@@ -319,6 +322,10 @@ const Profile = () => {
               <h1 className="po-project-name">My Profile</h1>
             </div>
           </div>
+          <button className="logout-button" onClick={() => setShowLogoutModal(true)}>
+            <i className="fas fa-sign-out-alt"></i>
+            Logout
+          </button>
         </div>
       </header>
 
@@ -542,6 +549,18 @@ const Profile = () => {
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleConfirmDelete}
+      />
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={async () => {
+          try {
+            await logout();
+            navigate('/');
+          } catch (error) {
+            console.error('Logout error:', error);
+          }
+        }}
       />
     </div>
   );

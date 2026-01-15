@@ -5,6 +5,9 @@ import LoadingAnimation from './LoadingAnimation';
 import Footer from './Footer';
 import '../styles/ProjectOverview.css';
 import '../styles/TodosCompact.css';
+import '../styles/Dashboard.css';
+import { useAuth } from '../context/AuthContext';
+import LogoutModal from './LogoutModal';
 
 const Todos = () => {
   const navigate = useNavigate();
@@ -24,6 +27,8 @@ const Todos = () => {
     status: 'Pending'
   });
   const [deleteConfirmation, setDeleteConfirmation] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const { logout } = useAuth();
 
   useEffect(() => {
     fetchTodos();
@@ -128,6 +133,15 @@ const Todos = () => {
       (todo.dueDate && new Date(todo.dueDate).toLocaleDateString().includes(searchLower))
     );
   });
+
+  const handleLogoutConfirm = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    }
+  };
 
   const renderTodoItem = (todo) => (
     <div key={todo._id} className="todo-item">
@@ -234,6 +248,10 @@ const Todos = () => {
               <h1 className="po-project-name">My To-dos</h1>
             </div>
           </div>
+          <button className="logout-button" onClick={() => setShowLogoutModal(true)}>
+            <i className="fas fa-sign-out-alt"></i>
+            Logout
+          </button>
         </div>
       </header>
 
@@ -357,109 +375,116 @@ const Todos = () => {
 
       {renderDeleteConfirmation()}
 
-      {showForm && (
-        <div className="td-modal-overlay">
-          <div className="td-modal">
-            <div className="td-modal-header">
-              <h2>{editingTodo ? 'Edit Todo' : 'New Todo'}</h2>
-              <button className="td-modal-close" onClick={() => {
-                setShowForm(false);
-                setEditingTodo(null);
-                setFormData({
-                  name: '', priority: 'Low', category: 'General', dueDate: '', status: 'Pending'
-                });
-                setCustomCategory('');
-              }}>&times;</button>
-            </div>
+      {
+        showForm && (
+          <div className="td-modal-overlay">
+            <div className="td-modal">
+              <div className="td-modal-header">
+                <h2>{editingTodo ? 'Edit Todo' : 'New Todo'}</h2>
+                <button className="td-modal-close" onClick={() => {
+                  setShowForm(false);
+                  setEditingTodo(null);
+                  setFormData({
+                    name: '', priority: 'Low', category: 'General', dueDate: '', status: 'Pending'
+                  });
+                  setCustomCategory('');
+                }}>&times;</button>
+              </div>
 
-            <div className="td-modal-body">
-              {isSubmitting ? (
-                <LoadingAnimation message="Saving..." />
-              ) : (
-                <form onSubmit={handleSubmit} className="td-form">
-                  <div className="td-form-group">
-                    <label className="td-label" htmlFor="name">Task Name</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="What needs to be done?"
-                      className="td-input"
-                    />
-                  </div>
-
-                  <div className="td-form-group">
-                    <label className="td-label" htmlFor="priority">Priority</label>
-                    <select
-                      id="priority"
-                      name="priority"
-                      value={formData.priority}
-                      onChange={handleInputChange}
-                      className="td-select"
-                    >
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                    </select>
-                  </div>
-
-                  <div className="td-form-group">
-                    <label className="td-label" htmlFor="category">Category</label>
-                    <select
-                      id="category"
-                      name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
-                      className="td-select"
-                    >
-                      <option value="General">General</option>
-                      <option value="Health">Health</option>
-                      <option value="Study">Study</option>
-                      <option value="Work">Work</option>
-                      <option value="Custom">Custom</option>
-                    </select>
-                  </div>
-
-                  {formData.category === 'Custom' && (
+              <div className="td-modal-body">
+                {isSubmitting ? (
+                  <LoadingAnimation message="Saving..." />
+                ) : (
+                  <form onSubmit={handleSubmit} className="td-form">
                     <div className="td-form-group">
-                      <label className="td-label">Custom Category</label>
+                      <label className="td-label" htmlFor="name">Task Name</label>
                       <input
                         type="text"
-                        value={customCategory}
-                        onChange={(e) => setCustomCategory(e.target.value)}
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
                         required
-                        placeholder="Enter category name"
+                        placeholder="What needs to be done?"
                         className="td-input"
                       />
                     </div>
-                  )}
 
-                  <div className="td-form-group">
-                    <label className="td-label" htmlFor="dueDate">Due Date</label>
-                    <input
-                      type="date"
-                      id="dueDate"
-                      name="dueDate"
-                      value={formData.dueDate}
-                      onChange={handleInputChange}
-                      className="td-input"
-                    />
-                  </div>
+                    <div className="td-form-group">
+                      <label className="td-label" htmlFor="priority">Priority</label>
+                      <select
+                        id="priority"
+                        name="priority"
+                        value={formData.priority}
+                        onChange={handleInputChange}
+                        className="td-select"
+                      >
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                      </select>
+                    </div>
 
-                  <button type="submit" className="td-submit-btn">
-                    {editingTodo ? 'Save Changes' : 'Create Task'}
-                  </button>
-                </form>
-              )}
+                    <div className="td-form-group">
+                      <label className="td-label" htmlFor="category">Category</label>
+                      <select
+                        id="category"
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        className="td-select"
+                      >
+                        <option value="General">General</option>
+                        <option value="Health">Health</option>
+                        <option value="Study">Study</option>
+                        <option value="Work">Work</option>
+                        <option value="Custom">Custom</option>
+                      </select>
+                    </div>
+
+                    {formData.category === 'Custom' && (
+                      <div className="td-form-group">
+                        <label className="td-label">Custom Category</label>
+                        <input
+                          type="text"
+                          value={customCategory}
+                          onChange={(e) => setCustomCategory(e.target.value)}
+                          required
+                          placeholder="Enter category name"
+                          className="td-input"
+                        />
+                      </div>
+                    )}
+
+                    <div className="td-form-group">
+                      <label className="td-label" htmlFor="dueDate">Due Date</label>
+                      <input
+                        type="date"
+                        id="dueDate"
+                        name="dueDate"
+                        value={formData.dueDate}
+                        onChange={handleInputChange}
+                        className="td-input"
+                      />
+                    </div>
+
+                    <button type="submit" className="td-submit-btn">
+                      {editingTodo ? 'Save Changes' : 'Create Task'}
+                    </button>
+                  </form>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
       <Footer />
-    </div>
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogoutConfirm}
+      />
+    </div >
   );
 };
 

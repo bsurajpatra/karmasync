@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import emailjs from "@emailjs/browser";
 import { useAuth } from '../context/AuthContext';
@@ -9,12 +10,16 @@ import LoadingAnimation from './LoadingAnimation';
 import { FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa';
 import '../styles/ProjectOverview.css';
 import '../styles/ContactCompact.css';
+import '../styles/Dashboard.css';
+import LogoutModal from './LogoutModal';
 import Footer from './Footer';
 
 const Contact = () => {
-    const { user } = useAuth();
+    const { logout, user } = useAuth();
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const navigate = useNavigate();
     const [userDetails, setUserDetails] = useState(null);
 
     useEffect(() => {
@@ -75,6 +80,10 @@ const Contact = () => {
                             <h1 className="po-project-name">Contact Us</h1>
                         </div>
                     </div>
+                    <button className="logout-button" onClick={() => setShowLogoutModal(true)}>
+                        <i className="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
                 </div>
             </header>
 
@@ -158,6 +167,18 @@ const Contact = () => {
             </div>
             <ToastContainer position="bottom-right" theme="light" />
             <Footer />
+            <LogoutModal
+                isOpen={showLogoutModal}
+                onClose={() => setShowLogoutModal(false)}
+                onConfirm={async () => {
+                    try {
+                        await logout();
+                        navigate('/');
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                    }
+                }}
+            />
         </div>
     );
 };
