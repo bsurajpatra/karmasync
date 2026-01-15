@@ -34,7 +34,7 @@
 
 .settings-form .po-edit-input,
 .settings-form .edit-textarea,
-.settings-form .github-input {
+.settings-form .repository-input {
     width: 100%;
     padding: 0.875rem 1rem;
     border: 1px solid #e2e8f0;
@@ -54,13 +54,13 @@
 
 .settings-form .po-edit-input:hover,
 .settings-form .edit-textarea:hover,
-.settings-form .github-input:hover {
+.settings-form .repository-input:hover {
     border-color: #cbd5e0;
 }
 
 .settings-form .po-edit-input:focus,
 .settings-form .edit-textarea:focus,
-.settings-form .github-input:focus {
+.settings-form .repository-input:focus {
     outline: none;
     border-color: #4a90e2;
     background: #ffffff;

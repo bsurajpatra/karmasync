@@ -35,8 +35,8 @@ const ProjectOverview = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [editingGithub, setEditingGithub] = useState(false);
-  const [githubLink, setGithubLink] = useState('');
+  const [editingRepository, setEditingRepository] = useState(false);
+  const [repositoryLink, setRepositoryLink] = useState('');
   const [editingTitle, setEditingTitle] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
   const [title, setTitle] = useState('');
@@ -113,7 +113,7 @@ const ProjectOverview = () => {
       const data = await getProjectById(id);
       console.log('Project details:', data);
       setProject(data);
-      setGithubLink(data.githubLink || '');
+      setRepositoryLink(data.repositoryLink || '');
       setTitle(data.title || '');
       setDescription(data.description || '');
 
@@ -274,16 +274,16 @@ const ProjectOverview = () => {
     fetchTaskCount();
   }, [fetchProject, fetchTaskCount]);
 
-  const handleGithubSubmit = async (e) => {
+  const handleRepositorySubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedProject = await updateProject(id, { githubLink });
+      const updatedProject = await updateProject(id, { repositoryLink });
       setProject(updatedProject);
-      setEditingGithub(false);
+      setEditingRepository(false);
       setError('');
     } catch (err) {
-      console.error('Error updating GitHub link:', err);
-      setError(err.message || 'Failed to update GitHub link');
+      console.error('Error updating repository link:', err);
+      setError(err.message || 'Failed to update repository link');
     }
   };
 
@@ -772,19 +772,19 @@ const ProjectOverview = () => {
                 <p>{project.description || 'No description provided'}</p>
               </div>
 
-              {project.githubLink && (
+              {project.repositoryLink && (
                 <div className="project-overview-section">
                   <div className="section-header">
-                    <h2>GitHub Repository</h2>
+                    <h2>Repository</h2>
                   </div>
                   <div className="github-display">
                     <a
-                      href={project.githubLink}
+                      href={project.repositoryLink}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="github-link"
                     >
-                      <i className="fab fa-github"></i> {project.githubLink.replace('https://github.com/', '')}
+                      <i className="fas fa-link"></i> {project.repositoryLink}
                     </a>
                   </div>
                 </div>
@@ -925,15 +925,15 @@ const ProjectOverview = () => {
                 </div>
 
                 <div className="settings-group">
-                  <form onSubmit={handleGithubSubmit} className="github-form settings-form">
+                  <form onSubmit={handleRepositorySubmit} className="repository-form settings-form">
                     <div className="form-group">
                       <label>Repository URL</label>
                       <input
                         type="url"
-                        value={githubLink}
-                        onChange={(e) => setGithubLink(e.target.value)}
+                        value={repositoryLink}
+                        onChange={(e) => setRepositoryLink(e.target.value)}
                         placeholder="https://github.com/username/repository"
-                        className="github-input"
+                        className="repository-input"
                       />
                     </div>
                     <button type="submit" className="settings-submit-btn">Update Repository</button>

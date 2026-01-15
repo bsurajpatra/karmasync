@@ -26,7 +26,7 @@ const CreateCollaborativeProject = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    githubLink: '',
+    repositoryLink: '',
     projectType: 'collaborative'
   });
 
@@ -248,16 +248,17 @@ const CreateCollaborativeProject = () => {
               </div>
 
               <div className="cp-form-group">
-                <label htmlFor="githubLink" className="cp-label">Repository Link</label>
+                <label htmlFor="repositoryLink" className="cp-label">Repository Link</label>
                 <input
                   type="url"
-                  id="githubLink"
-                  name="githubLink"
-                  value={formData.githubLink}
+                  id="repositoryLink"
+                  name="repositoryLink"
+                  value={formData.repositoryLink}
                   onChange={handleInputChange}
-                  placeholder="Enter GitHub repository URL"
+                  placeholder="https://github.com/username/repository"
                   className="cp-input"
                 />
+                <small className="cp-hint">Provide a link to your project repository (GitHub, GitLab, etc.)</small>
               </div>
 
               <div className="cp-actions">
