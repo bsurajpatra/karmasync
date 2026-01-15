@@ -1,0 +1,110 @@
+.activity-widget {
+    background: var(--bg-secondary, #ffffff);
+    border-radius: 12px;
+    padding: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+    font-family: 'Inter', sans-serif;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.activity-row {
+    padding: 10px 14px;
+    background: var(--bg-tertiary, #f8fafc);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-color, #4f46e5);
+    transition: all 0.2s ease;
+}
+
+.activity-row:hover {
+    background: var(--bg-hover, #f1f5f9);
+}
+
+.activity-content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+.activity-description {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-primary, #111827);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.actor-username {
+    font-weight: 700;
+    color: var(--accent-color, #4f46e5);
+    margin-right: 4px;
+}
+
+.activity-time {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary, #64748b);
+    white-space: nowrap;
+    background: var(--bg-secondary, #ffffff);
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--text-secondary, #6b7280);
+    font-size: 14px;
+    padding: 30px 0;
+}
+
+.activity-widget.loading {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.activity-skeleton {
+    height: 40px;
+    background: var(--bg-tertiary, #f3f4f6);
+    border-radius: 8px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.6;
+    }
+}
+
+/* Custom scrollbar */
+.activity-widget::-webkit-scrollbar {
+    width: 4px;
+}
+
+.activity-widget::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.activity-widget::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}

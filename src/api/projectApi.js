@@ -218,3 +218,16 @@ export const deleteProjectTag = async (projectId, tagId) => {
   });
   return response.data;
 };
+
+export const getProjectActivities = async (projectId, params = {}) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/${projectId}/activities`, {
+      headers: getAuthHeader(),
+      params
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error in getProjectActivities:', error.response || error);
+    throw error;
+  }
+};

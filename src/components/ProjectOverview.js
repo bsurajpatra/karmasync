@@ -19,6 +19,7 @@ import { getSprintsByProject } from '../api/sprintApi';
 import TagManager from './TagManager';
 import TagSelector from './TagSelector';
 import '../styles/Tags.css';
+import ProjectActivityWidget from './ProjectActivityWidget';
 
 const ROLE_TYPES = {
   MANAGER: 'manager',
@@ -822,6 +823,16 @@ const ProjectOverview = () => {
                   </div>
                 </div>
               )}
+
+              <div className="project-overview-section activity-section-overview">
+                <div className="section-header">
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#2c3e50', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <i className="fas fa-history" style={{ color: '#10b981' }}></i>
+                    Recent Activity
+                  </h2>
+                </div>
+                <ProjectActivityWidget projectId={id} />
+              </div>
 
               <div className="project-overview-section" style={{ background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid #f1f5f9' }}>
                 <div className="section-header" style={{ marginBottom: '1.5rem' }}>
