@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getTaskById, updateTask, deleteTask, addTaskComment, updateTaskStatus } from '../api/taskApi';
 import { getProjectById } from '../api/projectApi';
@@ -43,6 +43,10 @@ const TaskOverview = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showDangerModal, setShowDangerModal] = useState(false);
+  const [showMentions, setShowMentions] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState('');
+  const [mentionIndex, setMentionIndex] = useState(0);
+  const textareaRef = useRef(null);
 
   useEffect(() => {
     fetchTaskAndProject();
@@ -153,11 +157,120 @@ const TaskOverview = () => {
       const updatedTask = await addTaskComment(taskId, comment);
       setTask(updatedTask);
       setComment('');
+      setShowMentions(false);
       setError('');
     } catch (err) {
       console.error('Error adding comment:', err);
       setError(err.message || 'Failed to add comment');
     }
+  };
+
+  const handleCommentChange = (e) => {
+    const value = e.target.value;
+    const selectionStart = e.target.selectionStart;
+    setComment(value);
+
+    // Check for @mention
+    const textBeforeCursor = value.substring(0, selectionStart);
+    const lastAtIdx = textBeforeCursor.lastIndexOf('@');
+
+    if (lastAtIdx !== -1) {
+      const charBeforeAt = lastAtIdx > 0 ? textBeforeCursor[lastAtIdx - 1] : '';
+      // Only trigger if @ is at start of line or following a space
+      if (lastAtIdx === 0 || charBeforeAt === ' ' || charBeforeAt === '\n') {
+        const query = textBeforeCursor.substring(lastAtIdx + 1);
+        // Only trigger if query doesn't have spaces (we are still typing the username)
+        if (!query.includes(' ')) {
+          setMentionQuery(query);
+          setShowMentions(true);
+          setMentionIndex(0);
+          return;
+        }
+      }
+    }
+    setShowMentions(false);
+  };
+
+  const handleCommentKeyDown = (e) => {
+    if (showMentions) {
+      const filteredMembers = getFilteredProjectMembers();
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setMentionIndex(prev => (prev + 1) % filteredMembers.length);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setMentionIndex(prev => (prev - 1 + filteredMembers.length) % filteredMembers.length);
+      } else if (e.key === 'Enter' || e.key === 'Tab') {
+        if (filteredMembers.length > 0) {
+          e.preventDefault();
+          insertMention(filteredMembers[mentionIndex].userId.username);
+        }
+      } else if (e.key === 'Escape') {
+        setShowMentions(false);
+      }
+    }
+  };
+
+  const getFilteredProjectMembers = () => {
+    if (!project) return [];
+
+    // Include creator and collaborators
+    const members = [];
+    if (project.createdBy) {
+      members.push({
+        userId: {
+          _id: project.createdBy._id || project.createdBy,
+          username: project.createdBy.username,
+          fullName: project.createdBy.fullName
+        }
+      });
+    }
+
+    if (project.collaborators) {
+      project.collaborators.forEach(c => {
+        // Avoid duplicate if creator is also in collaborators (though unlikely in this model)
+        if (members.every(m => m.userId._id.toString() !== c.userId._id.toString())) {
+          members.push(c);
+        }
+      });
+    }
+
+    return members.filter(m =>
+      m.userId.username.toLowerCase().includes(mentionQuery.toLowerCase()) ||
+      m.userId.fullName.toLowerCase().includes(mentionQuery.toLowerCase())
+    );
+  };
+
+  const insertMention = (username) => {
+    const selectionStart = textareaRef.current.selectionStart;
+    const textBeforeCursor = comment.substring(0, selectionStart);
+    const textAfterCursor = comment.substring(selectionStart);
+    const lastAtIdx = textBeforeCursor.lastIndexOf('@');
+
+    const newText = textBeforeCursor.substring(0, lastAtIdx) + '@' + username + ' ' + textAfterCursor;
+    setComment(newText);
+    setShowMentions(false);
+
+    // Set focus back to textarea and set cursor position
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        const newCursorPos = lastAtIdx + username.length + 2; // +1 for @, +1 for space
+        textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+  };
+
+  const renderCommentText = (text) => {
+    if (!text) return null;
+    // Split by mention pattern while keeping the pattern in results
+    const parts = text.split(/(@[a-zA-Z0-9_]+)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('@')) {
+        return <span key={i} className="highlighted-mention">{part}</span>;
+      }
+      return part;
+    });
   };
 
   const handleStatusChange = async (newStatus) => {
@@ -714,22 +827,43 @@ const TaskOverview = () => {
                       {new Date(comment.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="to-comment-text">{comment.text}</p>
+                  <p className="to-comment-text">{renderCommentText(comment.text)}</p>
                 </div>
               ))}
             </div>
-            <form onSubmit={handleCommentSubmit} className="to-comment-form">
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Add a comment..."
-                className="to-textarea"
-                rows="2"
-              />
-              <button type="submit" className="to-btn-primary to-comment-btn">
-                <i className="fas fa-comment"></i> Add Comment
-              </button>
-            </form>
+            <div className="to-comment-form-wrapper">
+              {showMentions && (
+                <div className="mentions-dropdown">
+                  {getFilteredProjectMembers().map((member, idx) => (
+                    <div
+                      key={member.userId._id}
+                      className={`mention-item ${idx === mentionIndex ? 'selected' : ''}`}
+                      onClick={() => insertMention(member.userId.username)}
+                    >
+                      <span className="mention-item-username">@{member.userId.username}</span>
+                      <span className="mention-item-name">{member.userId.fullName}</span>
+                    </div>
+                  ))}
+                  {getFilteredProjectMembers().length === 0 && (
+                    <div className="mention-item no-results">No members found</div>
+                  )}
+                </div>
+              )}
+              <form onSubmit={handleCommentSubmit} className="to-comment-form">
+                <textarea
+                  ref={textareaRef}
+                  value={comment}
+                  onChange={handleCommentChange}
+                  onKeyDown={handleCommentKeyDown}
+                  placeholder="Add a comment... (Type @ to mention)"
+                  className="to-textarea"
+                  rows="2"
+                />
+                <button type="submit" className="to-btn-primary to-comment-btn">
+                  <i className="fas fa-comment"></i> Add Comment
+                </button>
+              </form>
+            </div>
           </div>
 
         </div>
