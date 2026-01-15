@@ -831,7 +831,7 @@ const ProjectOverview = () => {
                     Recent Activity
                   </h2>
                 </div>
-                <ProjectActivityWidget projectId={id} />
+                <ProjectActivityWidget projectId={id} projectType={project?.projectType} />
               </div>
 
               <div className="project-overview-section" style={{ background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid #f1f5f9' }}>

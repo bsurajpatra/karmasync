@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getProjectActivities } from '../api/projectApi';
 import '../styles/ProjectActivityWidget.css';
 
-const ProjectActivityWidget = ({ projectId }) => {
+const ProjectActivityWidget = ({ projectId, projectType }) => {
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -62,7 +62,9 @@ const ProjectActivityWidget = ({ projectId }) => {
                         <div key={activity.id} className="activity-row">
                             <div className="activity-content-wrapper">
                                 <p className="activity-description">
-                                    <span className="actor-username">@{activity.actor.username}</span> {activity.description}
+                                    {projectType !== 'personal' && (
+                                        <span className="actor-username">@{activity.actor.username}</span>
+                                    )} {activity.description}
                                 </p>
                                 <span className="activity-time">
                                     {formatDateTime(activity.createdAt)}
