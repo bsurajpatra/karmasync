@@ -48,11 +48,7 @@ const TaskOverview = () => {
   const [mentionIndex, setMentionIndex] = useState(0);
   const textareaRef = useRef(null);
 
-  useEffect(() => {
-    fetchTaskAndProject();
-  }, [taskId]);
-
-  const fetchTaskAndProject = async () => {
+  const fetchTaskAndProject = React.useCallback(async () => {
     try {
       const taskData = await getTaskById(taskId);
       setTask(taskData);
@@ -85,7 +81,11 @@ const TaskOverview = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [taskId]);
+
+  useEffect(() => {
+    fetchTaskAndProject();
+  }, [fetchTaskAndProject]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -123,7 +123,7 @@ const TaskOverview = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedTask = await updateTask(taskId, {
+      await updateTask(taskId, {
         ...formData,
         assignee: formData.assignee || task.assignee?._id || task.assignee,
         sprintId: formData.sprintId || null

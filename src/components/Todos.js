@@ -143,53 +143,7 @@ const Todos = () => {
     }
   };
 
-  const renderTodoItem = (todo) => (
-    <div key={todo._id} className="todo-item">
-      <div className="todo-header">
-        <h3 className="todo-name">{todo.name}</h3>
-        <span className={`todo-status ${todo.status.toLowerCase()}`}>
-          {todo.status}
-        </span>
-      </div>
-
-      <div className="todo-details">
-        <div className="todo-tags">
-          <span className="todo-category">{todo.category}</span>
-          <span className={`todo-priority ${todo.priority.toLowerCase()}`}>
-            {todo.priority}
-          </span>
-          <div className="todo-due-date">
-            <i className="fas fa-calendar"></i>
-            {new Date(todo.dueDate).toLocaleDateString()}
-          </div>
-        </div>
-      </div>
-
-      <div className="todo-actions">
-        <button
-          className="mark-done"
-          onClick={() => handleStatusChange(todo)}
-        >
-          <i className={`fas fa-${todo.status === 'Pending' ? 'check' : 'undo'}`}></i>
-          {todo.status === 'Pending' ? 'Mark Done' : 'Mark Pending'}
-        </button>
-        <button
-          className="edit"
-          onClick={() => handleEdit(todo)}
-        >
-          <i className="fas fa-edit"></i>
-          Edit
-        </button>
-        <button
-          className="delete"
-          onClick={() => setDeleteConfirmation(todo)}
-        >
-          <i className="fas fa-trash"></i>
-          Delete
-        </button>
-      </div>
-    </div>
-  );
+  // renderTodoItem function removed (unused)
 
   const renderDeleteConfirmation = () => {
     if (!deleteConfirmation) return null;

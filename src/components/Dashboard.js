@@ -11,7 +11,7 @@ import LogoutModal from './LogoutModal';
 const Dashboard = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation(); // Unused
   const [loading, setLoading] = useState(true);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [lockActive, setLockActive] = useState(true);

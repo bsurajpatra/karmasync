@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../styles/Tags.css';
 
-const TAG_COLORS = ['blue', 'purple', 'green', 'yellow', 'orange', 'red', 'gray', 'black'];
+// const TAG_COLORS = ['blue', 'purple', 'green', 'yellow', 'orange', 'red', 'gray', 'black']; // Unused
 
 const TagSelector = ({ projectTags, selectedTagIds, onChange, label = "Tags", placeholder = "Select tags...", compact = false }) => {
     const [isOpen, setIsOpen] = useState(false);

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../config';
-import { API_BASE_URL } from '../config';
+// import { API_BASE_URL } from '../config'; // Unused
 
 const BASE_URL = `${config.API_URL}/api/todos`;
 
@@ -11,7 +11,7 @@ const getAuthToken = () => {
 };
 
 const getAuthHeader = () => {
-    const token = getAuthToken();
+  const token = getAuthToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 

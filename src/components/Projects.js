@@ -40,14 +40,10 @@ const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [showForm, setShowForm] = useState(false);
-  const [showTypeModal, setShowTypeModal] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [editingProject, setEditingProject] = useState(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: ''
-  });
+  // Unused state variables removed
+  // const [showForm, setShowForm] = useState(false);
+  // const [editingProject, setEditingProject] = useState(null);
+  // const [formData, setFormData] = useState({ title: '', description: '' });
 
   useEffect(() => {
     console.log('Projects component mounted');
@@ -69,60 +65,7 @@ const Projects = () => {
     }
   };
 
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      console.log('Submitting project data:', formData);
-      if (editingProject) {
-        console.log('Updating existing project:', editingProject._id);
-        await updateProject(editingProject._id, formData);
-        console.log('Project updated successfully');
-      } else {
-        console.log('Creating new project');
-        console.log('Form data being sent:', formData);
-        const response = await createProject(formData);
-        console.log('Project created successfully:', response);
-      }
-      setShowForm(false);
-      setEditingProject(null);
-      setFormData({ title: '', description: '' });
-      fetchProjects();
-    } catch (err) {
-      console.error('Error in handleSubmit:', err);
-      setError(err.response?.data?.message || 'Failed to create project');
-    }
-  };
-
-  const handleEdit = (project) => {
-    console.log('Editing project:', project);
-    setEditingProject(project);
-    setFormData({
-      title: project.title,
-      description: project.description
-    });
-    setShowForm(true);
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
-      try {
-        console.log('Deleting project:', id);
-        await deleteProject(id);
-        console.log('Project deleted successfully');
-        fetchProjects();
-      } catch (err) {
-        console.error('Error deleting project:', err);
-        setError('Failed to delete project');
-      }
-    }
-  };
+  // Unused handlers removed (handleInputChange, handleSubmit, handleEdit, handleDelete)
 
   const handleProjectTypeSelect = (type) => {
     if (type === 'personal') {

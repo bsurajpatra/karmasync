@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaRocket, FaTasks, FaUsers, FaChartLine, FaCheckCircle, FaArrowRight, FaBrain, FaClipboardList, FaRunning, FaBookOpen, FaComments, FaHistory, FaCalendarCheck, FaLock, FaEnvelope, FaUserCircle } from 'react-icons/fa';
+import { FaTasks, FaUsers, FaChartLine, FaCheckCircle, FaArrowRight, FaBrain, FaClipboardList, FaRunning, FaBookOpen, FaComments, FaHistory, FaCalendarCheck, FaLock, FaUserCircle } from 'react-icons/fa';
 import Footer from './Footer';
 
 const LandingPage = () => {

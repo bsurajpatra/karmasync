@@ -31,7 +31,7 @@ const SprintManager = ({ projectId, currentUserRole }) => {
         endDate: '',
         status: 'planned'
     });
-    const [warnings, setWarnings] = useState([]);
+    // const [warnings, setWarnings] = useState([]); // Unused
     const [sprintSearchTerm, setSprintSearchTerm] = useState('');
     const [showWarningModal, setShowWarningModal] = useState(false);
     const [warningTasks, setWarningTasks] = useState([]);
@@ -87,8 +87,8 @@ const SprintManager = ({ projectId, currentUserRole }) => {
         e.preventDefault();
         try {
             if (selectedSprint) {
-                const result = await updateSprint(selectedSprint._id, formData);
-                if (result.warnings) setWarnings(result.warnings);
+                await updateSprint(selectedSprint._id, formData);
+                // if (result.warnings) setWarnings(result.warnings);
             } else {
                 await createSprint({ ...formData, projectId });
             }

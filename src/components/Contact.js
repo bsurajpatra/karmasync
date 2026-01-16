@@ -6,8 +6,6 @@ import { useAuth } from '../context/AuthContext';
 import { getCurrentUser } from '../api/authApi';
 import { Link } from 'react-router-dom';
 import "react-toastify/dist/ReactToastify.css";
-import LoadingAnimation from './LoadingAnimation';
-import { FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa';
 import '../styles/ProjectOverview.css';
 import '../styles/ContactCompact.css';
 import '../styles/Dashboard.css';

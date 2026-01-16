@@ -273,7 +273,6 @@ const StoryManager = ({ projectId, currentUserRole }) => {
                                         </label>
                                         <div className="tasks-preview-list" style={{ maxHeight: '200px', overflowY: 'auto', padding: '0.5rem', border: '1px solid #f1f5f9', borderRadius: '12px', background: '#fcfcfc' }}>
                                             {tasks.map(task => {
-                                                const isLinkedToThisStory = task.storyId && (task.storyId?._id || task.storyId) === selectedStory?._id;
                                                 const isLinkedToAnotherStory = task.storyId && (task.storyId?._id || task.storyId) !== selectedStory?._id;
 
                                                 if (isLinkedToAnotherStory) return null;

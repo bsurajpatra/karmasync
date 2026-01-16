@@ -56,7 +56,7 @@ export const createProject = async (projectData) => {
     if (error.response?.data) {
       throw error.response.data;
     }
-    throw { message: 'Error creating project' };
+    throw new Error('Error creating project');
   }
 };
 
@@ -76,7 +76,7 @@ export const updateProject = async (id, projectData) => {
     if (error.response?.data) {
       throw error.response.data;
     }
-    throw { message: 'Error updating project' };
+    throw new Error('Error updating project');
   }
 };
 
@@ -125,7 +125,7 @@ export const removeCollaborator = async (projectId, collaboratorId) => {
     if (error.response?.data) {
       throw error.response.data;
     }
-    throw { message: 'Error removing collaborator' };
+    throw new Error('Error removing collaborator');
   }
 };
 
@@ -148,7 +148,7 @@ export const updateCollaboratorRole = async (projectId, collaboratorId, role) =>
     if (error.response?.data) {
       throw error.response.data;
     }
-    throw { message: 'Error updating collaborator role' };
+    throw new Error('Error updating collaborator role');
   }
 };
 
@@ -171,7 +171,7 @@ export const addCollaborator = async (projectId, collaboratorData) => {
     if (error.response?.data) {
       throw error.response.data;
     }
-    throw { message: 'Error adding collaborator' };
+    throw new Error('Error adding collaborator');
   }
 };
 

@@ -106,7 +106,7 @@ const Signup = () => {
         password: formData.password
       };
 
-      const response = await signup(signupData);
+      await signup(signupData);
       setSuccess(true);
 
       setTimeout(() => {
@@ -145,7 +145,7 @@ const Signup = () => {
 
   if (loading) {
     return (
-      <LoadingAnimation 
+      <LoadingAnimation
         message={
           <>
             Creating your account...<br />
@@ -155,7 +155,7 @@ const Signup = () => {
               </span>
             )}
           </>
-        } 
+        }
       />
     );
   }
@@ -269,8 +269,8 @@ const Signup = () => {
               )}
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className={`auth-button ${!isFormComplete() ? 'auth-button-disabled' : ''}`}
               disabled={loading || success || !isFormComplete()}
             >

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom"; // Unused
 
 const Footer = () => {
   const year = new Date().getFullYear();

@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProjectById, addCustomBoard, deleteCustomBoard, removeCollaborator, addCollaborator, updateCollaboratorRole } from '../api/projectApi';
 import { getTasks, updateTaskStatus, createTask } from '../api/taskApi';
-import { searchUsers } from '../api/userApi';
-import { getSprintsByProject } from '../api/sprintApi';
 import axios from 'axios';
-import BoardManager from './BoardManager';
+// import BoardManager from './BoardManager'; // Unused
+import LoadingAnimation from './LoadingAnimation';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/KanbanBoard.css';
 import '../styles/ProjectOverview.css';
@@ -62,7 +61,7 @@ const KanbanBoard = () => {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [isAddingCollaborator, setIsAddingCollaborator] = useState(false);
   const [isUpdatingRole, setIsUpdatingRole] = useState(false);
-  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  // const [showRemoveModal, setShowRemoveModal] = useState(false); // Unused
   const [removingCollaborator, setRemovingCollaborator] = useState(null);
   const [showSelfRemoveModal, setShowSelfRemoveModal] = useState(false);
   const [tagFilter, setTagFilter] = useState([]);
@@ -77,51 +76,7 @@ const KanbanBoard = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  useEffect(() => {
-    fetchProjectAndTasks();
-  }, [projectId]);
-
-  /* Collaborator Management Logic */
-  const debouncedSearch = React.useCallback(
-    async (term) => {
-      if (!term || term.length < 2) {
-        setSearchResults([]);
-        return;
-      }
-
-      // Guard against project not being loaded yet
-      if (!project || !project.collaborators) {
-        setSearchResults([]);
-        return;
-      }
-
-      setSearchLoading(true);
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/search`, {
-          params: { searchTerm: term },
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        });
-        const filteredResults = response.data.filter(user =>
-          !project.collaborators.some(collab => collab.userId._id === user._id)
-        );
-        setSearchResults(filteredResults);
-      } catch (error) {
-        console.error('Error searching users:', error);
-      } finally {
-        setSearchLoading(false);
-      }
-    },
-    [project]
-  );
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchTerm) debouncedSearch(searchTerm);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [searchTerm, debouncedSearch]);
-
-  const fetchProjectAndTasks = async () => {
+  const fetchProjectAndTasks = React.useCallback(async () => {
     try {
       const [projectData, tasksData, sprintsData, storiesData] = await Promise.all([
         getProjectById(projectId),
@@ -174,7 +129,51 @@ const KanbanBoard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId]);
+
+  useEffect(() => {
+    fetchProjectAndTasks();
+  }, [fetchProjectAndTasks]);
+  const debouncedSearch = React.useCallback(
+    async (term) => {
+      if (!term || term.length < 2) {
+        setSearchResults([]);
+        return;
+      }
+
+      // Guard against project not being loaded yet
+      if (!project || !project.collaborators) {
+        setSearchResults([]);
+        return;
+      }
+
+      setSearchLoading(true);
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/search`, {
+          params: { searchTerm: term },
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        const filteredResults = response.data.filter(user =>
+          !project.collaborators.some(collab => collab.userId._id === user._id)
+        );
+        setSearchResults(filteredResults);
+      } catch (error) {
+        console.error('Error searching users:', error);
+      } finally {
+        setSearchLoading(false);
+      }
+    },
+    [project]
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm) debouncedSearch(searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm, debouncedSearch]);
+
+  // fetchProjectAndTasks moved above
 
   const handleDragStart = (e, taskId, sourceBoard) => {
     e.stopPropagation(); // Prevent event bubbling
@@ -296,13 +295,13 @@ const KanbanBoard = () => {
     }, 0);
   };
 
-  const handleIssueClick = (issue) => {
-    setSelectedIssue(issue);
-  };
+  // const handleIssueClick = (issue) => {
+  //   setSelectedIssue(issue);
+  // };
 
-  const handleAddIssue = () => {
-    setShowAddIssueModal(true);
-  };
+  // const handleAddIssue = () => {
+  //   setShowAddIssueModal(true);
+  // };
 
   const handleIssueFormChange = (e) => {
     const { name, value } = e.target;
@@ -588,18 +587,18 @@ const KanbanBoard = () => {
     }
   };
 
-  const handleRemoveCollaborator = async () => {
-    if (!removingCollaborator) return;
-    try {
-      const response = await removeCollaborator(projectId, removingCollaborator.userId._id);
-      setProject(response.project);
-      setShowRemoveModal(false);
-      setShowAddCollaborator(false);
-      setRemovingCollaborator(null);
-    } catch (error) {
-      setError('Failed to remove collaborator');
-    }
-  };
+  // const handleRemoveCollaborator = async () => {
+  //   if (!removingCollaborator) return;
+  //   try {
+  //     const response = await removeCollaborator(projectId, removingCollaborator.userId._id);
+  //     setProject(response.project);
+  //     // setShowRemoveModal(false); // variable also unused
+  //     setShowAddCollaborator(false);
+  //     setRemovingCollaborator(null);
+  //   } catch (error) {
+  //     setError('Failed to remove collaborator');
+  //   }
+  // };
 
   const SelfRemoveModal = () => (
     <div className="settings-dialog-overlay z-top">

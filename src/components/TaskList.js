@@ -20,7 +20,7 @@ const TaskList = () => {
   const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  // const [error, setError] = useState(''); // Unused, replaced by errorMessage/showErrorModal usage or not used at all
   const [project, setProject] = useState(null);
   const [taskSearchTerm, setTaskSearchTerm] = useState('');
   const [tagFilter, setTagFilter] = useState([]);
@@ -49,7 +49,7 @@ const TaskList = () => {
   const [showAddCollaborator, setShowAddCollaborator] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [searchLoading, setSearchLoading] = useState(false);
+  // const [searchLoading, setSearchLoading] = useState(false); // Unused
   const [selectedUser, setSelectedUser] = useState(null);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [isAddingCollaborator, setIsAddingCollaborator] = useState(false);
@@ -58,12 +58,7 @@ const TaskList = () => {
   const [showSelfRemoveModal, setShowSelfRemoveModal] = useState(false);
   const [isUpdatingRole, setIsUpdatingRole] = useState(false);
 
-  useEffect(() => {
-    fetchProject();
-    fetchTasks();
-  }, [projectId]);
-
-  const fetchProject = async () => {
+  const fetchProject = useCallback(async () => {
     try {
       const data = await getProjectById(projectId);
       setProject(data);
@@ -74,13 +69,13 @@ const TaskList = () => {
     } catch (err) {
       console.error('Error fetching project:', err);
     }
-  };
+  }, [projectId]);
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       const data = await getTasks(projectId);
       setTasks(data);
-      setError('');
+      // setError(''); // error state removed
     } catch (err) {
       console.error('Error fetching tasks:', err);
       setErrorMessage('Failed to load tasks');
@@ -88,7 +83,12 @@ const TaskList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId]);
+
+  useEffect(() => {
+    fetchProject();
+    fetchTasks();
+  }, [fetchProject, fetchTasks]);
 
   // Search Logic
   const debouncedSearch = useCallback(

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { verifyOTP, resendOTP } from '../api/authApi';
 import { useAuth } from '../context/AuthContext';
@@ -8,7 +8,7 @@ import '../styles/OTPVerfication.css';
 
 const OTPVerification = () => {
   console.log('OTPVerification component rendered');
-  
+
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -76,7 +76,7 @@ const OTPVerification = () => {
 
     const otpString = otp.join('');
     console.log('OTP string:', otpString);
-    
+
     if (otpString.length !== 6) {
       console.log('Invalid OTP length');
       setError('Please enter all digits of the OTP');
@@ -174,8 +174,8 @@ const OTPVerification = () => {
               ))}
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="otp-button"
               disabled={loading || success}
             >
@@ -189,7 +189,7 @@ const OTPVerification = () => {
                 onClick={handleResendOTP}
                 disabled={resendDisabled}
               >
-                {resendDisabled 
+                {resendDisabled
                   ? `Resend OTP in ${countdown}s`
                   : 'Resend OTP'}
               </button>
