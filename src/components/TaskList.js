@@ -49,7 +49,7 @@ const TaskList = () => {
   const [showAddCollaborator, setShowAddCollaborator] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  // const [searchLoading, setSearchLoading] = useState(false); // Unused
+  const [searchLoading, setSearchLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [isAddingCollaborator, setIsAddingCollaborator] = useState(false);

@@ -6,7 +6,6 @@ import { getTasks, updateTaskStatus, createTask } from '../api/taskApi';
 import axios from 'axios';
 // import BoardManager from './BoardManager'; // Unused
 import LoadingAnimation from './LoadingAnimation';
-import LoadingAnimation from './LoadingAnimation';
 import '../styles/KanbanBoard.css';
 import '../styles/ProjectOverview.css';
 import '../styles/IssueModal.css';

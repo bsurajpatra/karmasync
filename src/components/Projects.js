@@ -40,10 +40,11 @@ const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  // Unused state variables removed
-  // const [showForm, setShowForm] = useState(false);
-  // const [editingProject, setEditingProject] = useState(null);
-  // const [formData, setFormData] = useState({ title: '', description: '' });
+  const [showTypeModal, setShowTypeModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  // const [showForm, setShowForm] = useState(false); // Unused
+  // const [editingProject, setEditingProject] = useState(null); // Unused
+  // const [formData, setFormData] = useState({ title: '', description: '' }); // Unused
 
   useEffect(() => {
     console.log('Projects component mounted');

@@ -16,7 +16,7 @@ const ROLE_TYPES = {
 const CreateCollaborativeProject = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  // const [searchLoading, setSearchLoading] = useState(false); // Unused
+  const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedCollaborators, setSelectedCollaborators] = useState([]);

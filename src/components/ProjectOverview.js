@@ -5,6 +5,8 @@ import { getTasks, createTask } from '../api/taskApi';
 // import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'; // Unused
 // import { searchUsers } from '../api/userApi'; // Unused
 import LoadingAnimation from './LoadingAnimation';
+import SprintManager from './SprintManager';
+import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -30,16 +32,16 @@ const ProjectOverview = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  // const [editingRepository, setEditingRepository] = useState(false); // Unused state
+  const [editingRepository, setEditingRepository] = useState(false);
   const [repositoryLink, setRepositoryLink] = useState('');
-  // const [editingTitle, setEditingTitle] = useState(false); // Unused state
-  // const [editingDescription, setEditingDescription] = useState(false); // Unused state
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [editingDescription, setEditingDescription] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  // const [taskCount, setTaskCount] = useState(0); // Unused
-  // const [tasks, setTasks] = useState([]); // Unused
-  // const [boardStats, setBoardStats] = useState([]); // Unused
+  const [taskCount, setTaskCount] = useState(0);
+  const [tasks, setTasks] = useState([]);
+  const [boardStats, setBoardStats] = useState([]);
   const [showAddIssueModal, setShowAddIssueModal] = useState(false);
   const [issueFormData, setIssueFormData] = useState({
     title: '',
@@ -452,6 +454,36 @@ const ProjectOverview = () => {
   // handleCollaboratorClick (Actually used in line 702, so checking if I should keep it or if I made a mistake in analysis)
 
   // Wait, handleCollaboratorClick IS used in line 702. I should keep it.
+
+  const ErrorModal = () => (
+    <div className="access-denied-modal-overlay">
+      <div className="access-denied-modal-content">
+        <div className="access-denied-header">
+          <h2>Access Denied</h2>
+          <button
+            className="access-denied-close"
+            onClick={() => setShowErrorModal(false)}
+          >
+            ×
+          </button>
+        </div>
+        <div className="access-denied-body">
+          <div className="access-denied-icon">
+            <i className="fas fa-exclamation-triangle"></i>
+          </div>
+          <p className="access-denied-message">{errorMessage}</p>
+        </div>
+        <div className="access-denied-actions">
+          <button
+            className="btn-access-denied-close"
+            onClick={() => setShowErrorModal(false)}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   const handleEditClick = (action) => {
     // ... kept if used, but analysis says unused? 
