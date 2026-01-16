@@ -7,6 +7,10 @@ import { getTasks, createTask } from '../api/taskApi';
 import LoadingAnimation from './LoadingAnimation';
 import SprintManager from './SprintManager';
 import Footer from './Footer';
+import '../styles/ProjectOverview.css';
+import '../styles/ProjectSettings.css';
+import '../styles/Dashboard.css';
+import '../styles/ConfirmationModal.css';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -489,7 +493,7 @@ const ProjectOverview = () => {
   // handleEditClick removed
 
   const handleDeleteClick = () => {
-    // ... unused
+    setShowDeleteConfirm(true);
   };
 
   const handleCollaboratorClick = () => {
@@ -811,7 +815,7 @@ const ProjectOverview = () => {
           ) : (
             <div className="settings-view">
               <div className="project-overview-section">
-                <div className="section-header">
+                <div className="section-header settings-header-left">
                   <h2>Project Settings</h2>
                 </div>
 

@@ -1,0 +1,125 @@
+/* Confirmation Modal Styles */
+.confirmation-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.confirmation-modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    animation: dialogFadeIn 0.2s ease-out;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.confirmation-header h2 {
+    margin: 0;
+    color: #e53e3e;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.confirmation-body p {
+    margin: 0;
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+.confirmation-warning-text {
+    color: #c53030 !important;
+    font-size: 0.9rem;
+    margin-top: 0.5rem !important;
+    font-weight: 500;
+}
+
+.confirmation-project-info {
+    background: #fff5f5;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #2d3748;
+}
+
+.confirmation-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.btn-confirmation-cancel {
+    padding: 0.6rem 1.2rem;
+    background: #edf2f7;
+    color: #4a5568;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-confirmation-cancel:hover {
+    background: #e2e8f0;
+}
+
+.btn-confirmation-delete {
+    padding: 0.6rem 1.2rem;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-confirmation-delete:hover {
+    background: #c53030;
+}
+
+.btn-confirmation-leave {
+    padding: 0.6rem 1.2rem;
+    background: #dd6b20;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-confirmation-leave:hover {
+    background: #c05621;
+}
+
+/* Force left alignment for headers in settings view */
+.settings-view .section-header,
+.settings-header-left {
+    display: flex !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    width: 100% !important;
+}
+
+.settings-view .section-header h2,
+.settings-header-left h2 {
+    text-align: left !important;
+    margin-right: auto !important;
+    margin-left: 0 !important;
+    width: auto !important;
+}

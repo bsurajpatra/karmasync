@@ -44,7 +44,7 @@ const TagManager = ({ projectId, projectTags, onTagsChange }) => {
 
     return (
         <div className="tag-manager-container settings-group">
-            <div className="section-header" style={{ marginBottom: '1.5rem' }}>
+            <div className="section-header settings-header-left" style={{ marginBottom: '1.5rem' }}>
                 <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Project Tags</h2>
             </div>
 
