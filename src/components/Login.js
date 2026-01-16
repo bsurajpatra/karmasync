@@ -73,7 +73,7 @@ const Login = () => {
 
   if (loading) {
     return (
-      <LoadingAnimation 
+      <LoadingAnimation
         message={
           <>
             Signing you in...<br />
@@ -83,7 +83,7 @@ const Login = () => {
               </span>
             )}
           </>
-        } 
+        }
       />
     );
   }
@@ -100,9 +100,9 @@ const Login = () => {
             <h2>Welcome Back</h2>
             <p className="auth-subtitle">Sign in to continue your productivity journey</p>
           </div>
-          
+
           {error && <div className="signup-message error">{error}</div>}
-          
+
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
               <input
@@ -115,7 +115,7 @@ const Login = () => {
                 required
               />
             </div>
-            
+
             <div className="form-group password-group">
               <input
                 type={showPassword ? "text" : "password"}
@@ -134,16 +134,16 @@ const Login = () => {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
-            
-            <button 
-              type="submit" 
+
+            <button
+              type="submit"
               className={`auth-button ${!isFormComplete() ? 'auth-button-disabled' : ''}`}
               disabled={loading || !isFormComplete()}
             >
               {loading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
-          
+
           <div className="auth-footer">
             <p>
               Don't have an account?{' '}

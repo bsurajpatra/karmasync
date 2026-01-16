@@ -766,16 +766,16 @@ const ProjectOverview = () => {
               </div>
 
               <div className="project-overview-section">
-                <div className="section-header">
-                  <h2>Description</h2>
+                <div className="po-unique-widget-header">
+                  <h2 className="po-unique-widget-title">Description</h2>
                 </div>
                 <p>{project.description || 'No description provided'}</p>
               </div>
 
               {project.repositoryLink && (
                 <div className="project-overview-section">
-                  <div className="section-header">
-                    <h2>Repository</h2>
+                  <div className="po-unique-widget-header">
+                    <h2 className="po-unique-widget-title">Repository</h2>
                   </div>
                   <div className="github-display">
                     <a
@@ -792,8 +792,8 @@ const ProjectOverview = () => {
 
               {project && project.projectType === 'collaborative' && (
                 <div className="project-overview-section">
-                  <div className="section-header">
-                    <h2>Collaborators</h2>
+                  <div className="po-unique-widget-header">
+                    <h2 className="po-unique-widget-title">Collaborators</h2>
                   </div>
                   <div className="collaborators-list">
                     <table className="collaborators-table">
@@ -825,8 +825,8 @@ const ProjectOverview = () => {
               )}
 
               <div className="project-overview-section activity-section-overview">
-                <div className="section-header">
-                  <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#2c3e50', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div className="po-unique-widget-header">
+                  <h2 className="po-unique-widget-title">
                     <i className="fas fa-history" style={{ color: '#10b981' }}></i>
                     Recent Activity
                   </h2>
@@ -834,9 +834,9 @@ const ProjectOverview = () => {
                 <ProjectActivityWidget projectId={id} projectType={project?.projectType} />
               </div>
 
-              <div className="project-overview-section" style={{ background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid #f1f5f9' }}>
-                <div className="section-header" style={{ marginBottom: '1.5rem' }}>
-                  <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#2c3e50', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div className="project-overview-section user-stories-section">
+                <div className="po-unique-widget-header">
+                  <h2 className="po-unique-widget-title">
                     <i className="fas fa-chart-pie" style={{ color: '#4a90e2' }}></i>
                     User Stories Progress
                   </h2>

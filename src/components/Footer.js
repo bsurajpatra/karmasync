@@ -1,19 +1,23 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="dashboard-footer" style={{ fontSize: '0.75rem', padding: '0.4rem' }}>
-      &copy; {year} KarmaSync |{" "}
-      <a
-        href="https://github.com/bsurajpatra/KarmaSync_Info/blob/main/LICENSE"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="footer-link"
-      >
-        MIT License
-      </a>
+    <footer className="landing-footer">
+      <div className="footer-content-centered">
+        <span>&copy; {year} KarmaSync | Effortless Agile Management</span>
+        <span className="footer-divider-bs"> | </span>
+        <a
+          href="https://github.com/bsurajpatra/KarmaSync_Info/blob/main/LICENSE"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="footer-link-modern"
+        >
+          MIT License
+        </a>
+      </div>
     </footer>
   );
 };

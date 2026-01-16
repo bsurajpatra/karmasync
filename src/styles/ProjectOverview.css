@@ -383,6 +383,37 @@
   font-size: 0.875rem;
 }
 
+/* Widget Headers Unique */
+.po-unique-widget-header {
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  margin-bottom: 1.5rem !important;
+  width: 100% !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+.po-unique-widget-title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  margin: 0 !important;
+  text-align: left !important;
+  width: 100% !important;
+}
+
+.user-stories-section {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+}
+
 /* Project Type and Status Row */
 .project-type-status {
   display: flex;

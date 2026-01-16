@@ -1,14 +1,21 @@
 .auth-container {
   min-height: 100vh;
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-between;
+  flex-direction: column;
   background: transparent !important;
   background-color: transparent !important;
-  padding: 2rem 8rem;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+}
+
+.auth-main-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 8rem;
+  width: 100%;
 }
 
 .auth-logo-section {
@@ -18,8 +25,6 @@
   align-items: center;
   justify-content: center;
   padding-right: 6rem;
-  height: calc(100vh - 4rem);
-  margin: 0;
 }
 
 .auth-content {
@@ -28,8 +33,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - 4rem);
-  margin: 0;
 }
 
 .auth-card {
@@ -232,11 +235,11 @@
     max-width: 440px;
     padding: 1.75rem;
   }
-  
+
   .auth-logo {
     width: 260px;
   }
-  
+
   .auth-logo-text {
     font-size: 3rem;
   }
@@ -274,7 +277,10 @@
 }
 
 /* Remove or set to transparent any background/background-color on main/root containers */
-.login-container, .login-form, .modal-content, .modal-overlay {
+.login-container,
+.login-form,
+.modal-content,
+.modal-overlay {
   background: transparent !important;
   background-color: transparent !important;
 }
