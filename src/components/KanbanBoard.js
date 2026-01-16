@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getProjectById, addCustomBoard, deleteCustomBoard, removeCollaborator, addCollaborator, updateCollaboratorRole } from '../api/projectApi';
+import { getProjectById, addCustomBoard, deleteCustomBoard, addCollaborator, updateCollaboratorRole } from '../api/projectApi';
 import { getTasks, updateTaskStatus, createTask } from '../api/taskApi';
 import axios from 'axios';
 // import BoardManager from './BoardManager'; // Unused
@@ -14,6 +14,7 @@ import { useAuth } from '../context/AuthContext';
 import TagSelector from './TagSelector';
 import * as storyApi from '../api/userStoryApi';
 import '../styles/Tags.css';
+import { getSprintsByProject } from '../api/sprintApi';
 
 const KanbanBoard = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const KanbanBoard = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [selectedIssue] = useState(null);
   const [showAddIssueModal, setShowAddIssueModal] = useState(false);
   const [showBoardManager, setShowBoardManager] = useState(false);
   const [issueFormData, setIssueFormData] = useState({
@@ -60,8 +61,8 @@ const KanbanBoard = () => {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [isAddingCollaborator, setIsAddingCollaborator] = useState(false);
   const [isUpdatingRole, setIsUpdatingRole] = useState(false);
-  // const [showRemoveModal, setShowRemoveModal] = useState(false); // Unused
-  const [removingCollaborator, setRemovingCollaborator] = useState(null);
+  const [, setShowRemoveModal] = useState(false);
+  const [, setRemovingCollaborator] = useState(null);
   const [showSelfRemoveModal, setShowSelfRemoveModal] = useState(false);
   const [tagFilter, setTagFilter] = useState([]);
 

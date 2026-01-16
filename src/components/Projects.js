@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getProjects, createProject, updateProject, deleteProject } from '../api/projectApi';
+import { getProjects } from '../api/projectApi';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/Projects.css';
 import Footer from './Footer';

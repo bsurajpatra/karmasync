@@ -163,7 +163,7 @@ const SprintManager = ({ projectId, currentUserRole }) => {
 
     const proceedWithAssignment = async () => {
         try {
-            const result = await assignTasksToSprint(selectedSprint._id, selectedTasks);
+            await assignTasksToSprint(selectedSprint._id, selectedTasks);
             setShowAssignModal(false);
             setShowWarningModal(false);
             fetchData();

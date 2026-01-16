@@ -32,16 +32,16 @@ const ProjectOverview = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [editingRepository, setEditingRepository] = useState(false);
+  const [, setEditingRepository] = useState(false);
   const [repositoryLink, setRepositoryLink] = useState('');
-  const [editingTitle, setEditingTitle] = useState(false);
-  const [editingDescription, setEditingDescription] = useState(false);
+  const [, setEditingTitle] = useState(false);
+  const [, setEditingDescription] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [taskCount, setTaskCount] = useState(0);
-  const [tasks, setTasks] = useState([]);
-  const [boardStats, setBoardStats] = useState([]);
+  const [, setTaskCount] = useState(0);
+  const [, setTasks] = useState([]);
+  const [, setBoardStats] = useState([]);
   const [showAddIssueModal, setShowAddIssueModal] = useState(false);
   const [issueFormData, setIssueFormData] = useState({
     title: '',
@@ -133,10 +133,11 @@ const ProjectOverview = () => {
   const fetchTaskCount = useCallback(async () => {
     try {
       // console.log('Fetching tasks for project:', id);
-      const tasksData = await getTasks(id);
+      // console.log('Fetching tasks for project:', id);
+      await getTasks(id);
       // console.log('Tasks received:', tasksData);
-      // setTasks(tasksData); // removed
-      // setTaskCount(tasksData.length); // removed
+      // setTasks(tasksData); 
+      // setTaskCount(tasksData.length); 
 
       /* Board Stats calculation removed as boardStats is unused */
       // setBoardStats(stats);
@@ -485,15 +486,7 @@ const ProjectOverview = () => {
     </div>
   );
 
-  const handleEditClick = (action) => {
-    // ... kept if used, but analysis says unused? 
-    // I will comment out and see, or better, trust the user report.
-    // But I should be safe. 
-    // User report says: handleEditClick.
-    // I searched for usage in step 41 and didn't see it.
-    // I'll comment it out.
-    return true;
-  };
+  // handleEditClick removed
 
   const handleDeleteClick = () => {
     // ... unused
